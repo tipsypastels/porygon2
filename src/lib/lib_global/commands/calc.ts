@@ -7,18 +7,20 @@ interface Args {
 }
 
 const calc: Command<Args> = async ({ args, embed, reply }) => {
+  embed.addField('Equation', codeBlock(args.equation));
+
   try {
     const result = await evaluate(args.equation);
 
     embed
       .infoColor()
       .setTitle('Aaaand the answer is...')
-      .setDescription(codeBlock(result));
+      .addField('Result', codeBlock(result));
   } catch (error) {
     embed
       .poryPortrait()
       .warningColor()
-      .setDescription(codeBlock(error.message))
+      .addField('Error', codeBlock(error.message))
       .setTitle(
         '_Porygon adjusts her glasses and takes another look at that equation._',
       );

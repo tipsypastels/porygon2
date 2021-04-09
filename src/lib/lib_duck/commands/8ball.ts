@@ -1,14 +1,19 @@
 import { Command } from 'interaction/command';
 import { random } from 'support/array';
 
-const eightBall: Command = ({ embed, reply }) => {
+interface Args {
+  question: string;
+}
+
+const eightBall: Command<Args> = ({ embed, reply, args }) => {
   const line = random(LINES);
 
   embed
     .infoColor()
     .poryPortrait()
     .setTitle('The wise oracle Porygon studies her magic 8-ball.')
-    .setDescription(line);
+    .addField('Question', args.question)
+    .addField('Answer', line);
 
   reply(embed);
 };
