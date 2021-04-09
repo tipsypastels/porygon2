@@ -33,7 +33,7 @@ export class Markov {
       this.states.pop(); // remove final newline
       this.train();
     } else {
-      writeFileSync(this.file, '');
+      writeFileSync(this.file, '', { flag: 'w' });
       this.states = [];
     }
 
