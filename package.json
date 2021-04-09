@@ -1,12 +1,16 @@
 {
   "scripts": {
+    "build": "tsc",
+    "start": "NODE_ENV=production NODE_PATH=./dist node ./dist/main.js",
     "watch": "NODE_ENV=development NODE_PATH=./src nodemon",
     "test": "jest --coverage"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/keyv": "^3.1.1",
+    "@types/mathjs": "^6.0.11",
     "@types/node": "^14.14.33",
+    "@types/object.fromentries": "^2.0.0",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
@@ -23,7 +27,9 @@
     "date-fns": "^2.20.0",
     "discord.js": "vaporox/discord.js#feat-interactions",
     "keyv": "^4.0.3",
+    "mathjs": "^9.3.0",
     "node-cron": "^3.0.0",
+    "object.fromentries": "^2.0.4",
     "winston": "^3.3.3"
   }
 }

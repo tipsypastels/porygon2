@@ -1,14 +1,32 @@
-import { Collection, CommandInteraction } from 'discord.js';
+import { ApplicationCommand, Collection, CommandInteraction } from 'discord.js';
 import { Command, removeCommandHandler } from 'interaction/command';
 import { runCommand } from 'interaction/command/runtime';
 import { basename } from 'path';
+import { Porygon } from 'porygon/client';
 import { logger } from 'porygon/logger';
 import { isDev } from 'support/dev';
 import { eachFileRecursive } from 'support/dir';
 import { Lib } from './lib';
 
 export class LibCommands {
-  private handlers = new Collection<string, Command>();
+  static handlers = new Collection<string, Command>();
+
+  static async handle(client: Porygon, interaction: CommandInteraction) {
+    const command = this.handlers.get(interaction.commandID);
+
+    if (!command) {
+      logger.error(
+        `Got an interaction for nonexistant command ${interaction.commandName}.`,
+      );
+      return;
+    }
+
+    await runCommand({
+      command,
+      interaction,
+      client,
+    });
+  }
 
   constructor(readonly lib: Lib) {}
 
@@ -23,40 +41,33 @@ export class LibCommands {
       }
 
       const command: Command = mod.default;
+      const id = await this.addRegistration(command, global);
 
-      await this.addRegistration(command, global);
-      await this.addHandler(command);
+      if (id) {
+        await this.addHandler(id, command);
+      }
     });
 
     await Promise.all(promises);
   }
 
-  async handle(interaction: CommandInteraction) {
-    const command = this.handlers.get(interaction.commandName);
-
-    if (!command) {
-      return; // TODO: log error
-    }
-
-    await runCommand({
-      command,
-      interaction,
-      client: this.client,
-    });
-  }
-
-  private addRegistration(command: Command, global: boolean) {
+  private async addRegistration(command: Command, global: boolean) {
     const data = removeCommandHandler(command);
+    let result: Promise<ApplicationCommand> | undefined;
 
     if (global && !isDev) {
-      return this.client.application?.commands.create(data);
-    } else {
-      return this.guild.commands.create(data);
+      result = this.client.application?.commands.create(data);
+    } else if (this.guild) {
+      result = this.guild.commands.create(data);
+    }
+
+    if (result) {
+      return (await result).id;
     }
   }
 
-  private addHandler(command: Command) {
-    this.handlers.set(command.name, command);
+  private addHandler(id: string, command: Command) {
+    LibCommands.handlers.set(id, command);
   }
 
   private get client() {
@@ -64,6 +75,6 @@ export class LibCommands {
   }
 
   private get guild() {
-    return this.client.guilds.cache.get(this.lib.guildId)!;
+    return this.client.guilds.cache.get(this.lib.guildId);
   }
 }

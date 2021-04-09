@@ -3,7 +3,7 @@ import { basename } from 'path';
 import { Porygon } from 'porygon/client';
 import { logger } from 'porygon/logger';
 import { TEST_SERVER } from 'secrets.json';
-import { isDev } from 'support/dev';
+import { chooseIfDev, isDev } from 'support/dev';
 import { eachDirectory } from 'support/dir';
 import { Lib } from './lib';
 
@@ -16,6 +16,8 @@ let testLib: Lib;
 
 export async function setupLibs(client: Porygon) {
   const promises = Array.from(eachLibDir()).map(async (dir) => {
+    logger.info(`Setting up ${basename(dir)}...`);
+
     const lib = await createLibForDir(client, dir);
     const setup = await getLibSetupCallback(dir);
 
@@ -53,9 +55,11 @@ async function createLibForDir(client: Porygon, dir: string) {
 }
 
 async function getLibSetupCallback(dir: string) {
-  const mod = await import(`${dir}/index.ts`).catch(() => {
-    logger.warn(`${basename(dir)} has no index.ts.`);
-  });
+  const mod = await import(`${dir}/index.${chooseIfDev('js', 'ts')}`).catch(
+    () => {
+      logger.warn(`${basename(dir)} has no index.ts.`);
+    },
+  );
 
   if (typeof mod?.default !== 'function') {
     logger.warn(

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
     "target": "ES2017",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -10,5 +11,5 @@
     "resolveJsonModule": true,
     "baseUrl": "./src"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/**/*.json"]
 }

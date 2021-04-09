@@ -1,4 +1,3 @@
-import { Interaction } from 'discord.js';
 import { Porygon } from 'porygon/client';
 import { LibCommands } from './lib_commands';
 
@@ -20,19 +19,11 @@ export class Lib {
 
   constructor(readonly client: Porygon, readonly guildId: string) {}
 
-  importCommands(dir: string, { global = false } = {}) {
-    return this.commands.import(dir, { global });
+  async importCommands(dir: string, { global = false } = {}) {
+    await this.commands.import(dir, { global });
   }
 
   async importHandlers(dir: string) {
     /* TODO */
-  }
-
-  async handleInteraction(interaction: Interaction) {
-    if (!interaction.isCommand()) {
-      return;
-    }
-
-    await this.commands.handle(interaction);
   }
 }

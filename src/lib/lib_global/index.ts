@@ -1,5 +1,5 @@
 import { Lib } from 'lib/lib';
 
-export default (lib: Lib) => {
-  lib.importCommands(`${__dirname}/commands`, { global: true });
+export default async (lib: Lib) => {
+  await lib.importCommands(`${__dirname}/commands`, { global: true });
 };

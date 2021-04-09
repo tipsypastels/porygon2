@@ -1,5 +1,5 @@
 import { Lib } from 'lib/lib';
 
-export default function pokecom(lib: Lib) {
-  lib.importCommands(`${__dirname}/commands`);
+export default async function pokecom(lib: Lib) {
+  // await lib.importCommands(`${__dirname}/commands`);
 }

@@ -1,5 +1,6 @@
 import { Client as DiscordClient } from 'discord.js';
-import { setupLibs, getLib } from 'lib';
+import { setupLibs } from 'lib';
+import { LibCommands } from 'lib/lib_commands';
 import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
@@ -18,17 +19,11 @@ export class Porygon extends DiscordClient {
     });
 
     this.on('interaction', (interaction) => {
-      if (!interaction.guild) {
+      if (!interaction.guild || !interaction.isCommand()) {
         return;
       }
 
-      const lib = getLib(interaction.guild.id);
-
-      if (!lib) {
-        return;
-      }
-
-      lib.handleInteraction(interaction);
+      LibCommands.handle(this, interaction);
     });
   }
 

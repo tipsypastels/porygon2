@@ -1,5 +1,5 @@
 import { Lib } from 'lib/lib';
 
-export default function duck(lib: Lib) {
-  lib.importCommands(`${__dirname}/commands`);
+export default async function duck(lib: Lib) {
+  await lib.importCommands(`${__dirname}/commands`);
 }

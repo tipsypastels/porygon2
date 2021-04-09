@@ -14,6 +14,7 @@ if (isDev) {
   logger.add(
     new transports.Console({
       format: format.combine(format.colorize(), format.simple()),
+      level: 'debug',
     }),
   );
 }
