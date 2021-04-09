@@ -26,4 +26,12 @@ export class PorygonEmbed extends MessageEmbed {
   addInlineField(name: any, value: any) {
     return this.addField(name, value, true);
   }
+
+  if(cond: any, callback: (embed: this) => void) {
+    if (cond) {
+      callback(this);
+    }
+
+    return this;
+  }
 }

@@ -10,13 +10,21 @@ interface Args {
   prompt?: string;
 }
 
-const pory: Command<Args> = ({ args, reply }) => {
+const pory: Command<Args> = ({ args, reply, embed }) => {
+  const { prompt } = args;
   const response = PORY_AI.speak();
 
-  reply(response);
+  embed
+    .infoColor()
+    .poryPortrait()
+    .if(prompt, () => embed.addField('Input', prompt))
+    .addField('Response', response);
 
-  if (args.prompt) {
-    PORY_AI.learn(args.prompt);
+  reply(embed);
+
+  // slow, run after reply
+  if (prompt) {
+    PORY_AI.learn(prompt);
   }
 };
 
