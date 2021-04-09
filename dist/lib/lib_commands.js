@@ -34,7 +34,6 @@ class LibCommands {
     static async handle(client, interaction) {
         const command = this.handlers.get(interaction.commandID);
         if (!command) {
-            console.log(this.handlers);
             logger_1.logger.error(`Got an interaction for nonexistant command ${interaction.commandName}.`);
             return;
         }
