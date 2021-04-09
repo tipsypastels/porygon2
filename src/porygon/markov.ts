@@ -24,7 +24,7 @@ export class Markov {
   private stream: WriteStream;
 
   constructor({ name, fallback, order = 3 }: MarkovOpts) {
-    this.file = `${__dirname}/markov/${name}.markov`;
+    this.file = `.markov/${name}.markov`;
     this.order = order;
     this.fallback = fallback;
 
