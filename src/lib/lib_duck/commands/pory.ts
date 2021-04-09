@@ -1,5 +1,6 @@
 import { Command } from 'interaction/command';
 import { Markov } from 'porygon/markov';
+import { codeBlock } from 'support/format';
 
 const PORY_AI = new Markov({
   name: 'pory',
@@ -10,15 +11,18 @@ interface Args {
   prompt?: string;
 }
 
-const pory: Command<Args> = ({ args, reply, embed }) => {
+const pory: Command<Args> = ({ args, reply, embed, member, guild, client }) => {
   const { prompt } = args;
   const response = PORY_AI.speak();
+  const bot = guild.members.cache.get(client.user!.id)!;
 
-  embed
-    .infoColor()
-    .poryPortrait()
-    .if(prompt, () => embed.addField('Input', prompt))
-    .addField('Response', response);
+  embed.infoColor().setTitle('Porygon Talk Show');
+
+  if (prompt) {
+    embed.addField(member.displayName, codeBlock(prompt));
+  }
+
+  embed.addField(bot.displayName, codeBlock(response));
 
   reply(embed);
 
