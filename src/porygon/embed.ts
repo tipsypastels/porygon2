@@ -1,7 +1,12 @@
 import { MessageEmbed } from 'discord.js';
+import { PORY_PORTRAIT } from './asset';
 import COLORS from './colors.json';
 
 export class PorygonEmbed extends MessageEmbed {
+  poryPortrait() {
+    return this.setThumbnail(PORY_PORTRAIT);
+  }
+
   okColor() {
     return this.setColor(COLORS.ok);
   }

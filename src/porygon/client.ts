@@ -1,14 +1,13 @@
-import { Client as DiscordClient, Collection } from 'discord.js';
-import type { Lib } from 'lib/base';
+import { Client as DiscordClient } from 'discord.js';
+import { setupLibs, getLib } from 'lib';
 import { intents } from './client/intents';
 import { logger } from './logger';
+import { uptime } from './stats';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.
  */
-export class PorygonClient extends DiscordClient {
-  libs!: Collection<string, Lib>;
-
+export class Porygon extends DiscordClient {
   constructor() {
     super({ intents });
 
@@ -23,34 +22,32 @@ export class PorygonClient extends DiscordClient {
         return;
       }
 
-      const lib = this.libs.get(interaction.guild.id);
+      const lib = getLib(interaction.guild.id);
 
       if (!lib) {
         return;
       }
 
-      lib.handleInteraction(this, interaction);
+      lib.handleInteraction(interaction);
     });
   }
 
   private async setup() {
-    await Promise.all([this.setupLibraries()]);
+    await Promise.all([this.setupLibs(), this.setupStats()]);
   }
 
-  private async setupLibraries() {
-    this.libs = (await import('../lib')).default;
+  private async setupLibs() {
+    await setupLibs(this);
+  }
 
-    const promises = this.libs.map(async (lib) => {
-      await lib.synchronize(this);
-    });
-
-    await Promise.all(promises);
+  private setupStats() {
+    uptime.startTiming();
   }
 }
 
 /**
  * The global client singleton.
  *
- * @see PorygonClient
+ * @see Porygon
  */
-export const client = new PorygonClient();
+export const client = new Porygon();

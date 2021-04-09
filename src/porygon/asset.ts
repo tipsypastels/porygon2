@@ -1,3 +1,6 @@
+const BASE_GITHUB_URL =
+  'https://raw.githubusercontent.com/tipsypastels/porygon2/main/assets';
+
 /**
  * Represents an asset in the `/assets` directory, but with a twist.
  *
@@ -8,14 +11,8 @@
  * The only downside is that you do have to push before new assets will appear, but this
  * is fairly trivial.
  */
-
-const BASE_GITHUB_URL =
-  'https://github.com/tipsypastels/porygon/blob/main/assets';
-
-export class PorygonAsset {
-  constructor(readonly path: string) {}
-
-  get githubUrl() {
-    return `${BASE_GITHUB_URL}/${this.path}`;
-  }
+function toGithubUrl(path: string) {
+  return `${BASE_GITHUB_URL}/${path}`;
 }
+
+export const PORY_PORTRAIT = toGithubUrl('portrait.png');
