@@ -1,6 +1,7 @@
 import { GuildMember } from 'discord.js';
 import { Command } from 'interaction/command';
 import { OWNER } from 'secrets.json';
+import { isDev } from 'support/dev';
 import { codeBlock } from 'support/format';
 
 interface Args {
@@ -33,7 +34,7 @@ const evalCommand: Command<Args> = (args) => {
 };
 
 evalCommand.commandName = 'eval';
-evalCommand.defaultPermission = false;
+evalCommand.defaultPermission = isDev;
 evalCommand.description =
   "If you don't know what this does, you shouldn't be using it.";
 evalCommand.options = [

@@ -1,6 +1,7 @@
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { getSetting, setSettingLiteral } from 'porygon/settings';
+import { isDev } from 'support/dev';
 import { code, codeBlock } from 'support/format';
 
 type GetOpts = { get: { key: string } };
@@ -37,6 +38,7 @@ const settingSet: CommandHandler<SetOpts> = async ({ opts, embed, reply }) => {
   reply(embed);
 };
 
+setting.defaultPermission = isDev;
 setting.description = 'Gets or sets a Porygon setting by its internal ID.';
 setting.options = [
   {
