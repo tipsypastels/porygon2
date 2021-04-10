@@ -1,6 +1,7 @@
+import { Prisma } from '.prisma/client';
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
-import { getSetting, setSettingLiteral } from 'porygon/settings';
+import { getSetting, setSetting } from 'porygon/settings';
 import { isDev } from 'support/dev';
 import { code, codeBlock } from 'support/format';
 
@@ -26,14 +27,28 @@ const settingGet: CommandHandler<GetOpts> = async ({ opts, embed, reply }) => {
 };
 
 const settingSet: CommandHandler<SetOpts> = async ({ opts, embed, reply }) => {
-  const { key, value } = opts.set;
-  await setSettingLiteral(key, value);
+  const { key, value: rawValue } = opts.set;
+
+  let value: Prisma.JsonValue;
+
+  try {
+    value = JSON.parse(rawValue);
+  } catch (error) {
+    embed
+      .errorColor()
+      .setTitle('Operation aborted due to badly formed JSON.')
+      .setDescription(codeBlock(rawValue, { lang: 'json' }));
+
+    return reply(embed);
+  }
+
+  await setSetting(key, value);
 
   embed
     .okColor()
     .setTitle('Settings updated!')
     .addField('Key', code(key))
-    .addField('New Value', codeBlock(value, { lang: 'json' }));
+    .addField('New Value', codeBlock(value, { lang: 'js' }));
 
   reply(embed);
 };

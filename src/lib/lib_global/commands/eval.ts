@@ -3,6 +3,7 @@ import { Command } from 'interaction/command';
 import { OWNER } from 'secrets.json';
 import { isDev } from 'support/dev';
 import { codeBlock } from 'support/format';
+import { database as databaseImport } from 'porygon/database';
 
 interface Args {
   code: string;
@@ -13,6 +14,7 @@ const evalCommand: Command<Args> = (args) => {
   // bring all values into scope for eval
   // eslint-disable-next-line
   const { interaction, member, guild, reply, embed, client, opts } = args;
+  const database = databaseImport;
 
   if (!isOwner(member)) {
     return reply(embed.errorColor().setTitle('Hahahahah no'));

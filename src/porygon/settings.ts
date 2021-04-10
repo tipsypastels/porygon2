@@ -1,9 +1,12 @@
+import { Prisma } from '@prisma/client';
 import { EnvWrapper, unwrapEnv } from 'support/dev';
 import { database } from './database';
 
 const table = database.settings;
 
-export function setting<T>(key: string, initial: EnvWrapper<T>) {
+type JSON = Prisma.JsonValue;
+
+export function setting<T extends JSON>(key: string, initial: EnvWrapper<T>) {
   const initialValue = unwrapEnv(initial);
 
   return async function getSettingOrInitial(): Promise<T> {
@@ -14,26 +17,22 @@ export function setting<T>(key: string, initial: EnvWrapper<T>) {
     }
 
     await table.create({
-      data: { key, value: JSON.stringify(initialValue) },
+      data: { key, value: initialValue },
     });
 
     return initialValue;
   };
 }
 
-export async function getSetting<T>(key: string) {
+export async function getSetting<T extends JSON>(key: string) {
   const entry = await table.findFirst({ where: { key } });
 
   if (entry) {
-    return JSON.parse(entry.value) as T;
+    return entry.value as T;
   }
 }
 
-export async function setSetting<T>(key: string, value: T) {
-  await setSettingLiteral(key, JSON.stringify(value));
-}
-
-export async function setSettingLiteral(key: string, value: string) {
+export async function setSetting<T extends JSON>(key: string, value: T) {
   await table.upsert({
     where: { key },
     update: { value },

@@ -12,5 +12,5 @@ generator client {
 
 model Settings {
   key   String @id @db.VarChar(25)
-  value String @db.Text
+  value Json
 }
