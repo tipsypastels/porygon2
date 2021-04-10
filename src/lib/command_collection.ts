@@ -130,6 +130,10 @@ class ProdCommandCollection extends CommandCollection {
     return new this();
   }
 
+  saveLib(client: Porygon, guild?: Guild) {
+    return this.save(client, guild);
+  }
+
   merge(other: CommandCollection) {
     for (const [id, command] of other) {
       this.set(id, command);
