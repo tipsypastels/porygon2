@@ -1,16 +1,14 @@
 import { Command } from 'interaction/command';
-import { setting } from 'porygon/settings';
+import { Setting } from 'porygon/settings';
 import { random } from 'support/array';
 
-const inky: Command = async ({ interaction }) => {
-  const messages = await getMessages();
-
-  interaction.reply(random(messages));
+const inky: Command = ({ interaction }) => {
+  interaction.reply(random(MESSAGES.value));
 };
 
 inky.description = '🥺';
 
-const getMessages = setting('inky.messages', [
+const MESSAGES = new Setting('inky.messages', [
   '🥺',
   '<:femmeduck:773701798292095008>',
   "haven't you people heard of closing the goddamn door",

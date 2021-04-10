@@ -1,6 +1,6 @@
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
-import { getSetting, setSetting } from 'porygon/settings';
+import { Setting } from 'porygon/settings';
 import { isDev } from 'support/dev';
 import { code, codeBlock } from 'support/format';
 
@@ -12,25 +12,30 @@ const setting: Command<Opts> = (opts) => {
   disambiguate(opts, { get: settingGet, set: settingSet });
 };
 
-const settingGet: CommandHandler<GetOpts> = async ({ opts, embed, reply }) => {
+const settingGet: CommandHandler<GetOpts> = ({ opts, embed }) => {
   const { key } = opts.get;
-  const value = await getSetting<any>(key);
+  const value = Setting.value(key);
 
   embed
     .infoColor()
     .setTitle('Settings')
     .addField('Key', code(key))
-    .addField('Value', codeBlock(value, { inspect: true, lang: 'js' }));
-
-  reply(embed);
+    .addField('Value', codeBlock(value, { inspect: true, lang: 'js' }))
+    .reply();
 };
 
-const settingSet: CommandHandler<SetOpts> = async ({ opts, embed }) => {
+const settingSet: CommandHandler<SetOpts> = ({ opts, embed }) => {
   const { key, value: rawValue } = opts.set;
 
   parse(rawValue)
     .then(async (value) => {
-      await setSetting(key, value);
+      const setting = Setting.get(key);
+
+      if (!setting) {
+        throw new Error(); // TODO
+      }
+
+      await setting.set(value);
 
       embed
         .okColor()

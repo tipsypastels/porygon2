@@ -1,41 +1,62 @@
 import { Prisma } from '@prisma/client';
+import { Collection } from 'discord.js';
 import { EnvWrapper, unwrapEnv } from 'support/dev';
 import { database } from './database';
 
-const table = database.settings;
-
 type JSON = Prisma.JsonValue;
 
-export function setting<T extends JSON>(key: string, initial: EnvWrapper<T>) {
-  const initialValue = unwrapEnv(initial);
+export class Setting<T extends JSON> {
+  private static all = new Collection<string, Setting<any>>();
+  private static table = database.settings;
 
-  return async function getSettingOrInitial(): Promise<T> {
-    const result = await getSetting<T>(key);
+  static async synchronize() {
+    const records = await this.table.findMany();
+    const promises = this.all.map(async (setting) => {
+      console.log(setting);
 
-    if (result != null) {
-      return result;
-    }
+      const record = records.find((r) => r.key === setting.key);
 
-    await table.create({
-      data: { key, value: initialValue },
+      if (!record) {
+        setting._value = setting.initial;
+
+        return await this.table.create({
+          data: { key: setting.key, value: setting.initial },
+        });
+      }
+
+      setting._value = record.value;
     });
 
-    return initialValue;
-  };
-}
-
-export async function getSetting<T extends JSON>(key: string) {
-  const entry = await table.findFirst({ where: { key } });
-
-  if (entry) {
-    return entry.value as T;
+    await Promise.all(promises);
   }
-}
 
-export async function setSetting<T extends JSON>(key: string, value: T) {
-  await table.upsert({
-    where: { key },
-    update: { value },
-    create: { key, value },
-  });
+  static get(key: string) {
+    return this.all.get(key);
+  }
+
+  static value(key: string) {
+    const setting = this.get(key);
+    return setting?._value ?? setting?.initial;
+  }
+
+  readonly key: string;
+  readonly initial: T;
+
+  private _value?: T;
+
+  constructor(key: string, initial: EnvWrapper<T>) {
+    this.key = key;
+    this.initial = unwrapEnv(initial);
+
+    Setting.all.set(this.key, this);
+  }
+
+  get value(): T {
+    return this._value ?? this.initial;
+  }
+
+  async set(value: T) {
+    this._value = value;
+    await Setting.table.update({ where: { key: this.key }, data: { value } });
+  }
 }
