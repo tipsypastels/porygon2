@@ -1,3 +1,5 @@
+import { inspect } from 'util';
+
 /**
  * Converts a string to markdown bold.
  */
@@ -19,9 +21,15 @@ export function code(value: string) {
   return `\`${value}\``;
 }
 
+export interface CodeBlockOpts {
+  lang?: string;
+  inspect?: boolean;
+}
+
 /**
  * Converts a string to a code block, optionally with a provided language.
  */
-export function codeBlock(value: string, language?: string) {
-  return `\`\`\`${language}\n${value}\`\`\``;
+export function codeBlock(value: any, opts: CodeBlockOpts = {}) {
+  if (opts.inspect) value = inspect(value);
+  return `\`\`\`${opts.lang}\n${value}\`\`\``;
 }

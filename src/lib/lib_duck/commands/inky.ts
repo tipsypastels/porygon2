@@ -1,13 +1,15 @@
 import { Command } from 'interaction/command';
+import { getValue } from 'lib/lib_value';
 import { random } from 'support/array';
 
-const inky: Command = ({ interaction }) => {
-  interaction.reply(random(MESSAGES));
+const inky: Command = async ({ interaction }) => {
+  const messages = await getValue('inky.messages', MESSAGES);
+
+  interaction.reply(random(messages));
 };
 
 inky.description = '🥺';
 
-// TODO: turn this into a libsetting?
 const MESSAGES = [
   '🥺',
   '<:femmeduck:773701798292095008>',

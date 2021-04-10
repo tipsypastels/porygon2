@@ -11,8 +11,8 @@ interface Args {
   prompt?: string;
 }
 
-const pory: Command<Args> = ({ args, reply, embed, member, guild, client }) => {
-  const { prompt } = args;
+const pory: Command<Args> = ({ opts, reply, embed, member, guild, client }) => {
+  const { prompt } = opts;
   const response = PORY_AI.speak();
   const bot = guild.members.cache.get(client.user!.id)!;
 

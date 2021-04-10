@@ -14,7 +14,7 @@ export type CommandArgs<T> = {
   embed: PorygonEmbed;
   interaction: CommandInteraction;
   reply: CommandInteraction['reply'];
-  args: T;
+  opts: T;
 };
 export type CommandHandler<T> = (args: CommandArgs<T>) => void | Promise<void>;
 export type CommandWithNoConflictName = { commandName?: string };

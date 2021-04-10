@@ -1,7 +1,6 @@
 import { GuildMember } from 'discord.js';
 import { Command } from 'interaction/command';
 import { OWNER } from 'secrets.json';
-import { inspect } from 'util';
 import { codeBlock } from 'support/format';
 
 interface Args {
@@ -9,18 +8,18 @@ interface Args {
   quiet?: boolean;
 }
 
-const evalCommand: Command<Args> = (opts) => {
+const evalCommand: Command<Args> = (args) => {
   // bring all values into scope for eval
   // eslint-disable-next-line
-  const { interaction, member, guild, reply, embed, client, args } = opts;
+  const { interaction, member, guild, reply, embed, client, opts } = args;
 
   if (!isOwner(member)) {
     return reply(embed.errorColor().setTitle('Hahahahah no'));
   }
 
-  const result = eval(args.code);
+  const result = eval(opts.code);
 
-  if (args.quiet) {
+  if (opts.quiet) {
     // TODO: once the public api gets a way to pong, do that
     return;
   }
@@ -28,7 +27,7 @@ const evalCommand: Command<Args> = (opts) => {
   embed
     .okColor()
     .setTitle('Evaluated Code')
-    .setDescription(codeBlock(inspect(result), 'js'));
+    .setDescription(codeBlock(result, { lang: 'js', inspect: true }));
 
   return reply(embed);
 };

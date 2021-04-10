@@ -5,14 +5,14 @@ interface Args {
   question: string;
 }
 
-const eightBall: Command<Args> = ({ embed, reply, args }) => {
+const eightBall: Command<Args> = ({ embed, reply, opts }) => {
   const line = random(LINES);
 
   embed
     .infoColor()
     .poryPortrait()
     .setTitle('The wise oracle Porygon studies her magic 8-ball.')
-    .addField('Question', args.question)
+    .addField('Question', opts.question)
     .addField('Answer', line);
 
   reply(embed);

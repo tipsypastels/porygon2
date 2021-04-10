@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js';
 import { Porygon } from 'porygon/client';
 import { PorygonEmbed } from 'porygon/embed';
 import { Command } from '.';
-import { createCommandArgs } from './args';
+import { createCommandOpts } from './opts';
 
 export interface RunCommandOpts<T = undefined> {
   client: Porygon;
@@ -15,12 +15,12 @@ export async function runCommand<T = undefined>({
   command,
   interaction,
 }: RunCommandOpts<T>) {
-  const args = createCommandArgs<T>(interaction);
+  const opts = createCommandOpts<T>(interaction);
 
   await command({
     client,
     interaction,
-    args,
+    opts,
     reply: interaction.reply.bind(interaction),
     guild: interaction.guild!,
     member: interaction.member!,

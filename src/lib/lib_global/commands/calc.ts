@@ -6,11 +6,11 @@ interface Args {
   equation: string;
 }
 
-const calc: Command<Args> = async ({ args, embed, reply }) => {
-  embed.addField('Equation', codeBlock(args.equation));
+const calc: Command<Args> = async ({ opts, embed, reply }) => {
+  embed.addField('Equation', codeBlock(opts.equation));
 
   try {
-    const result = await evaluate(args.equation);
+    const result = await evaluate(opts.equation);
 
     embed
       .infoColor()
