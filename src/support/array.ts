@@ -15,6 +15,14 @@ export function samples<T>(count: number, array: T[], rand = Math.random): T[] {
 }
 
 /**
+ * Calls the callback `count` times. Acts like `Array.prototype.map` if the callback
+ * returns a value.
+ */
+export function times<R>(count: number, callback: (i: number) => R) {
+  return range(0, count, { isExclusive: true }).map(callback);
+}
+
+/**
  * Like `Array.prototype.map`, but omits falsy values both before and after transforming.
  */
 export function filterMap<T, R>(
