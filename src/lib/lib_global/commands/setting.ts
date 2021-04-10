@@ -1,4 +1,3 @@
-import { Prisma } from '.prisma/client';
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { getSetting, setSetting } from 'porygon/settings';

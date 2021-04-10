@@ -48,7 +48,7 @@ export abstract class CommandCollection extends Collection<string, Command> {
     // no-op
   }
 
-  async saveAll(client: Porygon, guild: Guild) {
+  async saveAllInDevelopment(client: Porygon, guild: Guild) {
     // no-op
   }
 
@@ -110,7 +110,7 @@ class DevCommandCollection extends CommandCollection {
     return this.instance;
   }
 
-  saveAll(client: Porygon, guild: Guild) {
+  saveAllInDevelopment(client: Porygon, guild: Guild) {
     return this.save(client, guild);
   }
 

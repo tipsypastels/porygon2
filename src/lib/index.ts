@@ -6,7 +6,7 @@ import { TEST_SERVER } from 'secrets.json';
 import { isDev } from 'support/dev';
 import { eachDirectory } from 'support/dir';
 import { Lib } from './lib';
-import { LibCommands } from './lib_commands';
+import { LibCommandManager } from './lib_command_manager';
 
 /**
  * See ./lib.ts for an explanation of the lib system.
@@ -29,7 +29,7 @@ export async function setupLibs(client: Porygon) {
   });
 
   await Promise.all(promises);
-  await LibCommands.saveAll(client, TEST_SERVER);
+  await LibCommandManager.saveAllInDevelopment(client, TEST_SERVER);
 }
 
 export function getLib(guildId: string) {

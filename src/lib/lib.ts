@@ -1,5 +1,6 @@
 import { Porygon } from 'porygon/client';
-import { LibCommands } from './lib_commands';
+import { LibCommandManager } from './lib_command_manager';
+import { LibEventManager } from './lib_event_manager';
 
 /**
  * A "lib" represents a block of behavior, including handlers and commands, that
@@ -15,7 +16,8 @@ import { LibCommands } from './lib_commands';
  * passed to each setup callback automatically.
  */
 export class Lib {
-  private commands = new LibCommands(this);
+  private commands = new LibCommandManager(this);
+  private events = new LibEventManager(this);
 
   constructor(readonly client: Porygon, readonly guildId: string) {}
 
@@ -23,7 +25,7 @@ export class Lib {
     await this.commands.import(dir);
   }
 
-  async importHandlers(dir: string) {
-    /* TODO */
+  async importEvents(dir: string) {
+    await this.events.import(dir);
   }
 }

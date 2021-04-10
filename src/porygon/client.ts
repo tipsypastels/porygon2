@@ -1,6 +1,6 @@
 import { Client as DiscordClient } from 'discord.js';
 import { setupLibs } from 'lib';
-import { LibCommands } from 'lib/lib_commands';
+import { LibCommandManager } from 'lib/lib_command_manager';
 import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
@@ -24,7 +24,7 @@ export class Porygon extends DiscordClient {
         return;
       }
 
-      LibCommands.handle(this, interaction);
+      LibCommandManager.handle(this, interaction);
     });
   }
 

@@ -5,12 +5,12 @@ import { logger } from 'porygon/logger';
 import { CommandCollection } from './command_collection';
 import { Lib } from './lib';
 
-export class LibCommands {
+export class LibCommandManager {
   static handlers = CommandCollection.create();
 
-  static saveAll(client: Porygon, guildId: string) {
+  static saveAllInDevelopment(client: Porygon, guildId: string) {
     const guild = client.guilds.cache.get(guildId)!;
-    return this.handlers.saveAll(client, guild);
+    return this.handlers.saveAllInDevelopment(client, guild);
   }
 
   static async handle(client: Porygon, interaction: CommandInteraction) {
@@ -38,7 +38,7 @@ export class LibCommands {
     await output.import(dir);
     await output.saveLib(this.client, this.guild);
 
-    LibCommands.handlers.merge(output);
+    LibCommandManager.handlers.merge(output);
   }
 
   private get client() {

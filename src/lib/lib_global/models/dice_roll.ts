@@ -1,6 +1,7 @@
 import { PorygonEmbed } from 'porygon/embed';
 import { random, range, times } from 'support/array';
 import { code } from 'support/format';
+import { clamp } from 'support/number';
 
 export type DiceRollOpts = Partial<{
   faces?: number;
@@ -19,9 +20,9 @@ export class DiceRoll {
   private rolls: number[] = [];
 
   constructor(opts: DiceRollOpts) {
-    this.faces = opts.faces ?? 6;
-    this.count = opts.count ?? 1;
-    this.offset = opts.offset ?? 0;
+    this.faces = clamp(opts.faces ?? 6, 1, 100);
+    this.count = clamp(opts.count ?? 1, 1, 100);
+    this.offset = clamp(opts.offset ?? 0, 0, 100);
     this.range = range(1, this.faces);
 
     times(this.count, () => this.roll());
