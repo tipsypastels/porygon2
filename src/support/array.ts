@@ -15,6 +15,30 @@ export function samples<T>(count: number, array: T[], rand = Math.random): T[] {
 }
 
 /**
+ * Like `Array.prototype.map`, but omits falsy values both before and after transforming.
+ */
+export function filterMap<T, R>(
+  array: (T | undefined)[],
+  filter: (item: T) => R,
+) {
+  const out: R[] = [];
+
+  for (const item of array) {
+    if (!item) {
+      continue;
+    }
+
+    const transformed = filter(item);
+
+    if (transformed) {
+      out.push(transformed);
+    }
+  }
+
+  return out;
+}
+
+/**
  * Creates an array with all intermediate values.
  */
 export function range(

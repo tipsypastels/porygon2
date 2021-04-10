@@ -19,8 +19,8 @@ export class Lib {
 
   constructor(readonly client: Porygon, readonly guildId: string) {}
 
-  async importCommands(dir: string, { global = false } = {}) {
-    await this.commands.import(dir, { global });
+  async importCommands(dir: string) {
+    await this.commands.import(dir);
   }
 
   async importHandlers(dir: string) {
