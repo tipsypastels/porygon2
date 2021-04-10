@@ -1,7 +1,7 @@
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
-import { getSetting } from 'porygon/settings';
-import { codeBlock } from 'support/format';
+import { getSetting, setSettingLiteral } from 'porygon/settings';
+import { code, codeBlock } from 'support/format';
 
 type GetOpts = { get: { key: string } };
 type SetOpts = { set: { key: string; value: string } };
@@ -14,18 +14,27 @@ const setting: Command<Opts> = (opts) => {
 const settingGet: CommandHandler<GetOpts> = async ({ opts, embed, reply }) => {
   const { key } = opts.get;
   const value = await getSetting<any>(key);
-  console.log(key);
 
   embed
     .infoColor()
-    .setTitle(`Setting: ${key}`)
-    .setDescription(codeBlock(value, { inspect: true }));
+    .setTitle('Settings')
+    .addField('Key', code(key))
+    .addField('Value', codeBlock(value, { inspect: true, lang: 'js' }));
 
   reply(embed);
 };
 
-const settingSet: CommandHandler<SetOpts> = () => {
-  //
+const settingSet: CommandHandler<SetOpts> = async ({ opts, embed, reply }) => {
+  const { key, value } = opts.set;
+  await setSettingLiteral(key, value);
+
+  embed
+    .okColor()
+    .setTitle('Settings updated!')
+    .addField('Key', code(key))
+    .addField('New Value', codeBlock(value, { lang: 'json' }));
+
+  reply(embed);
 };
 
 setting.description = 'Gets or sets a Porygon setting by its internal ID.';

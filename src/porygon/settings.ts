@@ -28,3 +28,15 @@ export async function getSetting<T>(key: string) {
     return JSON.parse(entry.value) as T;
   }
 }
+
+export async function setSetting<T>(key: string, value: T) {
+  await setSettingLiteral(key, JSON.stringify(value));
+}
+
+export async function setSettingLiteral(key: string, value: string) {
+  await table.upsert({
+    where: { key },
+    update: { value },
+    create: { key, value },
+  });
+}
