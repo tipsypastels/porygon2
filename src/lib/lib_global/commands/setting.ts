@@ -26,31 +26,27 @@ const settingGet: CommandHandler<GetOpts> = async ({ opts, embed, reply }) => {
   reply(embed);
 };
 
-const settingSet: CommandHandler<SetOpts> = async ({ opts, embed, reply }) => {
+const settingSet: CommandHandler<SetOpts> = async ({ opts, embed }) => {
   const { key, value: rawValue } = opts.set;
 
-  let value: Prisma.JsonValue;
+  parse(rawValue)
+    .then(async (value) => {
+      await setSetting(key, value);
 
-  try {
-    value = JSON.parse(rawValue);
-  } catch (error) {
-    embed
-      .errorColor()
-      .setTitle('Operation aborted due to badly formed JSON.')
-      .setDescription(codeBlock(rawValue, { lang: 'json' }));
-
-    return reply(embed);
-  }
-
-  await setSetting(key, value);
-
-  embed
-    .okColor()
-    .setTitle('Settings updated!')
-    .addField('Key', code(key))
-    .addField('New Value', codeBlock(value, { lang: 'js' }));
-
-  reply(embed);
+      embed
+        .okColor()
+        .setTitle('Settings updated!')
+        .addField('Key', code(key))
+        .addField('New Value', codeBlock(value, { lang: 'js' }))
+        .reply();
+    })
+    .catch(() => {
+      embed
+        .errorColor()
+        .setTitle('JSON was badly formed, operation aborted.')
+        .setDescription(codeBlock(rawValue, { lang: 'json' }))
+        .reply();
+    });
 };
 
 setting.defaultPermission = isDev;
@@ -91,3 +87,7 @@ setting.options = [
 ];
 
 export default setting;
+
+async function parse(code: string) {
+  return JSON.parse(code);
+}

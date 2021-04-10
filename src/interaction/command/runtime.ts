@@ -16,14 +16,15 @@ export async function runCommand<T = undefined>({
   interaction,
 }: RunCommandOpts<T>) {
   const opts = createCommandOpts<T>(interaction);
+  const reply = interaction.reply.bind(interaction);
 
   await command({
     client,
     interaction,
     opts,
-    reply: interaction.reply.bind(interaction),
+    reply,
     guild: interaction.guild!,
     member: interaction.member!,
-    embed: new PorygonEmbed(),
+    embed: new PorygonEmbed(reply),
   });
 }
