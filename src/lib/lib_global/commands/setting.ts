@@ -53,7 +53,7 @@ const settingSet: CommandHandler<SetOpts> = ({ opts, embed }) => {
     });
 };
 
-setting.defaultPermission = isDev;
+setting.defaultPermission = true;
 setting.description = 'Gets or sets a Porygon setting by its internal ID.';
 setting.options = [
   {
