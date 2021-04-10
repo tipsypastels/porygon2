@@ -3,18 +3,17 @@
  */
 export const isDev = process.env.NODE_ENV === 'development';
 
-export type DevProdChoice<T> = { dev: T; prod: T };
-
 /**
- * Returns `prod` if production, `dev` is development. Quick and easy way
- * to do a binary choice.
+ * Represents a value that may be provided literally, or wrapped
+ * in an object with `dev` and `prod` keys.
  */
-export function chooseIfDev<T>(prod: T, dev: T): T;
-export function chooseIfDev<T>(choices: DevProdChoice<T>): T;
-export function chooseIfDev(...args: any[]) {
-  if (args.length === 2) {
-    return isDev ? args[1] : args[0];
+export type EnvWrapper<T> = T | { prod: T; dev: T };
+
+/** @see EnvWrapper */
+export function unwrapEnv<T>(wrapper: EnvWrapper<T>): T {
+  if ('prod' in wrapper) {
+    return wrapper[isDev ? 'dev' : 'prod'];
   }
 
-  return args[0][isDev ? 'dev' : 'prod'];
+  return wrapper;
 }

@@ -1,16 +1,16 @@
 import { Command } from 'interaction/command';
-import { getValue } from 'lib/lib_value';
+import { setting } from 'porygon/settings';
 import { random } from 'support/array';
 
 const inky: Command = async ({ interaction }) => {
-  const messages = await getValue('inky.messages', MESSAGES);
+  const messages = await getMessages();
 
   interaction.reply(random(messages));
 };
 
 inky.description = '🥺';
 
-const MESSAGES = [
+const getMessages = setting('inky.messages', [
   '🥺',
   '<:femmeduck:773701798292095008>',
   "haven't you people heard of closing the goddamn door",
@@ -20,6 +20,6 @@ const MESSAGES = [
   'pleading is the most fun an inky can have without taking his clothes off',
   'periodt',
   'PB is my bwestest fwend uwu',
-];
+]);
 
 export default inky;

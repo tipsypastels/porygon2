@@ -1,6 +1,6 @@
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
-import { getValue } from 'lib/lib_value';
+import { getSetting } from 'porygon/settings';
 import { codeBlock } from 'support/format';
 
 type GetOpts = { get: { key: string } };
@@ -12,22 +12,16 @@ const setting: Command<Opts> = (opts) => {
 };
 
 const settingGet: CommandHandler<GetOpts> = async ({ opts, embed, reply }) => {
-  try {
-    reply('x');
+  const { key } = opts.get;
+  const value = await getSetting<any>(key);
+  console.log(key);
 
-    const { key } = opts.get;
-    const value = await getValue<any>(key, {});
-    console.log(key);
+  embed
+    .infoColor()
+    .setTitle(`Setting: ${key}`)
+    .setDescription(codeBlock(value, { inspect: true }));
 
-    embed
-      .infoColor()
-      .setTitle(`Setting: ${key}`)
-      .setDescription(codeBlock(value, { inspect: true }));
-
-    reply(embed);
-  } catch (error) {
-    console.log(error);
-  }
+  reply(embed);
 };
 
 const settingSet: CommandHandler<SetOpts> = () => {

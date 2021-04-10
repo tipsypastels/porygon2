@@ -3,3 +3,4 @@ secrets.json
 dist/
 *.log
 .markov/*.markov
+.env
