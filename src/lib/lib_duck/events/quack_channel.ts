@@ -5,7 +5,7 @@ import { Setting } from 'porygon/settings';
 const PHRASES = new Setting('quack.phrases', ['duck', 'quack', 'bread']);
 const CHANNEL_ID = new Setting('quack.channel', {
   dev: '775630182521634846',
-  prod: '0',
+  prod: '830569145204342794',
 });
 
 const quackHandler: GuildHandler = async ({ em }) => {
