@@ -4,6 +4,7 @@ import { LibCommands } from 'lib/lib_commands';
 import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
+import './client/ascii';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.
