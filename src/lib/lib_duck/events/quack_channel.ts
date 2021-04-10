@@ -9,21 +9,18 @@ const getChannelId = setting('quack.channel_id', {
 });
 
 const quackHandler: GuildHandler = async ({ em }) => {
-  em.on('message', async (message) => {
-    const [phrases, channelId] = await lazyFetchSettings();
-
-    if (message.channel.id === channelId) {
-      deleteIfInvalid(message, phrases);
-    }
-  });
-
-  em.on('messageUpdate', async (message) => {
-    const [phrases, channelId] = await lazyFetchSettings();
-
-    if (message.channel.id === channelId) {
-      deleteIfInvalid(message, phrases);
-    }
-  });
+  // em.on('message', async (message) => {
+  //   const [phrases, channelId] = await lazyFetchSettings();
+  //   if (message.channel.id === channelId) {
+  //     deleteIfInvalid(message, phrases);
+  //   }
+  // });
+  // em.on('messageUpdate', async (message) => {
+  //   const [phrases, channelId] = await lazyFetchSettings();
+  //   if (message.channel.id === channelId) {
+  //     deleteIfInvalid(message, phrases);
+  //   }
+  // });
 };
 
 export default quackHandler;
