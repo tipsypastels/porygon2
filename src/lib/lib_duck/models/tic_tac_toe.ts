@@ -1,4 +1,3 @@
-import COLORS from 'colors.json';
 import {
   Collection,
   CommandInteraction,
@@ -44,26 +43,9 @@ export class TicTacToe {
 
     for (;;) {
       const didCancel = await this.turn();
-
-      if (didCancel) {
-        console.log('game cancelled');
-        this.state = new GameCancelledState();
-      } else {
-        switch (this.board.state) {
-          case BoardState.Full: {
-            console.log('game tied');
-            this.state = new GameTiedState();
-            break;
-          }
-          case BoardState.Line: {
-            console.log('game won');
-            this.state = new GameWonState();
-          }
-        }
-      }
+      this.state = this.getNextState(didCancel);
 
       if (this.state.shouldContinue) {
-        console.log('continuing');
         this.players.next();
         await this.render();
         continue;
@@ -79,6 +61,21 @@ export class TicTacToe {
     const embed = this.state.render(player, this.board);
 
     this.reply(embed);
+  }
+
+  private getNextState(didCancel?: boolean) {
+    const boardState = this.board.state;
+
+    switch (true) {
+      case didCancel:
+        return new GameCancelledState();
+      case boardState === BoardState.Full:
+        return new GameTiedState();
+      case boardState === BoardState.Line:
+        return new GameWonState();
+    }
+
+    return this.state;
   }
 
   private async turn() {
