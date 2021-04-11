@@ -8,6 +8,8 @@ export class Listener {
   static ALLOWED_TIME = Seconds(30);
   static NO_ENTRY = '🚫';
 
+  hasCollectedAny = false;
+
   constructor(private channel: TextChannel) {}
 
   listen(player: Player, board: Board) {
@@ -19,6 +21,7 @@ export class Listener {
 
       collector.on('collect', (message: Message) => {
         const cell = message.content.toUpperCase();
+        this.hasCollectedAny = true;
 
         if (!isValidCell(cell)) {
           return; // ignore other messages

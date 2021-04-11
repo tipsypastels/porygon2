@@ -22,8 +22,12 @@ export abstract class GameState {
       : await interaction.reply(embed);
   }
 
-  protected async text(text: string) {
-    await this.game.channel.send(text);
+  protected body() {
+    return `${this.game.players}\n${this.board}`;
+  }
+
+  protected async status(status: string) {
+    await this.game.status(status);
   }
 
   protected get board() {
@@ -39,7 +43,7 @@ export class GamePlayingState extends GameState {
   intoEmbed(embed: MessageEmbed) {
     embed
       .setTitle(TITLE)
-      .setDescription(this.board.toString())
+      .setDescription(this.body())
       .setColor(COLORS.ok)
       .addField(
         `${this.player}, it's your turn!`,
@@ -66,7 +70,7 @@ export class GameCancelledState extends GameState {
   async tick() {
     await Promise.all([
       this.render(),
-      this.text('⚠️ The game was cancelled due to inactivity.'),
+      this.status('⚠️ The game was cancelled due to inactivity.'),
     ]);
 
     return false;
@@ -78,14 +82,14 @@ export class GameWonState extends GameState {
     embed
       .setColor(COLORS.info)
       .setTitle(TITLE)
-      .setDescription(this.board.toString())
+      .setDescription(this.body())
       .addField(`${this.player} won the game!`, CTA);
   }
 
   async tick() {
     await Promise.all([
       this.render(),
-      this.text(`🎉 **${this.player}** won the game!`),
+      this.status(`🎉 **${this.player}** won the game!`),
     ]);
 
     return false;
@@ -97,12 +101,12 @@ export class GameTiedState extends GameState {
     embed
       .setColor(COLORS.info)
       .setTitle(TITLE)
-      .setDescription(this.board.toString())
+      .setDescription(this.body())
       .addField("It's a tie!", CTA);
   }
 
   async tick() {
-    await Promise.all([this.render(), this.text('🤷 Match ended in a tie.')]);
+    await Promise.all([this.render(), this.status('🤷 Match ended in a tie.')]);
     return false;
   }
 }

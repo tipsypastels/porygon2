@@ -19,6 +19,10 @@ export class PlayerList {
   next() {
     this.currentTeam = this.currentTeam === Team.X ? Team.O : Team.X;
   }
+
+  toString() {
+    return `**${this.x}** vs **${this.o}**`;
+  }
 }
 
 export class Player {

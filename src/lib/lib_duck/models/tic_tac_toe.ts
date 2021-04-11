@@ -50,6 +50,12 @@ export class TicTacToe {
     }
   }
 
+  async status(status: string) {
+    if (this.listener.hasCollectedAny) {
+      await this.channel.send(status);
+    }
+  }
+
   private async turn() {
     const player = this.players.current;
 
