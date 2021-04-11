@@ -1,62 +1,108 @@
 import COLORS from 'colors.json';
 import { MessageEmbed } from 'discord.js';
-import { Board } from './board';
-import { Player } from './player';
+import type { TicTacToe } from '../tic_tac_toe';
 
 const TITLE = 'Tic-Tac-Toe';
 const CTA = 'Start a new match with `/ttt`.';
 
-export interface GameState {
-  shouldContinue: boolean;
-  render(player: Player, board: Board): MessageEmbed;
-}
+export abstract class GameState {
+  constructor(protected game: TicTacToe) {}
 
-export class GamePlayingState implements GameState {
-  shouldContinue = true;
+  abstract intoEmbed(embed: MessageEmbed): void;
+  abstract tick(): Promise<boolean>;
 
-  render(player: Player, board: Board) {
-    return new MessageEmbed()
-      .setTitle(TITLE)
-      .setDescription(board.toString())
-      .setColor(COLORS.ok)
-      .addField(
-        `${player}, it's your turn!`,
-        'Enter a letter and number matching an available cell; for example, **A1**.',
-      );
+  async render() {
+    const embed = new MessageEmbed();
+    const { interaction } = this.game;
+
+    this.intoEmbed(embed);
+
+    interaction.replied
+      ? await interaction.editReply(embed)
+      : await interaction.reply(embed);
+  }
+
+  protected async text(text: string) {
+    await this.game.channel.send(text);
+  }
+
+  protected get board() {
+    return this.game.board;
+  }
+
+  protected get player() {
+    return this.game.players.current;
   }
 }
 
-export class GameCancelledState implements GameState {
-  shouldContinue = false;
+export class GamePlayingState extends GameState {
+  intoEmbed(embed: MessageEmbed) {
+    embed
+      .setTitle(TITLE)
+      .setDescription(this.board.toString())
+      .setColor(COLORS.ok)
+      .addField(
+        `${this.player}, it's your turn!`,
+        'Enter a letter and number matching an available cell; for example, **A1**.',
+      );
+  }
 
-  render() {
-    return new MessageEmbed()
+  async tick() {
+    this.game.players.next();
+    await this.render();
+
+    return true;
+  }
+}
+
+export class GameCancelledState extends GameState {
+  intoEmbed(embed: MessageEmbed) {
+    embed
       .setColor(COLORS.warning)
       .setTitle(TITLE)
       .setDescription('Match timed out due to inactivity.');
   }
-}
 
-export class GameWonState implements GameState {
-  shouldContinue = false;
+  async tick() {
+    await Promise.all([
+      this.render(),
+      this.text('⚠️ The game was cancelled due to inactivity.'),
+    ]);
 
-  render(winner: Player, board: Board) {
-    return new MessageEmbed()
-      .setColor(COLORS.info)
-      .setTitle(TITLE)
-      .setDescription(board.toString())
-      .addField(`${winner} won the game!`, CTA);
+    return false;
   }
 }
 
-export class GameTiedState implements GameState {
-  shouldContinue = false;
-
-  render(_: Player, board: Board) {
-    return new MessageEmbed()
+export class GameWonState extends GameState {
+  intoEmbed(embed: MessageEmbed) {
+    embed
       .setColor(COLORS.info)
       .setTitle(TITLE)
-      .setDescription(board.toString())
+      .setDescription(this.board.toString())
+      .addField(`${this.player} won the game!`, CTA);
+  }
+
+  async tick() {
+    await Promise.all([
+      this.render(),
+      this.text(`🎉 **${this.player}** won the game!`),
+    ]);
+
+    return false;
+  }
+}
+
+export class GameTiedState extends GameState {
+  intoEmbed(embed: MessageEmbed) {
+    embed
+      .setColor(COLORS.info)
+      .setTitle(TITLE)
+      .setDescription(this.board.toString())
       .addField("It's a tie!", CTA);
+  }
+
+  async tick() {
+    await Promise.all([this.render(), this.text('🤷 Match ended in a tie.')]);
+    return false;
   }
 }

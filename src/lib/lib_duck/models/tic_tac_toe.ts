@@ -1,19 +1,16 @@
 import {
-  Collection,
   CommandInteraction,
   GuildMember,
-  Message,
   MessageEmbed,
   TextChannel,
 } from 'discord.js';
-import { Board, BoardState } from './tic_tac_toe/board';
-import { Cell } from './tic_tac_toe/constants';
+import { Board } from './tic_tac_toe/board';
+import { Listener } from './tic_tac_toe/listener';
 import { PlayerList } from './tic_tac_toe/player';
 import {
   GameCancelledState,
   GamePlayingState,
-  GameTiedState,
-  GameWonState,
+  GameState,
 } from './tic_tac_toe/state';
 
 interface GameOpts {
@@ -25,102 +22,42 @@ interface GameOpts {
 
 export class TicTacToe {
   readonly channel: TextChannel;
-  readonly players: PlayerList;
   readonly interaction: CommandInteraction;
-
-  private didReplyOnce = false;
-  private board = new Board();
-  private state = new GamePlayingState();
+  readonly players: PlayerList;
+  readonly listener: Listener;
+  readonly board: Board;
+  private state: GameState;
 
   constructor(opts: GameOpts) {
     this.channel = opts.channel;
-    this.players = new PlayerList(opts.playerX, opts.playerO);
     this.interaction = opts.interaction;
+    this.players = new PlayerList(opts.playerX, opts.playerO);
+    this.listener = new Listener(this.channel);
+    this.board = new Board(this);
+    this.state = new GamePlayingState(this);
   }
 
   async start() {
-    await this.render();
+    await this.state.render();
 
     for (;;) {
-      const didCancel = await this.turn();
-      this.state = this.getNextState(didCancel);
+      this.state = await this.turn();
+      const isOngoing = await this.state.tick();
 
-      if (this.state.shouldContinue) {
-        this.players.next();
-        await this.render();
-        continue;
+      if (!isOngoing) {
+        break;
       }
-
-      await this.render();
-      break;
     }
-  }
-
-  private async render() {
-    const player = this.players.current;
-    const embed = this.state.render(player, this.board);
-
-    this.reply(embed);
-  }
-
-  private getNextState(didCancel?: boolean) {
-    const boardState = this.board.state;
-
-    switch (true) {
-      case didCancel:
-        return new GameCancelledState();
-      case boardState === BoardState.Full:
-        return new GameTiedState();
-      case boardState === BoardState.Line:
-        return new GameWonState();
-    }
-
-    return this.state;
   }
 
   private async turn() {
-    console.log('starting turn');
-
     const player = this.players.current;
-    const filter = (message: Message) => {
-      const content = message.content.toUpperCase();
-
-      return (
-        message.author.id === player.id &&
-        content in Cell &&
-        this.board.isFree(Cell[content as 'A1'])
-      );
-    };
-
-    let res: Collection<string, Message>;
 
     try {
-      res = await this.awaitMessages(filter);
+      const cell = await this.listener.listen(player, this.board);
+      return this.board.fill(cell, player.team);
     } catch {
-      return true;
+      return new GameCancelledState(this);
     }
-
-    const message = res.first()!;
-    const content = message.content.toUpperCase();
-    const cell = Cell[content as 'A1'];
-
-    this.board.fill(cell, player.team);
-  }
-
-  private reply(embed: MessageEmbed) {
-    if (this.didReplyOnce) {
-      return this.interaction.editReply(embed);
-    } else {
-      this.didReplyOnce = true;
-      return this.interaction.reply(embed);
-    }
-  }
-
-  private awaitMessages(filter: (message: Message) => boolean) {
-    return this.channel.awaitMessages(filter, {
-      max: 1,
-      time: 30000,
-      errors: ['time'],
-    });
   }
 }
