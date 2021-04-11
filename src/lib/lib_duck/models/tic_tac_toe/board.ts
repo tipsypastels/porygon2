@@ -1,16 +1,8 @@
 import { codeBlock } from 'support/format';
-import type { TicTacToe } from '../tic_tac_toe';
 import { Team } from './constants';
-import {
-  GamePlayingState,
-  GameState,
-  GameTiedState,
-  GameWonState,
-} from './state';
+import { GamePlayingState, GameTiedState, GameWonState } from './state';
 
 export class Board {
-  constructor(private game: TicTacToe) {}
-
   private map = new Map<string, Team>();
   private static lines = [
     ['A1', 'A2', 'A3'],
@@ -63,21 +55,37 @@ export class Board {
     return this.map.get(cell) ?? ' ';
   }
 
-  private computeState(): GameState {
+  private computeState() {
+    for (const [a, b, c] of this.eachLine()) {
+      if (a && a === b && a === c) {
+        return GameWonState;
+      }
+    }
+
+    for (const line of this.eachLine()) {
+      // if there's only one player on a given line, it is still in play
+      if (this.getEffectivePlayersOnLine(line).size <= 1) {
+        return GamePlayingState;
+      }
+    }
+
+    return GameTiedState;
+  }
+
+  private *eachLine() {
     for (const [a, b, c] of Board.lines) {
       const aVal = this.get(a);
       const bVal = this.get(b);
       const cVal = this.get(c);
 
-      if (aVal && aVal === bVal && aVal === cVal) {
-        return new GameWonState(this.game);
-      }
+      yield [aVal, bVal, cVal] as const;
     }
+  }
 
-    if (this.map.size >= 9) {
-      return new GameTiedState(this.game);
-    }
+  private getEffectivePlayersOnLine(line: readonly (Team | undefined)[]) {
+    const filled = line.filter((x) => x != null);
+    const set = new Set(filled);
 
-    return new GamePlayingState(this.game);
+    return set;
   }
 }

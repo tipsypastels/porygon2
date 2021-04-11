@@ -1,9 +1,4 @@
-import {
-  CommandInteraction,
-  GuildMember,
-  MessageEmbed,
-  TextChannel,
-} from 'discord.js';
+import { CommandInteraction, GuildMember, TextChannel } from 'discord.js';
 import { Board } from './tic_tac_toe/board';
 import { Listener } from './tic_tac_toe/listener';
 import { PlayerList } from './tic_tac_toe/player';
@@ -33,7 +28,7 @@ export class TicTacToe {
     this.interaction = opts.interaction;
     this.players = new PlayerList(opts.playerX, opts.playerO);
     this.listener = new Listener(this.channel);
-    this.board = new Board(this);
+    this.board = new Board();
     this.state = new GamePlayingState(this);
   }
 
@@ -61,7 +56,9 @@ export class TicTacToe {
 
     try {
       const cell = await this.listener.listen(player, this.board);
-      return this.board.fill(cell, player.team);
+      const nextState = this.board.fill(cell, player.team);
+
+      return new nextState(this);
     } catch {
       return new GameCancelledState(this);
     }
