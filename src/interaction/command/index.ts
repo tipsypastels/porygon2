@@ -3,6 +3,7 @@ import {
   CommandInteraction,
   Guild,
   GuildMember,
+  TextChannel,
 } from 'discord.js';
 import { Porygon } from 'porygon/client';
 import { PorygonEmbed } from 'porygon/embed';
@@ -11,6 +12,7 @@ export type CommandArgs<T> = {
   client: Porygon;
   guild: Guild;
   member: GuildMember;
+  channel: TextChannel;
   embed: PorygonEmbed;
   interaction: CommandInteraction;
   reply: CommandInteraction['reply'];

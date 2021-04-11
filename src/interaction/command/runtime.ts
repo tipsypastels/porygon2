@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, TextChannel } from 'discord.js';
 import { Porygon } from 'porygon/client';
 import { PorygonEmbed } from 'porygon/embed';
 import { Command } from '.';
@@ -25,6 +25,7 @@ export async function runCommand<T = undefined>({
     reply,
     guild: interaction.guild!,
     member: interaction.member!,
+    channel: interaction.channel as TextChannel,
     embed: new PorygonEmbed(reply),
   });
 }

@@ -1,11 +1,9 @@
 import { Message, PartialMessage } from 'discord.js';
 import { GuildHandler } from 'lib/lib_event_manager';
 import { Setting } from 'porygon/settings';
-import { eachWord, toWords } from 'support/string';
+import { eachWord } from 'support/string';
 
 const PHRASES = new Setting('quack.phrases', ['duck', 'quack', 'bread']);
-const ANY_WORDS = /(\w+)/gi;
-
 const CHANNEL_ID = new Setting('quack.channel', {
   dev: '775630182521634846',
   prod: '830569145204342794',
@@ -32,9 +30,7 @@ function isInvalid({ content }: Message | PartialMessage) {
     return false;
   }
 
-  content = content.toLowerCase();
-
-  for (const word of eachWord(content)) {
+  for (const word of eachWord(content.toLowerCase())) {
     if (!PHRASES.value.includes(word)) {
       return true;
     }
