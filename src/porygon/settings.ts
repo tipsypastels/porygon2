@@ -35,8 +35,7 @@ export class Setting<T extends JSON> {
   }
 
   static value(key: string) {
-    const setting = this.get(key);
-    return setting?._value ?? setting?.initial;
+    return this.get(key)?.value;
   }
 
   readonly key: string;

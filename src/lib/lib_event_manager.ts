@@ -39,6 +39,8 @@ export class LibEventManager {
         handler(...args);
       }
     });
+
+    return this;
   }
 
   get client() {
