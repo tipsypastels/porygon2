@@ -35,3 +35,14 @@ export function toWords(input: string): string {
     }
   });
 }
+
+const WORDS = /(\w+)/i;
+
+/** Yields each word to the iterator. Ignores non-word characters. */
+export function* eachWord(input: string) {
+  const tokens = input.split(WORDS);
+
+  for (let i = 1; i < tokens.length; i += 2) {
+    yield tokens[i];
+  }
+}
