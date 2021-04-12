@@ -1,5 +1,5 @@
 import { Command } from 'interaction/command';
-import { Markov } from 'porygon/markov';
+import { Markov } from 'lib/lib_duck/models/markov';
 import { codeBlock } from 'support/format';
 
 const PORY_AI = new Markov({
