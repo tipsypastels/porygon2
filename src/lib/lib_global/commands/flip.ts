@@ -1,53 +1,28 @@
 import { Command } from 'interaction/command';
-import { COIN_ASSETS } from 'porygon/asset';
 
 const COLOR = 'E1A339';
 const FACES = {
   heads: {
     text: 'Heads',
     emoji: '<:heads:831074796925091861>',
-    image: COIN_ASSETS.heads,
   },
   tails: {
     text: 'Tails',
     emoji: '<:tails:831074797294845952>',
-    image: COIN_ASSETS.tails,
   },
 };
 
-interface Args {
-  headsText?: string;
-  tailsText?: string;
-}
-
-const flip: Command<Args> = ({ opts, embed }) => {
+const flip: Command = ({ embed }) => {
   const bool = Math.random() > 0.5;
   const result = bool ? FACES.heads : FACES.tails;
-  const customText = bool ? opts.headsText : opts.tailsText;
-  const text = customText ?? result.text;
 
   embed
-    .setTitle('Coin Flip')
-    .okColor()
-    .setDescription(`${result.emoji} ${text}`)
-    .setImage(result.image)
+    .setColor(COLOR)
+    .setTitle(`${result.text}!`)
+    .setDescription(result.emoji)
     .reply();
 };
 
 flip.description = 'Flips a coin.';
-flip.options = [
-  {
-    name: 'headsText',
-    type: 'STRING',
-    required: false,
-    description: 'Changes the text of the heads result.',
-  },
-  {
-    name: 'tailsText',
-    type: 'STRING',
-    required: false,
-    description: 'Changes the text of the tails result.',
-  },
-];
 
 export default flip;
