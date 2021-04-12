@@ -1,14 +1,17 @@
 import { Command } from 'interaction/command';
+import { COIN_ASSETS } from 'porygon/asset';
 
 const COLOR = 'E1A339';
 const FACES = {
   heads: {
     text: 'Heads',
     emoji: '<:heads:831074796925091861>',
+    image: COIN_ASSETS.heads,
   },
   tails: {
     text: 'Tails',
     emoji: '<:tails:831074797294845952>',
+    image: COIN_ASSETS.tails,
   },
 };
 
@@ -27,6 +30,7 @@ const flip: Command<Args> = ({ opts, embed }) => {
     .setTitle('Coin Flip')
     .okColor()
     .setDescription(`${result.emoji} ${text}`)
+    .setImage(result.image)
     .reply();
 };
 

@@ -16,3 +16,7 @@ function toGithubUrl(path: string) {
 }
 
 export const PORY_PORTRAIT = toGithubUrl('portrait.png');
+export const COIN_ASSETS = {
+  heads: toGithubUrl('coins/heads.png'),
+  tails: toGithubUrl('coins/tails.png'),
+};
