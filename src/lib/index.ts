@@ -17,7 +17,7 @@ let testLib: Lib;
 
 export async function setupLibs(client: Porygon) {
   const promises = Array.from(eachLibDir()).map(async (dir) => {
-    logger.info(`Setting up ${basename(dir)}...`);
+    logger.setup(`Setting up ${basename(dir)}...`);
 
     const lib = await createLibForDir(client, dir);
     const setup = await getLibSetupCallback(dir);

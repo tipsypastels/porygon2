@@ -6,6 +6,7 @@ import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
 import { Setting } from './settings';
+import { setupActivityMessages } from './activity_message';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.
@@ -30,7 +31,11 @@ export class Porygon extends DiscordClient {
   }
 
   private async setup() {
-    await Promise.all([this.setupLibs(), this.setupStats()]);
+    await Promise.all([
+      this.setupLibs(),
+      this.setupActivityMessages(),
+      this.setupStats(),
+    ]);
     await this.setupSettings(); // runs after all settings are loaded
   }
 
@@ -40,6 +45,10 @@ export class Porygon extends DiscordClient {
 
   private async setupSettings() {
     await Setting.synchronize();
+  }
+
+  private async setupActivityMessages() {
+    setupActivityMessages(this);
   }
 
   private setupStats() {
