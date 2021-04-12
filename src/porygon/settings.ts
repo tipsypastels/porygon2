@@ -12,8 +12,6 @@ export class Setting<T extends JSON> {
   static async synchronize() {
     const records = await this.table.findMany();
     const promises = this.all.map(async (setting) => {
-      console.log(setting);
-
       const record = records.find((r) => r.key === setting.key);
 
       if (!record) {

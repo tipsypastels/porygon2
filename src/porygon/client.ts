@@ -30,8 +30,8 @@ export class Porygon extends DiscordClient {
   }
 
   private async setup() {
-    await this.setupSettings(); // others may rely on this
     await Promise.all([this.setupLibs(), this.setupStats()]);
+    await this.setupSettings(); // runs after all settings are loaded
   }
 
   private async setupLibs() {

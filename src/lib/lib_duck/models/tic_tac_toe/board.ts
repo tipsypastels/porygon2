@@ -83,9 +83,6 @@ export class Board {
   }
 
   private getEffectivePlayersOnLine(line: readonly (Team | undefined)[]) {
-    const filled = line.filter((x) => x != null);
-    const set = new Set(filled);
-
-    return set;
+    return new Set(line.filter((x) => x !== null));
   }
 }
