@@ -57,6 +57,10 @@ export abstract class CommandCollection extends Collection<string, Command> {
   }
 
   protected modIsCommand(file: string, mod: any): mod is CommandMod {
+    if (mod && mod.skipFile) {
+      return false; // no warning
+    }
+
     if (!mod || !mod.default || Object.keys(mod.default).length === 0) {
       logger.error(`${basename(file)} does not have a command default export.`);
       return false;
