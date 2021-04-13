@@ -21,3 +21,16 @@ model FriendCodes {
   switch String?
   go     String?
 }
+
+model RoleSettings {
+  roleId        String  @id
+  isBound       Boolean @default(false)
+  isRequestable Boolean @default(false)
+}
+
+model BoundRoles {
+  userId String
+  roleId String
+
+  @@id([userId, roleId])
+}

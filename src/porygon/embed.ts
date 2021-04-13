@@ -1,4 +1,9 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
+import {
+  ColorResolvable,
+  CommandInteraction,
+  GuildMember,
+  MessageEmbed,
+} from 'discord.js';
 import { PORY_PORTRAIT } from './asset';
 import COLORS from './colors.json';
 
@@ -8,6 +13,14 @@ type IntoEmbeddable = { intoEmbed(embed: PorygonEmbed): unknown };
 export class PorygonEmbed extends MessageEmbed {
   constructor(private _reply: Reply) {
     super();
+  }
+
+  setColorIfNonZero(color: ColorResolvable) {
+    if (color !== 0) {
+      this.setColor(color);
+    }
+
+    return this;
   }
 
   reply() {

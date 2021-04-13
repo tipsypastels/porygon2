@@ -57,7 +57,7 @@ async function createLibForDir(client: Porygon, dir: string) {
 }
 
 async function getLibSetupCallback(dir: string) {
-  const mod = await import(`${dir}/index.${isDev ? 'ts' : 'js'}`).catch(() => {
+  const mod = await import(`${dir}`).catch(() => {
     logger.warn(`${basename(dir)} has no index.ts.`);
   });
 

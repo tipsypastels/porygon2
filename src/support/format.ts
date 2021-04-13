@@ -34,3 +34,10 @@ export function codeBlock(value: any, opts: CodeBlockOpts = {}) {
   if (opts.inspect) value = inspect(value);
   return `\`\`\`${opts.lang}\n${value}\`\`\``;
 }
+
+/**
+ * Converts a boolean to yes or no.
+ */
+export function yesNo(value: boolean | null | undefined) {
+  return value ? 'Yes' : 'No';
+}

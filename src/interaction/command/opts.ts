@@ -24,6 +24,10 @@ function transform(option: CommandInteractionOption, out: any = {}) {
       out[option.name] = option.role;
       break;
     }
+    case 'BOOLEAN': {
+      out[option.name] = typeof option.value !== 'undefined';
+      break;
+    }
     case 'SUB_COMMAND':
     case 'SUB_COMMAND_GROUP': {
       if (option.options) {
