@@ -2,8 +2,8 @@ import { Command } from 'interaction/command';
 import { Setting } from 'porygon/settings';
 import { random } from 'support/array';
 
-const inky: Command = ({ interaction }) => {
-  interaction.reply(random(MESSAGES.value));
+const inky: Command = async ({ reply }) => {
+  await reply(random(MESSAGES.value));
 };
 
 inky.description = '🥺';

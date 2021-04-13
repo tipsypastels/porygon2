@@ -14,3 +14,10 @@ model Settings {
   key   String @id @db.VarChar(25)
   value Json
 }
+
+model FriendCodes {
+  userId String  @id
+  ds     String?
+  switch String?
+  go     String?
+}

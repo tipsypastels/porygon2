@@ -1,6 +1,7 @@
 {
-  "ok": "11806a",
-  "info": "51509c",
-  "error": "f25e81",
-  "warning": "ffff00"
+  "ok": "7FC13A",
+  "info": "00C17D",
+  "error": "FF0041",
+  "danger": "FF8931",
+  "warning": "FDBE4A"
 }

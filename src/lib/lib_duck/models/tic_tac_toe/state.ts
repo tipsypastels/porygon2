@@ -1,4 +1,4 @@
-import COLORS from 'colors.json';
+import COLORS from 'porygon/colors.json';
 import { MessageEmbed } from 'discord.js';
 import type { TicTacToe } from '../tic_tac_toe';
 

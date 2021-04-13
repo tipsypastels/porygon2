@@ -5,7 +5,7 @@ import { random, range, toSentence } from 'support/array';
 const nudge: Command = async ({ guild, embed, reply }) => {
   embed.okColor().setTitle(disaster()).setDescription(deaths(guild));
 
-  reply(embed);
+  await reply(embed);
 };
 
 nudge.description = 'Never use this it literally causes natural disasters.';

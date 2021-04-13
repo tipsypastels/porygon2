@@ -6,7 +6,7 @@ interface Args {
   equation: string;
 }
 
-const calc: Command<Args> = async ({ opts, embed, reply }) => {
+const calc: Command<Args> = async ({ opts, embed }) => {
   embed.addField('Equation', codeBlock(opts.equation));
 
   try {
@@ -26,7 +26,7 @@ const calc: Command<Args> = async ({ opts, embed, reply }) => {
       );
   }
 
-  reply(embed);
+  await embed.reply();
 };
 
 calc.description = 'Does your math homework.';

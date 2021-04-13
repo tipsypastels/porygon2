@@ -24,10 +24,15 @@ function transform(option: CommandInteractionOption, out: any = {}) {
       out[option.name] = option.role;
       break;
     }
-    case 'SUB_COMMAND': {
-      const child: any = {};
-      option.options!.forEach((o) => transform(o, child));
-      out[option.name] = child;
+    case 'SUB_COMMAND':
+    case 'SUB_COMMAND_GROUP': {
+      if (option.options) {
+        const child: any = {};
+        option.options!.forEach((o) => transform(o, child));
+        out[option.name] = child;
+      } else {
+        out[option.name] = undefined; // required for disambiguate to work
+      }
       break;
     }
     default: {

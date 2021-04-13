@@ -6,19 +6,18 @@ interface Args {
   member: GuildMember;
 }
 
-const hug: Command<Args> = ({ opts, embed, reply, member: actor }) => {
+const hug: Command<Args> = async ({ opts, embed, reply, member: actor }) => {
   const subject = opts.member;
   const isSelf = actor.id === subject.id;
   const subjectLine = isSelf ? 'themself' : subject.displayName;
 
   const stat = random(STATS);
 
-  embed
+  await embed
     .okColor()
     .setTitle(`${actor.displayName} hugs ${subjectLine}!`)
-    .setDescription(`:hugging: ${subject.displayName}'s ${stat} rose!`);
-
-  reply(embed);
+    .setDescription(`:hugging: ${subject.displayName}'s ${stat} rose!`)
+    .reply();
 };
 
 hug.description = 'Hugs a friend.';

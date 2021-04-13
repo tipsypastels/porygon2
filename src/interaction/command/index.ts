@@ -18,7 +18,7 @@ export type CommandArgs<T> = {
   reply: CommandInteraction['reply'];
   opts: T;
 };
-export type CommandHandler<T> = (args: CommandArgs<T>) => void | Promise<void>;
+export type CommandHandler<T> = (args: CommandArgs<T>) => Promise<void>;
 export type CommandWithNoConflictName = { commandName?: string };
 export type Command<T = unknown> = CommandHandler<T> &
   ApplicationCommandData &

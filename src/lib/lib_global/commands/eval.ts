@@ -10,7 +10,7 @@ interface Args {
   quiet?: boolean;
 }
 
-const evalCommand: Command<Args> = (args) => {
+const evalCommand: Command<Args> = async (args) => {
   // bring all values into scope for eval
   // eslint-disable-next-line
   const { interaction, member, guild, reply, embed, client, opts } = args;
@@ -27,12 +27,11 @@ const evalCommand: Command<Args> = (args) => {
     return;
   }
 
-  embed
+  await embed
     .okColor()
     .setTitle('Evaluated Code')
-    .setDescription(codeBlock(result, { lang: 'js', inspect: true }));
-
-  return reply(embed);
+    .setDescription(codeBlock(result, { lang: 'js', inspect: true }))
+    .reply();
 };
 
 evalCommand.commandName = 'eval';

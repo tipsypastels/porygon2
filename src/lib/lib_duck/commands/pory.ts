@@ -11,7 +11,14 @@ interface Args {
   prompt?: string;
 }
 
-const pory: Command<Args> = ({ opts, reply, embed, member, guild, client }) => {
+const pory: Command<Args> = async ({
+  opts,
+  reply,
+  embed,
+  member,
+  guild,
+  client,
+}) => {
   const { prompt } = opts;
   const response = PORY_AI.speak();
   const bot = guild.members.cache.get(client.user!.id)!;
@@ -22,9 +29,7 @@ const pory: Command<Args> = ({ opts, reply, embed, member, guild, client }) => {
     embed.addField(member.displayName, codeBlock(prompt));
   }
 
-  embed.addField(bot.displayName, codeBlock(response));
-
-  reply(embed);
+  await embed.addField(bot.displayName, codeBlock(response)).reply();
 
   // slow, run after reply
   if (prompt) {

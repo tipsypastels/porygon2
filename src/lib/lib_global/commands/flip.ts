@@ -12,11 +12,11 @@ const FACES = {
   },
 };
 
-const flip: Command = ({ embed }) => {
+const flip: Command = async ({ embed }) => {
   const bool = Math.random() > 0.5;
   const result = bool ? FACES.heads : FACES.tails;
 
-  embed
+  await embed
     .setColor(COLOR)
     .setTitle(`${result.text}!`)
     .setDescription(result.emoji)

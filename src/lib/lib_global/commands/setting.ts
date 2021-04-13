@@ -9,19 +9,19 @@ type SetOpts = { set: { key: string; value: string } };
 type UpdateOpts = { update: { key: string; expression: string } };
 type Opts = GetOpts | SetOpts | UpdateOpts;
 
-const setting: Command<Opts> = (opts) => {
-  disambiguate(opts, {
+const setting: Command<Opts> = async (opts) => {
+  await disambiguate(opts, {
     get: settingGet,
     set: settingSet,
     update: settingUpdate,
   });
 };
 
-const settingGet: CommandHandler<GetOpts> = ({ opts, embed }) => {
+const settingGet: CommandHandler<GetOpts> = async ({ opts, embed }) => {
   const { key } = opts.get;
   const value = Setting.value(key);
 
-  embed
+  await embed
     .infoColor()
     .setTitle('Settings')
     .addField('Key', code(key))
@@ -29,10 +29,10 @@ const settingGet: CommandHandler<GetOpts> = ({ opts, embed }) => {
     .reply();
 };
 
-const settingSet: CommandHandler<SetOpts> = ({ opts, embed }) => {
+const settingSet: CommandHandler<SetOpts> = async ({ opts, embed }) => {
   const { key, value: rawValue } = opts.set;
 
-  parse(rawValue)
+  await parse(rawValue)
     .then(async (value) => {
       const setting = Setting.get(key);
 
@@ -79,7 +79,7 @@ const settingUpdate: CommandHandler<UpdateOpts> = async ({
 
   await setting.set(nextValue);
 
-  embed
+  await embed
     .okColor()
     .setTitle('Settings updated!')
     .addField('Key', code(key))

@@ -5,17 +5,16 @@ interface Args {
   question: string;
 }
 
-const eightBall: Command<Args> = ({ embed, reply, opts }) => {
+const eightBall: Command<Args> = async ({ embed, reply, opts }) => {
   const line = random(LINES);
 
-  embed
+  await embed
     .infoColor()
     .poryPortrait()
     .setTitle('The wise oracle Porygon studies her magic 8-ball.')
     .addField('Question', opts.question)
-    .addField('Answer', line);
-
-  reply(embed);
+    .addField('Answer', line)
+    .reply();
 };
 
 eightBall.commandName = '8ball';

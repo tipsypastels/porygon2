@@ -1,4 +1,4 @@
-import { GuildMember, TextChannel } from 'discord.js';
+import { GuildMember } from 'discord.js';
 import { Command } from 'interaction/command';
 import { TicTacToe } from '../models/tic_tac_toe';
 
