@@ -11,7 +11,7 @@ export type EnvWrapper<T> = T | { prod: T; dev: T };
 
 /** @see EnvWrapper */
 export function unwrapEnv<T>(wrapper: EnvWrapper<T>): T {
-  if ('prod' in wrapper) {
+  if (typeof wrapper === 'object' && 'prod' in wrapper) {
     return wrapper[isDev ? 'dev' : 'prod'];
   }
 

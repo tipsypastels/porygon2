@@ -18,7 +18,10 @@ const evalCommand: Command<Args> = async (args) => {
   const database = databaseImport;
 
   if (!isOwner(member)) {
-    throw new InteractionError('No.', (e) => e.poryThumb('angry'));
+    throw new InteractionError({
+      title: 'No.',
+      yieldEmbed: (e) => e.poryThumb('angry'),
+    });
   }
 
   const result = eval(opts.code);

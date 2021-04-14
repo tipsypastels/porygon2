@@ -6,7 +6,7 @@ const LEVELS = splitWinstonLevels({
   info: 'green',
   setup: 'blue',
   task: 'cyan',
-  verbose: 'magenta',
+  cmd: 'magenta',
   debug: 'bgRed',
 });
 

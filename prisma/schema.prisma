@@ -28,9 +28,16 @@ model RoleSettings {
   isRequestable Boolean @default(false)
 }
 
-model BoundRoles {
+model BoundRole {
   userId String
   roleId String
 
   @@id([userId, roleId])
+}
+
+model Pet {
+  id      Int    @id @default(autoincrement())
+  guildId String
+  userId  String
+  url     String
 }

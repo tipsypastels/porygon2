@@ -2,37 +2,53 @@ import { PorygonEmbed } from 'porygon/embed';
 
 type YieldEmbed = (embed: PorygonEmbed) => unknown;
 
+interface Opts {
+  title?: string;
+  message?: string;
+  yieldEmbed?: YieldEmbed;
+}
+
 export abstract class InteractionBaseError {
-  constructor(
-    protected title: string,
-    protected message: string,
-    protected yieldEmbed?: YieldEmbed,
-  ) {}
+  protected title?: string;
+  protected message?: string;
+  protected yieldEmbed?: YieldEmbed;
+
+  constructor(title?: string, message?: string, yieldEmbed?: YieldEmbed);
+  constructor(opts: Opts);
+  constructor(...args: any[]) {
+    if (typeof args[0] === 'string') {
+      this.title = args[0];
+      this.message = args[1];
+      this.yieldEmbed = args[2];
+    } else {
+      const opts: Opts = args[0];
+      this.title = opts.title;
+      this.message = opts.message;
+      this.yieldEmbed = opts.yieldEmbed;
+    }
+  }
 
   intoEmbed(embed: PorygonEmbed) {
-    return embed
-      .setTitle(this.title)
-      .setDescription(this.message)
-      .merge({ intoEmbed: (e) => this.yieldEmbed?.(e) });
+    if (this.title) embed.setTitle(this.title);
+    if (this.message) embed.setDescription(this.message);
+    return embed.merge({ intoEmbed: (e) => this.yieldEmbed?.(e) });
   }
 }
 
 export class InteractionWarning extends InteractionBaseError {
-  constructor(message: string, yieldEmbed?: YieldEmbed) {
-    super('Usage Error', message, yieldEmbed);
+  intoEmbed(embed: PorygonEmbed) {
+    return super.intoEmbed(embed).warningColor();
   }
+}
 
+export class InteractionDanger extends InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
     return super.intoEmbed(embed).poryThumb('danger').dangerColor();
   }
 }
 
 export class InteractionError extends InteractionBaseError {
-  constructor(message: string, yieldEmbed?: YieldEmbed) {
-    super('Error', message, yieldEmbed);
-  }
-
   intoEmbed(embed: PorygonEmbed) {
-    return super.intoEmbed(embed).errorColor();
+    return super.intoEmbed(embed).errorColor(); // TODO: make an icon for this
   }
 }

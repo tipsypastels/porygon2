@@ -1,6 +1,6 @@
 import { FriendCodes } from '.prisma/client';
 import { GuildMember } from 'discord.js';
-import { InteractionError, InteractionWarning } from 'interaction/errors';
+import { InteractionWarning } from 'interaction/errors';
 import { database } from 'porygon/database';
 import { PorygonEmbed } from 'porygon/embed';
 import { codeBlock } from 'support/format';
@@ -28,9 +28,10 @@ export class FriendCodeManager {
   }
 
   async save(rawData: RawData | undefined) {
-    if (!rawData) {
+    if (!rawData || Object.keys(rawData).length === 0) {
       throw new InteractionWarning(
-        'You used `/fc set` with no parameters. Please provide at least one of `3ds`, `switch`, or `go` to set.',
+        'You used /fc set with no parameters.',
+        'Please provide at least one of `3ds`, `switch`, or `go` to set.',
       );
     }
 
@@ -72,7 +73,8 @@ export class FriendCodeManager {
 
     if (code.match(FriendCodeManager.SYNTAX) === null) {
       throw new InteractionWarning(
-        `\`${code}\` is not a valid friend code. Valid friend codes look like \`####-####-####\`.`,
+        `${code} is not a valid friend code.`,
+        'Valid friend codes look like `####-####-####`.',
       );
     }
 

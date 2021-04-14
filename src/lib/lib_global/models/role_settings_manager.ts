@@ -46,7 +46,8 @@ export class RoleSettingsManager {
   async save(set: Settable) {
     if (Object.keys(set).length === 0) {
       throw new InteractionWarning(
-        'You used `/rolesettings set` with no parameters. Nothing to set!',
+        'You used /rolesettings set with no parameters.',
+        'Nothing to set!',
       );
     }
 

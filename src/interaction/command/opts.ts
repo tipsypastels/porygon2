@@ -35,7 +35,7 @@ function transform(option: CommandInteractionOption, out: any = {}) {
         option.options!.forEach((o) => transform(o, child));
         out[option.name] = child;
       } else {
-        out[option.name] = undefined; // required for disambiguate to work
+        out[option.name] = {}; // required for disambiguate to work
       }
       break;
     }
