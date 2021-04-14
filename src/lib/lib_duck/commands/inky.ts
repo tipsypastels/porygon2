@@ -2,8 +2,12 @@ import { Command } from 'interaction/command';
 import { Setting } from 'porygon/settings';
 import { random } from 'support/array';
 
-const inky: Command = async ({ reply }) => {
-  await reply(random(MESSAGES.value));
+const inky: Command = async ({ embed }) => {
+  await embed
+    .infoColor()
+    .setDescription(random(MESSAGES.value))
+    .poryThumb('plead')
+    .reply();
 };
 
 inky.description = '🥺';

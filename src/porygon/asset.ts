@@ -19,6 +19,8 @@ function toGithubUrl(path: string) {
 export const PORY_PORTRAIT = toGithubUrl('portrait.png');
 
 export const PORY_THUMBS = {
-  danger: toGithubUrl('pory/danger.png'),
-  speech: toGithubUrl('pory/speech.png'),
+  'danger': toGithubUrl('pory/danger.png'),
+  'speech': toGithubUrl('pory/speech.png'),
+  '8ball': toGithubUrl('pory/8ball.png'),
+  'plead': toGithubUrl('pory/plead.png'),
 };

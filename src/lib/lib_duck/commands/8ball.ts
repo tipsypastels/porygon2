@@ -10,7 +10,7 @@ const eightBall: Command<Args> = async ({ embed, reply, opts }) => {
 
   await embed
     .infoColor()
-    .poryPortrait()
+    .poryThumb('8ball')
     .setTitle('The wise oracle Porygon studies her magic 8-ball.')
     .addField('Question', opts.question)
     .addField('Answer', line)
