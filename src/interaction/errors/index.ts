@@ -1,16 +1,10 @@
-import COLORS from 'porygon/colors.json';
 import { PorygonEmbed } from 'porygon/embed';
 
 export abstract class InteractionBaseError {
-  protected abstract color: string;
-
   constructor(protected title: string, protected message: string) {}
 
   intoEmbed(embed: PorygonEmbed) {
-    return embed
-      .setTitle(this.title)
-      .setDescription(this.message)
-      .setColor(this.color);
+    return embed.setTitle(this.title).setDescription(this.message);
   }
 }
 
@@ -19,9 +13,13 @@ export class InteractionWarning extends InteractionBaseError {
     super('Usage Error', message);
   }
 
-  protected color = COLORS.warning;
+  intoEmbed(embed: PorygonEmbed) {
+    return super.intoEmbed(embed).poryThumb('danger').dangerColor();
+  }
 }
 
 export class InteractionError extends InteractionBaseError {
-  protected color = COLORS.danger;
+  intoEmbed(embed: PorygonEmbed) {
+    return super.intoEmbed(embed).errorColor();
+  }
 }

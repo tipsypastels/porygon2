@@ -15,4 +15,10 @@ function toGithubUrl(path: string) {
   return `${BASE_GITHUB_URL}/${path}`;
 }
 
+/** @deprecated */
 export const PORY_PORTRAIT = toGithubUrl('portrait.png');
+
+export const PORY_THUMBS = {
+  danger: toGithubUrl('pory/danger.png'),
+  speech: toGithubUrl('pory/speech.png'),
+};

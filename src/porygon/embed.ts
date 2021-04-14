@@ -4,7 +4,7 @@ import {
   GuildMember,
   MessageEmbed,
 } from 'discord.js';
-import { PORY_PORTRAIT } from './asset';
+import { PORY_PORTRAIT, PORY_THUMBS } from './asset';
 import COLORS from './colors.json';
 
 type Reply = CommandInteraction['reply'];
@@ -32,8 +32,13 @@ export class PorygonEmbed extends MessageEmbed {
     return this;
   }
 
+  /** @deprecated */
   poryPortrait() {
     return this.setThumbnail(PORY_PORTRAIT);
+  }
+
+  poryThumb(thumb: keyof typeof PORY_THUMBS) {
+    return this.setThumbnail(PORY_THUMBS[thumb]);
   }
 
   okColor() {
@@ -50,6 +55,10 @@ export class PorygonEmbed extends MessageEmbed {
 
   warningColor() {
     return this.setColor(COLORS.warning);
+  }
+
+  dangerColor() {
+    return this.setColor(COLORS.danger);
   }
 
   addInlineField(name: any, value: any) {
