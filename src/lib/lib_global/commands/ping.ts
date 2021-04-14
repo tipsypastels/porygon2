@@ -4,7 +4,7 @@ import { uptime } from 'porygon/stats';
 const ping: Command = async ({ embed }) => {
   await embed
     .infoColor()
-    .poryPortrait()
+    .poryThumb('speech')
     .setTitle(':sparkles: Pong! Porygon is online~')
     .setDescription('_beep boop_ How are you all today?')
     .addField('Uptime', uptime.inWords())
