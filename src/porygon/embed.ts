@@ -4,6 +4,7 @@ import {
   GuildMember,
   MessageEmbed,
 } from 'discord.js';
+import { isDev } from 'support/dev';
 import { PORY_PORTRAIT, PORY_THUMBS } from './asset';
 import COLORS from './colors.json';
 
@@ -38,7 +39,13 @@ export class PorygonEmbed extends MessageEmbed {
   }
 
   poryThumb(thumb: keyof typeof PORY_THUMBS) {
-    return this.setThumbnail(PORY_THUMBS[thumb]);
+    let url = PORY_THUMBS[thumb];
+
+    if (isDev) {
+      url += `?${Date.now()}`;
+    }
+
+    return this.setThumbnail(url);
   }
 
   okColor() {
