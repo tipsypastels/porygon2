@@ -18,7 +18,7 @@ const calc: Command<Args> = async ({ opts, embed }) => {
       .addField('Result', codeBlock(result));
   } catch (error) {
     embed
-      .poryPortrait()
+      .poryThumb('math')
       .warningColor()
       .addField('Error', codeBlock(error.message))
       .setTitle(
