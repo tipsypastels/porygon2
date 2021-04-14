@@ -1,13 +1,9 @@
 import { Command } from 'interaction/command';
 import { DiceRoll, DiceRollOpts } from '../models/dice_roll';
 
-const dice: Command<DiceRollOpts> = async ({ opts, reply, embed }) => {
+const dice: Command<DiceRollOpts> = async ({ opts, embed }) => {
   const roll = new DiceRoll(opts);
-
-  embed.okColor().setTitle('Dice Roll');
-  roll.intoEmbed(embed);
-
-  await reply(embed);
+  await embed.okColor().setTitle('Dice Roll').merge(roll).reply();
 };
 
 dice.description = 'Rolls the dice.';
