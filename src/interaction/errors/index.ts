@@ -37,7 +37,7 @@ export abstract class InteractionBaseError {
 
 export class InteractionWarning extends InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
-    return super.intoEmbed(embed).warningColor();
+    return super.intoEmbed(embed).poryThumb('warning').warningColor();
   }
 }
 
@@ -49,6 +49,6 @@ export class InteractionDanger extends InteractionBaseError {
 
 export class InteractionError extends InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
-    return super.intoEmbed(embed).errorColor(); // TODO: make an icon for this
+    return super.intoEmbed(embed).poryThumb('error').errorColor();
   }
 }

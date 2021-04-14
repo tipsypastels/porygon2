@@ -70,9 +70,11 @@ const petsDel: CommandHandler<DelOpts> = async ({
 
 const petsRand: CommandHandler<RandOpts> = async ({ opts, embed, guild }) => {
   const { by } = opts.random;
-  const entry = await Pet.findFirst({
-    where: { userId: by?.user.id, guildId: guild.id },
-  });
+  // const entry = await Pet.findFirst({
+  //   where: { userId: by?.user.id, guildId: guild.id },
+  // });
+
+  const entry = await database.$queryRaw`SELECT * FROM porygon2.Pet WHERE guildId = ${guild.id} ORDER BY RANDOM() LIMIT 1`;
 
   if (!entry) {
     throw new InteractionWarning(

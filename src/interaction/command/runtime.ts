@@ -57,11 +57,15 @@ function createErrorResponse(error: any, embed: PorygonEmbed) {
     case typeof error === 'object' && 'message' in error: {
       return embed
         .errorColor()
+        .poryThumb('error')
         .setTitle("Whoops, that's an error.")
         .setDescription(codeBlock(error.message));
     }
     default: {
-      return embed.errorColor().setTitle('An unknown error occurred.');
+      return embed
+        .errorColor()
+        .poryThumb('error')
+        .setTitle('An unknown error occurred.');
     }
   }
 }
