@@ -25,4 +25,5 @@ export const PORY_THUMBS = {
   'plead': toGithubUrl('pory/plead.png'),
   'death': toGithubUrl('pory/death.png'),
   'math': toGithubUrl('pory/math.gif'),
+  'angry': toGithubUrl('pory/angry.png'),
 };

@@ -4,6 +4,7 @@ import { OWNER } from 'secrets.json';
 import { isDev } from 'support/dev';
 import { codeBlock } from 'support/format';
 import { database as databaseImport } from 'porygon/database';
+import { InteractionError } from 'interaction/errors';
 
 interface Args {
   code: string;
@@ -17,7 +18,7 @@ const evalCommand: Command<Args> = async (args) => {
   const database = databaseImport;
 
   if (!isOwner(member)) {
-    return reply(embed.errorColor().setTitle('Hahahahah no'));
+    throw new InteractionError('No.', (e) => e.poryThumb('angry'));
   }
 
   const result = eval(opts.code);
