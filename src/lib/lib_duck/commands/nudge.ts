@@ -2,10 +2,13 @@ import { Guild } from 'discord.js';
 import { Command } from 'interaction/command';
 import { random, range, toSentence } from 'support/array';
 
-const nudge: Command = async ({ guild, embed, reply }) => {
-  embed.okColor().setTitle(disaster()).setDescription(deaths(guild));
-
-  await reply(embed);
+const nudge: Command = async ({ guild, embed }) => {
+  await embed
+    .okColor()
+    .poryThumb('death')
+    .setTitle(disaster())
+    .setDescription(deaths(guild))
+    .reply();
 };
 
 nudge.description = 'Never use this it literally causes natural disasters.';
