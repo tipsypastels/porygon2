@@ -5,7 +5,7 @@ import {
   MessageEmbed,
 } from 'discord.js';
 import { isDev } from 'support/dev';
-import { PORY_PORTRAIT, PORY_THUMBS } from './asset';
+import { PORY_THUMBS } from './asset';
 import COLORS from './colors.json';
 
 type Reply = CommandInteraction['reply'];
@@ -31,11 +31,6 @@ export class PorygonEmbed extends MessageEmbed {
   merge(into: IntoEmbeddable) {
     into.intoEmbed(this);
     return this;
-  }
-
-  /** @deprecated */
-  poryPortrait() {
-    return this.setThumbnail(PORY_PORTRAIT);
   }
 
   poryThumb(thumb: keyof typeof PORY_THUMBS) {
