@@ -14,15 +14,15 @@ export class LibImporter extends Importer<LibSetup, void> {
     super({ dir: `${__dirname}/../`, each: eachDirectory });
   }
 
-  shouldSkipFile(libDir: string) {
+  protected shouldSkipFile(libDir: string) {
     return basename(libDir) === 'lib'; // this folder is not a lib
   }
 
-  beforeImport(file: string) {
+  protected beforeImport(file: string) {
     logger.setup(`Setting up ${basename(file)}...`);
   }
 
-  async transform(setup: LibSetup, libDir: string) {
+  protected async transform(setup: LibSetup, libDir: string) {
     const config = await this.importConfig(libDir);
     const guildId = isDev ? TEST_SERVER : config.guildId;
     const lib = Lib.findOrCreate(this.client, guildId);
