@@ -1,12 +1,12 @@
 import './client/ascii';
 import { Client as DiscordClient } from 'discord.js';
-import { setupLibs } from 'lib';
-import { LibCommandManager } from 'lib/lib_command_manager';
+import { LibCommandManager } from 'lib/lib/command/manager';
 import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
 import { Setting } from './settings';
 import { setupActivityMessages } from './activity_message';
+import { setupLibs } from 'lib/lib/setup';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.

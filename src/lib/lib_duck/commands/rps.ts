@@ -30,3 +30,4 @@ rps.options = [
 // leave disabled until `RPS` works
 // export default rps;
 export const skipFile = true;
+export const __SKIP_FILE__ = true;

@@ -1,32 +1,13 @@
 import { Guild, ClientEvents as Events } from 'discord.js';
-import { basename } from 'path';
-import { logger } from 'porygon/logger';
-import { eachFileRecursive } from 'support/dir';
-import { Lib } from './lib';
-
-export type GuildHandlerArgs = {
-  em: LibEventManager;
-};
-export type GuildHandler = (args: GuildHandlerArgs) => void | Promise<void>;
+import { Lib } from '..';
+import { LibEventImporter } from './importer';
 
 export class LibEventManager {
   constructor(readonly lib: Lib) {}
 
   async import(dir: string) {
-    const promises = Array.from(eachFileRecursive(dir)).map(async (file) => {
-      const mod = await import(file);
-
-      if (!mod || !mod.default || typeof mod.default !== 'function') {
-        logger.error(`Guild handler ${basename(file)} has no default export`);
-        return;
-      }
-
-      const handler = mod.default as GuildHandler;
-
-      handler({ em: this });
-    });
-
-    await Promise.all(promises);
+    const importer = new LibEventImporter(dir);
+    await importer.import((handler) => handler({ em: this }));
   }
 
   on<K extends keyof Events>(key: K, handler: (...args: Events[K]) => void) {

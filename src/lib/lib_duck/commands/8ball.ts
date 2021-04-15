@@ -5,7 +5,7 @@ interface Args {
   question: string;
 }
 
-const eightBall: Command<Args> = async ({ embed, reply, opts }) => {
+const eightBall: Command<Args> = async ({ embed, opts }) => {
   const line = random(LINES);
 
   await embed

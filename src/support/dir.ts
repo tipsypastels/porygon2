@@ -42,6 +42,10 @@ function* eachInternal(
   for (const file of readdirSync(dir)) {
     const path = join(dir, file);
 
+    if (file === '..' || file === '.') {
+      continue;
+    }
+
     if (isDirectory(path)) {
       switch (onDir) {
         case 'yield':

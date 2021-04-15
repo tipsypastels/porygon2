@@ -1,5 +1,5 @@
 import { Message, PartialMessage } from 'discord.js';
-import { GuildHandler } from 'lib/lib_event_manager';
+import { GuildHandler } from 'lib/lib/event';
 import { Setting } from 'porygon/settings';
 import { eachWord } from 'support/string';
 

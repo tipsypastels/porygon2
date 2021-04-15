@@ -1,6 +1,7 @@
 import { Porygon } from 'porygon/client';
-import { LibCommandManager } from './lib_command_manager';
-import { LibEventManager } from './lib_event_manager';
+import { CollectionCache } from 'support/cache';
+import { LibCommandManager } from './command/manager';
+import { LibEventManager } from './event/manager';
 
 /**
  * A "lib" represents a block of behavior, including handlers and commands, that
@@ -16,10 +17,25 @@ import { LibEventManager } from './lib_event_manager';
  * passed to each setup callback automatically.
  */
 export class Lib {
+  static instances = new CollectionCache<string, Lib>();
+
+  static findOrCreate(client: Porygon, guildId: string) {
+    return this.instances.findOr(guildId, () => new this(client, guildId));
+  }
+
+  static async saveAll() {
+    await Promise.all(this.instances.mapValues((l) => l.save()));
+  }
+
   private commands = new LibCommandManager(this);
   private events = new LibEventManager(this);
 
+  /** @deprecated */
   constructor(readonly client: Porygon, readonly guildId: string) {}
+
+  get guild() {
+    return this.client.guilds.cache.get(this.guildId);
+  }
 
   async importCommands(dir: string) {
     await this.commands.import(dir);
@@ -27,5 +43,9 @@ export class Lib {
 
   async importEvents(dir: string) {
     await this.events.import(dir);
+  }
+
+  async save() {
+    await this.commands.save();
   }
 }
