@@ -29,9 +29,7 @@ export class Lib {
 
   private commands = new LibCommandManager(this);
   private events = new LibEventManager(this);
-
-  /** @deprecated */
-  constructor(readonly client: Porygon, readonly guildId: string | undefined) {}
+  private constructor(readonly client: Porygon, readonly guildId?: string) {}
 
   get guild() {
     if (this.guildId) {
