@@ -1,4 +1,5 @@
-import { GuildMember } from 'discord.js';
+import { Pet } from '.prisma/client';
+import { Guild, GuildMember } from 'discord.js';
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { InteractionWarning, InteractionDanger } from 'interaction/errors';
@@ -11,7 +12,6 @@ type AddOpts = { add: { url: string } };
 type DelOpts = { delete: { id: number } };
 type Opts = RandOpts | AddOpts | DelOpts;
 
-const Pet = database.pet;
 const CAN_MOD_PETS = new Setting('pets.can_mod', 'KICK_MEMBERS');
 
 const pets: Command<Opts> = async (args) => {
@@ -26,7 +26,7 @@ const petsAdd: CommandHandler<AddOpts> = async ({
 }) => {
   const { url } = opts.add;
   const data = { url, guildId: guild.id, userId: member.id };
-  const entry = await Pet.create({ data });
+  const entry = await database.pet.create({ data });
 
   await embed
     .okColor()
@@ -46,7 +46,7 @@ const petsDel: CommandHandler<DelOpts> = async ({
   member,
 }) => {
   const { id } = opts.delete;
-  const entry = await Pet.findFirst({
+  const entry = await database.pet.findFirst({
     where: { id, guildId: guild.id },
   });
 
@@ -64,17 +64,13 @@ const petsDel: CommandHandler<DelOpts> = async ({
     );
   }
 
-  await Pet.delete({ where: { id } });
+  await database.pet.delete({ where: { id } });
   await embed.okColor().setTitle('Pet deleted!').reply();
 };
 
 const petsRand: CommandHandler<RandOpts> = async ({ opts, embed, guild }) => {
   const { by } = opts.random;
-  // const entry = await Pet.findFirst({
-  //   where: { userId: by?.user.id, guildId: guild.id },
-  // });
-
-  const entry = await database.$queryRaw`SELECT * FROM porygon2.Pet WHERE guildId = ${guild.id} ORDER BY RANDOM() LIMIT 1`;
+  const entry = await randomEntry(guild, by);
 
   if (!entry) {
     throw new InteractionWarning(
@@ -137,3 +133,28 @@ pets.options = [
 ];
 
 export default pets;
+
+async function randomEntry(guild: Guild, by: GuildMember | undefined) {
+  const entries = await (by ? randomEntryBy(guild, by) : randomEntryAny(guild));
+  return entries[0];
+}
+
+function randomEntryAny(guild: Guild) {
+  return database.$queryRaw<Pet[]>`
+    SELECT * 
+    FROM "public"."Pet" 
+    WHERE "Pet"."guildId" = ${guild.id} 
+    ORDER BY RANDOM() 
+    LIMIT 1`;
+}
+
+function randomEntryBy(guild: Guild, member: GuildMember) {
+  return database.$queryRaw<Pet[]>`
+    SELECT * 
+    FROM "public"."Pet" 
+    WHERE "Pet"."guildId" = ${guild.id} 
+    AND "Pet"."userId" = ${member.user.id} 
+    ORDER BY RANDOM() 
+    LIMIT 1
+  `;
+}
