@@ -1,4 +1,10 @@
-import { ApplicationCommand, Collection, CommandInteraction } from 'discord.js';
+import {
+  ApplicationCommand,
+  ApplicationCommandData,
+  Collection,
+  CommandInteraction,
+  Guild,
+} from 'discord.js';
 import { Command, removeCommandHandler } from 'interaction/command';
 import { runCommand } from 'interaction/command/runtime';
 import { Lib } from 'lib/lib';
@@ -51,20 +57,29 @@ export class LibCommandManager {
     for (const [, apiCommand] of apiCommandData) {
       const command = unsavedCommands.find(zip(apiCommand));
 
-      if (command) {
-        this.set(apiCommand.id, command);
-      } else {
+      if (!command) {
         logger.error(`Failed to find match for API command ${apiCommand.name}`);
+        return;
       }
+
+      this.set(apiCommand.id, command);
     }
   }
 
   protected upload(commands: Command[]) {
-    const commandData = commands.map(removeCommandHandler);
-    if (this.guild) {
-      return this.guild.commands.set(commandData);
-    }
-    return this.client.application!.commands.set(commandData);
+    const data = commands.map(removeCommandHandler);
+
+    return this.guild
+      ? this.uploadGuild(this.guild, data)
+      : this.uploadGlobal(data);
+  }
+
+  protected uploadGuild(guild: Guild, data: ApplicationCommandData[]) {
+    return guild.commands.set(data);
+  }
+
+  protected uploadGlobal(data: ApplicationCommandData[]) {
+    return this.client.application!.commands.set(data);
   }
 
   protected set(id: string, command: Command) {
