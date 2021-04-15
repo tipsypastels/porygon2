@@ -54,24 +54,27 @@ export class LibCommandManager {
 
     const apiCommandData = await this.upload(unsavedCommands);
 
-    for (const [, apiCommand] of apiCommandData) {
-      const command = unsavedCommands.find(zip(apiCommand));
+    if (apiCommandData) {
+      for (const [, apiCommand] of apiCommandData) {
+        const command = unsavedCommands.find(zip(apiCommand));
 
-      if (!command) {
-        logger.error(`Failed to find match for API command ${apiCommand.name}`);
-        return;
+        if (!command) {
+          logger.error(
+            `Failed to find match for API command ${apiCommand.name}`,
+          );
+          return;
+        }
+
+        this.set(apiCommand.id, command);
       }
-
-      this.set(apiCommand.id, command);
     }
   }
 
   protected upload(commands: Command[]) {
     const data = commands.map(removeCommandHandler);
 
-    return this.guild
-      ? this.uploadGuild(data, this.guild)
-      : this.uploadGlobal(data);
+    if (this.isGlobal) return this.uploadGlobal(data);
+    if (this.guild) return this.uploadGuild(data, this.guild);
   }
 
   protected uploadGuild(data: ApplicationCommandData[], guild: Guild) {
@@ -92,6 +95,10 @@ export class LibCommandManager {
 
   private get guild() {
     return this.lib.guild;
+  }
+
+  private get isGlobal() {
+    return this.lib.isGlobal;
   }
 }
 

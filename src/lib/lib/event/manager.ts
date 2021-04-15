@@ -29,7 +29,7 @@ export class LibEventManager {
   }
 
   get guild() {
-    return this.client.guilds.cache.get(this.lib.guildId);
+    return this.lib.guild;
   }
 
   private assertGuild() {

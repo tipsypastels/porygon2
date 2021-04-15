@@ -31,10 +31,16 @@ export class Lib {
   private events = new LibEventManager(this);
 
   /** @deprecated */
-  constructor(readonly client: Porygon, readonly guildId: string) {}
+  constructor(readonly client: Porygon, readonly guildId: string | undefined) {}
 
   get guild() {
-    return this.client.guilds.cache.get(this.guildId);
+    if (this.guildId) {
+      return this.client.guilds.cache.get(this.guildId);
+    }
+  }
+
+  get isGlobal() {
+    return !this.guildId;
   }
 
   async importCommands(dir: string) {
