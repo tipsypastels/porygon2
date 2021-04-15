@@ -70,11 +70,11 @@ export class LibCommandManager {
     const data = commands.map(removeCommandHandler);
 
     return this.guild
-      ? this.uploadGuild(this.guild, data)
+      ? this.uploadGuild(data, this.guild)
       : this.uploadGlobal(data);
   }
 
-  protected uploadGuild(guild: Guild, data: ApplicationCommandData[]) {
+  protected uploadGuild(data: ApplicationCommandData[], guild: Guild) {
     return guild.commands.set(data);
   }
 
