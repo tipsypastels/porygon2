@@ -136,7 +136,7 @@ export default pets;
 
 async function randomEntry(guild: Guild, by: GuildMember | undefined) {
   const entries = await (by ? randomEntryBy(guild, by) : randomEntryAny(guild));
-  return entries[0];
+  return entries[0] as Pet | undefined;
 }
 
 function randomEntryAny(guild: Guild) {
