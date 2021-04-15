@@ -76,15 +76,14 @@ export class PorygonEmbed extends MessageEmbed {
   }
 
   setAuthor(member: GuildMember): this;
-  setAuthor(name: string, iconURL?: string, url?: string): this;
-  setAuthor(nameOrMember: any, iconURL?: any, url?: any): this {
-    if (nameOrMember instanceof GuildMember) {
-      return super.setAuthor(
-        nameOrMember.displayName,
-        nameOrMember.user.avatarURL()!,
-      );
+  setAuthor(name: string, iconUrl?: string, url?: string): this;
+  setAuthor(...args: any[]): this {
+    if (args[0] instanceof GuildMember) {
+      const [member] = args;
+      return super.setAuthor(member.displayName, member.user.avatarURL()!);
     }
 
-    return super.setAuthor(nameOrMember, iconURL, url);
+    const [name, iconUrl, url] = args;
+    return super.setAuthor(name, iconUrl, url);
   }
 }
