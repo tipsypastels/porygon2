@@ -5,6 +5,9 @@ import { isDev } from 'support/dev';
 import { codeBlock } from 'support/format';
 import { database as databaseImport } from 'porygon/database';
 import { InteractionError } from 'interaction/errors';
+import * as SettingsImport from 'porygon/settings';
+
+const testSetting = SettingsImport.setting('lib.global.pets.mod_perm');
 
 interface Args {
   code: string;
@@ -12,10 +15,11 @@ interface Args {
 }
 
 const evalCommand: Command<Args> = async (args) => {
-  // bring all values into scope for eval
-  // eslint-disable-next-line
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const { interaction, member, guild, reply, embed, client, opts } = args;
   const database = databaseImport;
+  const Settings = SettingsImport;
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   if (!isOwner(member)) {
     throw new InteractionError({

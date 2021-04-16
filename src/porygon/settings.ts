@@ -1,59 +1,35 @@
-import { Prisma } from '@prisma/client';
-import { Collection } from 'discord.js';
-import { EnvWrapper, unwrapEnv } from 'support/dev';
-import { database } from './database';
+import settings from './settings/settings.json';
+import get from 'lodash.get';
+import set from 'lodash.set';
+import has from 'lodash.has';
+import { writeFileSync } from 'fs';
+import { unwrapEnv } from 'support/dev';
 
-type JSON = Prisma.JsonValue;
+export function setting<T = unknown>(key: string) {
+  assertSettingExists(key);
 
-export class Setting<T extends JSON> {
-  private static all = new Collection<string, Setting<any>>();
-  private static table = database.settings;
+  return {
+    get value() {
+      return unwrapEnv(get(settings, key)) as T;
+    },
+  };
+}
 
-  static async synchronize() {
-    const records = await this.table.findMany();
-    const promises = this.all.map(async (setting) => {
-      const record = records.find((r) => r.key === setting.key);
+export function setSetting(key: string, value: any) {
+  assertSettingExists(key);
+  set(settings, key, value);
+  overwriteSettingsFile();
+}
 
-      if (!record) {
-        setting._value = setting.initial;
-
-        return await this.table.create({
-          data: { key: setting.key, value: setting.initial },
-        });
-      }
-
-      setting._value = record.value;
-    });
-
-    await Promise.all(promises);
+function assertSettingExists(key: string) {
+  if (!has(settings, key)) {
+    throw new Error(`No such setting: ${key}`);
   }
+}
 
-  static get(key: string) {
-    return this.all.get(key);
-  }
+function overwriteSettingsFile() {
+  const file = `${__dirname}/settings/settings.json`;
+  const json = JSON.stringify(settings, null, 2);
 
-  static value(key: string) {
-    return this.get(key)?.value;
-  }
-
-  readonly key: string;
-  readonly initial: T;
-
-  private _value?: T;
-
-  constructor(key: string, initial: EnvWrapper<T>) {
-    this.key = key;
-    this.initial = unwrapEnv(initial);
-
-    Setting.all.set(this.key, this);
-  }
-
-  get value(): T {
-    return this._value ?? this.initial;
-  }
-
-  async set(value: T) {
-    this._value = value;
-    await Setting.table.update({ where: { key: this.key }, data: { value } });
-  }
+  writeFileSync(file, json);
 }

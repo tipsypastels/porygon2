@@ -4,7 +4,6 @@ import { LibCommandManager } from 'lib/lib/command/manager';
 import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
-import { Setting } from './settings';
 import { setupActivityMessages } from './activity_message';
 import { setupLibs } from 'lib/lib/setup';
 
@@ -36,15 +35,10 @@ export class Porygon extends DiscordClient {
       this.setupActivityMessages(),
       this.setupStats(),
     ]);
-    await this.setupSettings(); // runs after all settings are loaded
   }
 
   private async setupLibs() {
     await setupLibs(this);
-  }
-
-  private async setupSettings() {
-    await Setting.synchronize();
   }
 
   private async setupActivityMessages() {

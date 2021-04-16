@@ -1,8 +1,8 @@
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
-import { Setting } from 'porygon/settings';
 import { code, codeBlock } from 'support/format';
 import { OWNER } from 'secrets.json';
+import * as Settings from 'porygon/settings';
 
 type GetOpts = { get: { key: string } };
 type SetOpts = { set: { key: string; value: string } };
@@ -19,7 +19,7 @@ const setting: Command<Opts> = async (opts) => {
 
 const settingGet: CommandHandler<GetOpts> = async ({ opts, embed }) => {
   const { key } = opts.get;
-  const value = Setting.value(key);
+  const { value } = Settings.setting(key);
 
   await embed
     .infoColor()
@@ -34,13 +34,7 @@ const settingSet: CommandHandler<SetOpts> = async ({ opts, embed }) => {
 
   await parse(rawValue)
     .then(async (value) => {
-      const setting = Setting.get(key);
-
-      if (!setting) {
-        throw new Error(); // TODO
-      }
-
-      await setting.set(value);
+      Settings.setSetting(key, value);
 
       embed
         .okColor()
@@ -68,16 +62,10 @@ const settingUpdate: CommandHandler<UpdateOpts> = async ({
   }
 
   const { key, expression } = opts.update;
-  const setting = await Setting.get(key);
-
-  if (!setting) {
-    throw new Error('nonexistant setting');
-  }
-
-  const currentValue = setting.value;
+  const { value: currentValue } = await Settings.setting(key);
   const nextValue = evaluate(expression, currentValue);
 
-  await setting.set(nextValue);
+  Settings.setSetting(key, nextValue);
 
   await embed
     .okColor()

@@ -1,13 +1,10 @@
 import { Message, PartialMessage } from 'discord.js';
 import { GuildHandler } from 'lib/lib/event';
-import { Setting } from 'porygon/settings';
+import { setting } from 'porygon/settings';
 import { eachWord } from 'support/string';
 
-const PHRASES = new Setting('quack.phrases', ['duck', 'quack', 'bread']);
-const CHANNEL_ID = new Setting('quack.channel', {
-  dev: '775630182521634846',
-  prod: '830569145204342794',
-});
+const PHRASES = setting<string[]>('lib.duck.quack.phrases');
+const CHANNEL_ID = setting<string>('lib.duck.quack.channel');
 
 const quackHandler: GuildHandler = async ({ em }) => {
   em.on('message', run).on('messageUpdate', run);

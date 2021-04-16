@@ -4,7 +4,7 @@ import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { InteractionWarning, InteractionDanger } from 'interaction/errors';
 import { database } from 'porygon/database';
-import { Setting } from 'porygon/settings';
+import { setting } from 'porygon/settings';
 import { code } from 'support/format';
 
 type RandOpts = { random: { by?: GuildMember } };
@@ -12,7 +12,7 @@ type AddOpts = { add: { url: string } };
 type DelOpts = { delete: { id: number } };
 type Opts = RandOpts | AddOpts | DelOpts;
 
-const CAN_MOD_PETS = new Setting('pets.can_mod', 'KICK_MEMBERS');
+const CAN_MOD_PETS = setting<'KICK_MEMBERS'>('lib.global.pets.mod_perm');
 
 const pets: Command<Opts> = async (args) => {
   await disambiguate(args, { add: petsAdd, delete: petsDel, random: petsRand });
