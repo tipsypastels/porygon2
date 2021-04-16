@@ -10,11 +10,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Settings {
-  key   String @id @db.VarChar(25)
-  value Json
-}
-
 model FriendCodes {
   userId String  @id
   ds     String?
