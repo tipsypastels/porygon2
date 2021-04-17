@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { GuildMember } from 'discord.js';
 import { Command } from 'interaction/command';
 import { OWNER } from 'secrets.json';
@@ -15,11 +17,9 @@ interface Args {
 }
 
 const evalCommand: Command<Args> = async (args) => {
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const { interaction, member, guild, reply, embed, client, opts } = args;
+  const { interaction, member, guild, reply, embed, client, opts, lib } = args;
   const database = databaseImport;
   const Settings = SettingsImport;
-  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   if (!isOwner(member)) {
     throw new InteractionError({

@@ -5,6 +5,7 @@ import {
   GuildMember,
   TextChannel,
 } from 'discord.js';
+import { Lib } from 'lib/lib';
 import { Porygon } from 'porygon/client';
 import { PorygonEmbed } from 'porygon/embed';
 
@@ -17,6 +18,7 @@ export type CommandArgs<T> = {
   interaction: CommandInteraction;
   reply: CommandInteraction['reply'];
   opts: T;
+  lib: Lib;
 };
 export type CommandHandler<T> = (args: CommandArgs<T>) => Promise<void>;
 export type CommandWithNoConflictName = { commandName?: string };
@@ -25,5 +27,9 @@ export type Command<T = unknown> = CommandHandler<T> &
   CommandWithNoConflictName;
 
 export function removeCommandHandler(command: Command): ApplicationCommandData {
-  return { ...command, name: command.commandName ?? command.name };
+  return { ...command, name: effectiveCommandName(command) };
+}
+
+export function effectiveCommandName(command: Command<any>) {
+  return command.commandName ?? command.name;
 }

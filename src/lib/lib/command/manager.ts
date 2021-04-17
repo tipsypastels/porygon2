@@ -5,27 +5,34 @@ import {
   CommandInteraction,
   Guild,
 } from 'discord.js';
-import { Command, removeCommandHandler } from 'interaction/command';
+import {
+  Command,
+  effectiveCommandName,
+  removeCommandHandler,
+} from 'interaction/command';
 import { runCommand } from 'interaction/command/runtime';
-import { Lib } from 'lib/lib';
+import type { Lib } from 'lib/lib';
 import { Porygon } from 'porygon/client';
 import { logger } from 'porygon/logger';
 import { LibCommandImporter } from './importer';
 
 export class LibCommandManager {
-  static handlers = new Collection<string, Command>();
+  static handlers = new Collection<string, [Command, Lib]>();
 
   static async handle(client: Porygon, interaction: CommandInteraction) {
-    const command = this.handlers.get(interaction.commandID);
+    const entry = this.handlers.get(interaction.commandID);
 
-    if (!command) {
+    if (!entry) {
       logger.error(
         `Got an interaction for nonexistant command ${interaction.commandName}`,
       );
       return;
     }
 
+    const [command, lib] = entry;
+
     await runCommand({
+      lib,
       command,
       interaction,
       client,
@@ -35,6 +42,12 @@ export class LibCommandManager {
   private unsavedCommands: Command[] = [];
 
   constructor(readonly lib: Lib) {}
+
+  has(commandName: string) {
+    return !!LibCommandManager.handlers.find(([command, lib]) => {
+      return lib === this.lib && effectiveCommandName(command) === commandName;
+    });
+  }
 
   async import(dir: string) {
     const importer = new LibCommandImporter(dir);
@@ -86,7 +99,7 @@ export class LibCommandManager {
   }
 
   protected set(id: string, command: Command) {
-    LibCommandManager.handlers.set(id, command);
+    LibCommandManager.handlers.set(id, [command, this.lib]);
   }
 
   private get client() {
@@ -103,8 +116,5 @@ export class LibCommandManager {
 }
 
 function zip(data: ApplicationCommand) {
-  return (command: Command) => {
-    if (command.commandName) return command.commandName === data.name;
-    return command.name === data.name;
-  };
+  return (command: Command) => effectiveCommandName(command) === data.name;
 }

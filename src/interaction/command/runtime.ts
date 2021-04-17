@@ -1,19 +1,22 @@
 import { CommandInteraction, TextChannel } from 'discord.js';
 import { InteractionBaseError } from 'interaction/errors';
+import { Lib } from 'lib/lib';
 import { Porygon } from 'porygon/client';
 import { PorygonEmbed } from 'porygon/embed';
 import { logger } from 'porygon/logger';
 import { codeBlock } from 'support/format';
-import { Command } from '.';
+import { Command, effectiveCommandName } from '.';
 import { createCommandOpts } from './opts';
 
 export interface RunCommandOpts<T = undefined> {
+  lib: Lib;
   client: Porygon;
   command: Command<T>;
   interaction: CommandInteraction;
 }
 
 export async function runCommand<T = undefined>({
+  lib,
   client,
   command,
   interaction,
@@ -26,6 +29,7 @@ export async function runCommand<T = undefined>({
   const channel = interaction.channel as TextChannel;
 
   const args = {
+    lib,
     client,
     interaction,
     opts,
@@ -39,7 +43,9 @@ export async function runCommand<T = undefined>({
   await (command(args) as Promise<void>)
     .then(() => {
       logger.cmd(
-        `${member.user.username} used command ${command.name} in #${channel.name}, ${guild.name}`,
+        `${member.user.username} used command ${effectiveCommandName(
+          command,
+        )} in #${channel.name}, ${guild.name}`,
       );
     })
     .catch((e) => handleCommandError(e, embed));

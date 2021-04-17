@@ -45,6 +45,10 @@ export class Lib {
     await this.commands.import(dir);
   }
 
+  hasCommand(commandName: string) {
+    return this.commands.has(commandName);
+  }
+
   async importEvents(dir: string) {
     await this.events.import(dir);
   }
