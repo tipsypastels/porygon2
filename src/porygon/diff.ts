@@ -10,6 +10,27 @@ type DiffChanges<T> = {
 
 type DiffPresenter<T> = (diff: Diff<T>, key: keyof T) => string;
 
+type DiffEachUnchanged<T> = (
+  value: DiffUnchangedValue<T[keyof T]>,
+  key: keyof T,
+) => void;
+
+type DiffEachChanged<T> = (
+  value: DiffChangedValue<T[keyof T]>,
+  key: keyof T,
+) => void;
+
+type DiffEach<T> = Partial<{
+  eachChanged: DiffEachChanged<T>;
+  eachUnchanged: DiffEachUnchanged<T>;
+}>;
+
+export enum DiffState {
+  Changed,
+  Unchanged,
+  AllChangesWereNoOps,
+}
+
 export class Diff<T> {
   static convert<T>(object: T) {
     const out: Partial<DiffChanges<T>> = {};
@@ -22,9 +43,19 @@ export class Diff<T> {
     return out as DiffChanges<T>;
   }
 
+  static of<T>(from: T, to: Partial<T>) {
+    const diff = new this(from);
+    diff.changeMany(to);
+    return diff;
+  }
+
+  static compare<T>(from: T, to: Partial<T>) {
+    return this.of(from, to).getChangedState();
+  }
+
   private object: DiffChanges<T>;
   private presenter: DiffPresenter<T>;
-  private _unchanged = true;
+  private state = DiffState.Unchanged;
 
   constructor(object: T, presenter: DiffPresenter<T> = defaultPresenter) {
     this.object = Diff.convert(object);
@@ -32,7 +63,11 @@ export class Diff<T> {
   }
 
   get unchanged() {
-    return this._unchanged;
+    return this.state === DiffState.Unchanged;
+  }
+
+  get allChangesWereNoOps() {
+    return this.state === DiffState.AllChangesWereNoOps;
   }
 
   get<K extends keyof T>(key: K): DiffValue<T[K]> {
@@ -41,19 +76,23 @@ export class Diff<T> {
 
   getCurrentState() {
     const out: Partial<T> = {};
-    let key: keyof T;
 
-    for (key in this.object) {
-      const value = this.get(key);
-
-      if (value.changed) {
-        out[key] = value.data.to;
-      } else {
-        out[key] = value.data;
-      }
-    }
+    this.eachInternal({
+      eachChanged: (value, key) => (out[key] = value.data.to),
+      eachUnchanged: (value, key) => (out[key] = value.data),
+    });
 
     return out as T;
+  }
+
+  getChangedState() {
+    const out: Partial<T> = {};
+
+    this.eachInternal({
+      eachChanged: (value, key) => (out[key] = value.data.to),
+    });
+
+    return out;
   }
 
   getChangeString(key: keyof T) {
@@ -61,10 +100,18 @@ export class Diff<T> {
   }
 
   change<K extends keyof T>(key: K, value: T[K]) {
-    this._unchanged = false;
+    const prev = this.get(key);
+    const prevValue = prev.changed ? prev.data.to : prev.data;
+
+    if (prevValue === value) {
+      this.markChangeAsNoOp();
+      return;
+    }
+
+    this.state = DiffState.Changed;
     this.object[key] = {
       changed: true,
-      data: this.nextDataValue(key, value),
+      data: { from: prevValue, to: value },
     };
   }
 
@@ -80,17 +127,23 @@ export class Diff<T> {
     return this.object[key].changed;
   }
 
-  private nextDataValue<K extends keyof T>(key: K, to: T[K]) {
-    console.log(key);
-    console.log(this.object);
+  private eachInternal(each: DiffEach<T>) {
+    let key: keyof T;
 
-    const value = this.get(key);
-
-    if (value.changed) {
-      return { from: value.data.from, to };
+    for (key in this.object) {
+      const value = this.get(key);
+      if (value.changed) {
+        each.eachChanged?.(value, key);
+      } else {
+        each.eachUnchanged?.(value, key);
+      }
     }
+  }
 
-    return { from: value.data, to };
+  private markChangeAsNoOp() {
+    if (this.state === DiffState.Unchanged) {
+      this.state = DiffState.AllChangesWereNoOps;
+    }
   }
 }
 

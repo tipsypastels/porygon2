@@ -2,7 +2,12 @@ import { ApplicationCommandOption, Role } from 'discord.js';
 import { Command, CommandHandler } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { isDev } from 'support/dev';
-import { RoleMod, RoleModOpts } from '../models/role_mod';
+import {
+  RoleModOpts,
+  updateRoleMod,
+  createRoleMod,
+  fetchRoleMod,
+} from '../models/role_mod';
 
 type GetOpts = { get: { role: Role } };
 type SetOpts = { set: { role: Role } & Partial<RoleModOpts> };
@@ -14,46 +19,21 @@ const rolemod: Command<Opts> = async (args) => {
 
 const rolemodGet: CommandHandler<GetOpts> = async ({ embed, opts }) => {
   const { role } = opts.get;
-  const manager = await RoleMod.init(role);
+  const result = await fetchRoleMod(role);
 
-  await embed.setTitle(role.name).merge(manager).reply();
+  await embed.infoColor().setTitle(role.name).merge(result).reply();
 };
 
 const rolemodSet: CommandHandler<SetOpts> = async ({ embed, opts }) => {
   const { role, ...roleOpts } = opts.set;
-  const manager = await RoleMod.init(role);
+  const result = await updateRoleMod(role, roleOpts);
 
-  await manager.set(roleOpts).save();
-  await embed.setTitle(`Role "${role.name}" updated!`).merge(manager).reply();
+  await embed
+    .okColor()
+    .setTitle(`Role "${role.name}" updated!`)
+    .merge(result)
+    .reply();
 };
-
-// maybe reuse this for a /role create in the future?
-const SETTINGS: ApplicationCommandOption[] = [
-  {
-    name: 'hoist',
-    type: 'BOOLEAN',
-    description: 'Whether to hoist the role.',
-    required: false,
-  },
-  {
-    name: 'mentionable',
-    type: 'BOOLEAN',
-    description: 'Whether others can mention the role.',
-    required: false,
-  },
-  {
-    name: 'requestable',
-    type: 'BOOLEAN',
-    description: 'Whether users can give themselves the role.',
-    required: false,
-  },
-  {
-    name: 'bound',
-    type: 'BOOLEAN',
-    description: 'Whether the role stays with users across rejoins.',
-    required: false,
-  },
-];
 
 rolemod.description = 'Manages role settings.';
 rolemod.defaultPermission = isDev;
@@ -82,9 +62,46 @@ rolemod.options = [
         description: 'The role to update.',
         required: true,
       },
-      ...SETTINGS,
+      ...createRoleModOptions({ isNameOptional: true }),
     ],
   },
 ];
 
 export default rolemod;
+
+function createRoleModOptions({
+  isNameOptional = false,
+}): ApplicationCommandOption[] {
+  return [
+    {
+      name: 'name',
+      type: 'STRING',
+      description: 'Name of the role.',
+      required: !isNameOptional,
+    },
+    {
+      name: 'hoist',
+      type: 'BOOLEAN',
+      description: 'Whether to hoist the role.',
+      required: false,
+    },
+    {
+      name: 'mentionable',
+      type: 'BOOLEAN',
+      description: 'Whether others can mention the role.',
+      required: false,
+    },
+    {
+      name: 'requestable',
+      type: 'BOOLEAN',
+      description: 'Whether users can give themselves the role.',
+      required: false,
+    },
+    {
+      name: 'bound',
+      type: 'BOOLEAN',
+      description: 'Whether the role stays with users across rejoins.',
+      required: false,
+    },
+  ];
+}

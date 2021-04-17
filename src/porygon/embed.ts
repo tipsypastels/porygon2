@@ -9,7 +9,8 @@ import { PORY_THUMBS } from './asset';
 import COLORS from './colors.json';
 
 type Reply = CommandInteraction['reply'];
-type IntoEmbeddable = { intoEmbed(embed: PorygonEmbed): unknown };
+type EmbeddableFn = (embed: PorygonEmbed) => void;
+type Embeddable = EmbeddableFn | { intoEmbed: EmbeddableFn };
 
 export class PorygonEmbed extends MessageEmbed {
   constructor(private _reply: Reply) {
@@ -28,8 +29,8 @@ export class PorygonEmbed extends MessageEmbed {
     return this._reply(this);
   }
 
-  merge(into: IntoEmbeddable) {
-    into.intoEmbed(this);
+  merge(into: Embeddable) {
+    typeof into === 'object' ? into.intoEmbed(this) : into(this);
     return this;
   }
 
