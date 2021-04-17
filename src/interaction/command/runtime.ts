@@ -46,26 +46,31 @@ export async function runCommand<T = undefined>({
 }
 
 function handleCommandError(error: any, embed: PorygonEmbed) {
-  return createErrorResponse(error, embed).reply();
+  const shouldRethrow = injectErrorResponse(error, embed);
+  embed.reply();
+  if (shouldRethrow) throw error;
 }
 
-function createErrorResponse(error: any, embed: PorygonEmbed) {
+function injectErrorResponse(error: any, embed: PorygonEmbed) {
   switch (true) {
     case error instanceof InteractionBaseError: {
-      return error.intoEmbed(embed);
+      error.intoEmbed(embed);
+      return false;
     }
     case typeof error === 'object' && 'message' in error: {
-      return embed
+      embed
         .errorColor()
         .poryThumb('error')
         .setTitle("Whoops, that's an error.")
         .setDescription(codeBlock(error.message));
+      return true;
     }
     default: {
-      return embed
+      embed
         .errorColor()
         .poryThumb('error')
         .setTitle('An unknown error occurred.');
+      return true;
     }
   }
 }

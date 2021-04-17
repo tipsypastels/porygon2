@@ -41,3 +41,24 @@ export function codeBlock(value: any, opts: CodeBlockOpts = {}) {
 export function yesNo(value: boolean | null | undefined) {
   return value ? 'Yes' : 'No';
 }
+
+/**
+ * "Humanizes" a value.
+ */
+export function humanizeValue(value: unknown): string {
+  switch (typeof value) {
+    case 'string': {
+      return value;
+    }
+    case 'number':
+    case 'bigint': {
+      return value.toString();
+    }
+    case 'boolean': {
+      return yesNo(value);
+    }
+    default: {
+      throw new Error(`Can't humanize: ${value}`);
+    }
+  }
+}

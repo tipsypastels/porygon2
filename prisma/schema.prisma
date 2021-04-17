@@ -17,10 +17,10 @@ model FriendCodes {
   go     String?
 }
 
-model RoleSettings {
-  roleId        String  @id
-  isBound       Boolean @default(false)
-  isRequestable Boolean @default(false)
+model RoleBehaviors {
+  roleId      String  @id
+  bound       Boolean @default(false)
+  requestable Boolean @default(false)
 }
 
 model BoundRole {
