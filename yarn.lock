@@ -1678,9 +1678,9 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-discord.js@vaporox/discord.js#d19d70f:
+discord.js@vaporox/discord.js#ef08cc8:
   version "12.5.0"
-  resolved "https://codeload.github.com/vaporox/discord.js/tar.gz/d19d70fad298a839645275a3ec2906bbb6f683fe"
+  resolved "https://codeload.github.com/vaporox/discord.js/tar.gz/ef08cc8907da4fa9dc04bb1f2da31dd0ae8e8fc9"
   dependencies:
     "@discordjs/collection" "^0.1.6"
     "@discordjs/form-data" "^3.0.1"

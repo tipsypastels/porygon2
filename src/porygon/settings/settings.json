@@ -66,6 +66,7 @@
     }
   },
   "pory": {
+    "help_desc": "You can see a pop-up list of commands by pressing `/`. If you have any other questions or suggestions, please direct them to my creator!",
     "activity_messages": [
       "cyberduck supreme",
       "mining bitcoin",

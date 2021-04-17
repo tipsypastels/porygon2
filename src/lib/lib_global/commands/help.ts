@@ -1,5 +1,8 @@
 import { Command } from 'interaction/command';
+import { setting } from 'porygon/settings';
 import { OWNER } from 'secrets.json';
+
+const helpDesc = setting<string>('pory.help_desc');
 
 const help: Command = async ({ client, embed }) => {
   const owner = await client.users.cache.get(OWNER);
@@ -9,7 +12,7 @@ const help: Command = async ({ client, embed }) => {
     .infoColor()
     .poryThumb('smile')
     .setTitle("Hello! My name's Pory.")
-    .setDescription('You can see a pop-up list of commands by pressing `/`.')
+    .setDescription(helpDesc.value)
     .setFooter('Created by Dakota', ownerAvatar)
     .reply();
 };
