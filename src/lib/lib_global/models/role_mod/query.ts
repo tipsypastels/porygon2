@@ -3,12 +3,7 @@ import { InteractionDanger } from 'interaction/errors';
 import { Lib } from 'lib/lib';
 import { database } from 'porygon/database';
 
-const ROLE_NAMES_TO_TRIGGER_IRATE_RESPONSE = [
-  /owner/i,
-  /admin/i,
-  /moderator/i,
-  /moderoid/i,
-];
+const IRATE_ROLE_NAMES = /owner|admin|moderator|moderoid/i;
 
 export async function assertRequestable(role: Role, lib: Lib) {
   const requestable = await isRequestable(role);
@@ -33,7 +28,7 @@ export async function assertRequestable(role: Role, lib: Lib) {
 }
 
 function shouldUseIrateResponse(role: Role) {
-  return ROLE_NAMES_TO_TRIGGER_IRATE_RESPONSE.some((x) => x.exec(role.name));
+  return IRATE_ROLE_NAMES.exec(role.name);
 }
 
 function shouldReferUserToRoleList(lib: Lib) {
