@@ -25,6 +25,9 @@
     "global": {
       "pets": {
         "mod_perm": "KICK_MEMBERS"
+      },
+      "role": {
+        "staff_roles": ["owner", "admin", "moderator", "moderoid"]
       }
     },
     "pokecom": {
