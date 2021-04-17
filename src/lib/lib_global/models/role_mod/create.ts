@@ -13,6 +13,7 @@ export async function createRoleMod(guild: Guild, opts: Partial<RoleModOpts>) {
   });
 
   return (embed: PorygonEmbed) => {
+    embed.setTitle(`Role "${role.name}" created!`);
     embedRoleFields(embed, role, behaviors);
   };
 }

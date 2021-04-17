@@ -11,10 +11,15 @@ import {
 
 type GetOpts = { get: { role: Role } };
 type SetOpts = { set: { role: Role } & Partial<RoleModOpts> };
-type Opts = GetOpts | SetOpts;
+type CreateOpts = { create: Partial<RoleModOpts> };
+type Opts = GetOpts | SetOpts | CreateOpts;
 
 const rolemod: Command<Opts> = async (args) => {
-  await disambiguate(args, { get: rolemodGet, set: rolemodSet });
+  await disambiguate(args, {
+    get: rolemodGet,
+    set: rolemodSet,
+    create: rolemodCreate,
+  });
 };
 
 const rolemodGet: CommandHandler<GetOpts> = async ({ embed, opts }) => {
@@ -33,6 +38,15 @@ const rolemodSet: CommandHandler<SetOpts> = async ({ embed, opts }) => {
     .setTitle(`Role "${role.name}" updated!`)
     .merge(result)
     .reply();
+};
+
+const rolemodCreate: CommandHandler<CreateOpts> = async ({
+  embed,
+  opts,
+  guild,
+}) => {
+  const result = await createRoleMod(guild, opts.create);
+  await embed.okColor().merge(result).reply();
 };
 
 rolemod.description = 'Manages role settings.';
@@ -64,6 +78,12 @@ rolemod.options = [
       },
       ...createRoleModOptions({ isNameOptional: true }),
     ],
+  },
+  {
+    name: 'create',
+    type: 'SUB_COMMAND',
+    description: 'Creates a new role with the specified settings.',
+    options: createRoleModOptions({ isNameOptional: false }),
   },
 ];
 
