@@ -37,18 +37,27 @@ export abstract class InteractionBaseError {
 
 export class InteractionWarning extends InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
-    return super.intoEmbed(embed).poryThumb('warning').warningColor();
+    return embed
+      .poryThumb('warning')
+      .warningColor()
+      .merge((e) => super.intoEmbed(e));
   }
 }
 
 export class InteractionDanger extends InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
-    return super.intoEmbed(embed).poryThumb('danger').dangerColor();
+    return embed
+      .poryThumb('danger')
+      .dangerColor()
+      .merge((e) => super.intoEmbed(e));
   }
 }
 
 export class InteractionError extends InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
-    return super.intoEmbed(embed).poryThumb('error').errorColor();
+    return embed
+      .poryThumb('danger')
+      .dangerColor()
+      .merge((e) => super.intoEmbed(e));
   }
 }
