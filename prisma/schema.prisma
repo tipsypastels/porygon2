@@ -37,12 +37,9 @@ model Pet {
   url     String
 }
 
-model CooltrainerScore {
-  userId  String
-  guildId String
+model CtScore {
+  userId String @id
 
   pointsThisCycle Int @default(0)
   pointsPrevCycle Int @default(0)
-
-  @@id([userId, guildId])
 }
