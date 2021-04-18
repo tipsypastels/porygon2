@@ -18,6 +18,6 @@ export function handleCtMessage(message: Message) {
 }
 
 function pointsPerMessage(message: Message) {
-  const { id } = message.channel;
+  const id = message.channel as never;
   return CtSettings.ppmExceptions.value[id] ?? 1;
 }

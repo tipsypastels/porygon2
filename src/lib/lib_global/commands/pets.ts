@@ -12,7 +12,7 @@ type AddOpts = { add: { url: string } };
 type DelOpts = { delete: { id: number } };
 type Opts = RandOpts | AddOpts | DelOpts;
 
-const CAN_MOD_PETS = setting<'KICK_MEMBERS'>('lib.global.pets.mod_perm');
+const CAN_MOD_PETS = setting('lib.global.pets.mod_perm');
 
 const pets: Command<Opts> = async (args) => {
   await disambiguate(args, { add: petsAdd, delete: petsDel, random: petsRand });
@@ -55,7 +55,7 @@ const petsDel: CommandHandler<DelOpts> = async ({
   }
 
   const isCreator = member.id === entry.userId;
-  const isMod = member.permissions.has(CAN_MOD_PETS.value);
+  const isMod = member.permissions.has(CAN_MOD_PETS.value as 'KICK_MEMBERS');
 
   if (!(isCreator || isMod)) {
     throw new InteractionDanger(

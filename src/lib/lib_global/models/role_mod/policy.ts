@@ -5,7 +5,7 @@ import { setting } from 'porygon/settings';
 import { isRequestable } from './query';
 
 const STAFF_ROLES = new RegExp(
-  `${setting<string[]>('lib.global.role.staff_roles').value.join('|')}`,
+  `${setting('lib.global.role.staff_roles').value.join('|')}`,
   'i',
 );
 

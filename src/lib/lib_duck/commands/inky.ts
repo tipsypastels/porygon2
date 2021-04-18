@@ -12,6 +12,6 @@ const inky: Command = async ({ embed }) => {
 
 inky.description = '🥺';
 
-const MESSAGES = setting<string[]>('lib.duck.inky.messages');
+const MESSAGES = setting('lib.duck.inky.messages');
 
 export default inky;

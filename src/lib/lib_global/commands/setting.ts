@@ -19,7 +19,7 @@ const setting: Command<Opts> = async (opts) => {
 
 const settingGet: CommandHandler<GetOpts> = async ({ opts, embed }) => {
   const { key } = opts.get;
-  const { value } = Settings.setting(key);
+  const { value } = Settings.setting(key as never);
 
   await embed
     .infoColor()
@@ -62,7 +62,7 @@ const settingUpdate: CommandHandler<UpdateOpts> = async ({
   }
 
   const { key, expression } = opts.update;
-  const { value: currentValue } = await Settings.setting(key);
+  const { value: currentValue } = await Settings.setting(key as never);
   const nextValue = evaluate(expression, currentValue);
 
   Settings.setSetting(key, nextValue);

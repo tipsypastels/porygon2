@@ -3,8 +3,8 @@ import { GuildHandler } from 'lib/lib/event';
 import { setting } from 'porygon/settings';
 import { eachWord } from 'support/string';
 
-const PHRASES = setting<string[]>('lib.duck.quack.phrases');
-const CHANNEL_ID = setting<string>('lib.duck.quack.channel');
+const PHRASES = setting('lib.duck.quack.phrases');
+const CHANNEL_ID = setting('lib.duck.quack.channel');
 
 const quackHandler: GuildHandler = async ({ em }) => {
   em.on('message', run).on('messageUpdate', run);

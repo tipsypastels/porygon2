@@ -15,4 +15,4 @@ function set(client: Porygon) {
   user.setActivity(random(ACTIVITY_MESSAGES.value));
 }
 
-const ACTIVITY_MESSAGES = setting<string[]>('pory.activity_messages');
+const ACTIVITY_MESSAGES = setting('pory.activity_messages');

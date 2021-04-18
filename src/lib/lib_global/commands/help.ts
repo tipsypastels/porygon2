@@ -2,7 +2,7 @@ import { Command } from 'interaction/command';
 import { setting } from 'porygon/settings';
 import { OWNER } from 'secrets.json';
 
-const helpDesc = setting<string>('pory.help_desc');
+const helpDesc = setting('pory.help_desc');
 
 const help: Command = async ({ client, embed }) => {
   const owner = await client.users.cache.get(OWNER);
