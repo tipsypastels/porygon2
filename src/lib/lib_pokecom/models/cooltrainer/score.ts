@@ -28,8 +28,8 @@ export class CtScoreManager {
 
   constructor(readonly member: GuildMember) {}
 
-  async increment(amount: number) {
-    await database.$executeRaw`
+  increment(amount: number) {
+    return database.$executeRaw`
       INSERT INTO 
         "public"."CtScore" ("userId", "pointsThisCycle")
       VALUES 
@@ -41,8 +41,6 @@ export class CtScoreManager {
         "CtScore"."pointsThisCycle" + "excluded"."pointsThisCycle"
       )
     `;
-
-    return this;
   }
 
   fetch() {
