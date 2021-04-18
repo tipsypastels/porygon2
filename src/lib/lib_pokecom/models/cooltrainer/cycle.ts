@@ -1,5 +1,6 @@
 import { Guild } from 'discord.js';
 import { database } from 'porygon/database';
+import { logger } from 'porygon/logger';
 import { CtTickRunner } from './tick';
 
 export class CtCycleRunner {
@@ -17,6 +18,8 @@ export class CtCycleRunner {
         "pointsPrevCycle" = "pointsThisCycle",
         "pointsThisCycle" = 0 
     `;
+
+    logger.task('COOLTRAINER has been cycled! Running a tick now...');
 
     await CtTickRunner.run(this.guild);
   }
