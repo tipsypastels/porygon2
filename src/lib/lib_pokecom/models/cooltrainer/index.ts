@@ -1,7 +1,11 @@
 import { Message } from 'discord.js';
-import { setting } from 'porygon/settings';
 import { CtScoreManager } from './score';
 import { CtSettings } from './settings';
+
+export * from './score';
+export * from './scoreboard';
+export * from './tick';
+export * from './cycle';
 
 export function handleCtMessage(message: Message) {
   if (message.author.bot) return;
@@ -10,9 +14,7 @@ export function handleCtMessage(message: Message) {
   const points = pointsPerMessage(message);
   if (!member || !points) return;
 
-  CtScoreManager.increment(member, points).then((manager) => {
-    manager.fetchSummary().then(console.log);
-  });
+  CtScoreManager.increment(member, points);
 }
 
 function pointsPerMessage(message: Message) {
