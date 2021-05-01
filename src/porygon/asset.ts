@@ -1,3 +1,5 @@
+import { clamp } from 'support/number';
+
 const BASE_GITHUB_URL =
   'https://raw.githubusercontent.com/tipsypastels/porygon2/main/assets';
 
@@ -28,3 +30,8 @@ export const PORY_THUMBS = {
   'warning': toGithubUrl('pory/warning.png'),
   'error': toGithubUrl('pory/error.png'),
 };
+
+export function hangmanThumb(stage: number) {
+  stage = clamp(stage, 0, 6);
+  return toGithubUrl(`pory/hangman/${stage}.png`);
+}

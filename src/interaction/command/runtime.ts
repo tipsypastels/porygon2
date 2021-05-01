@@ -23,7 +23,7 @@ export async function runCommand<T = undefined>({
 }: RunCommandOpts<T>) {
   const opts = createCommandOpts<T>(interaction);
   const reply = interaction.reply.bind(interaction);
-  const embed = new PorygonEmbed(reply);
+  const embed = PorygonEmbed.fromInteraction(interaction);
   const guild = interaction.guild!;
   const member = interaction.member!;
   const channel = interaction.channel as TextChannel;

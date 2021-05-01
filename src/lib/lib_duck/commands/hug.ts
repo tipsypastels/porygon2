@@ -6,7 +6,7 @@ interface Args {
   member: GuildMember;
 }
 
-const hug: Command<Args> = async ({ opts, embed, reply, member: actor }) => {
+const hug: Command<Args> = async ({ opts, embed, member: actor }) => {
   const subject = opts.member;
   const isSelf = actor.id === subject.id;
   const subjectLine = isSelf ? 'themself' : subject.displayName;

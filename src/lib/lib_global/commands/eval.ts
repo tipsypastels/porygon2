@@ -9,15 +9,13 @@ import { database as databaseImport } from 'porygon/database';
 import { InteractionError } from 'interaction/errors';
 import * as SettingsImport from 'porygon/settings';
 
-const testSetting = SettingsImport.setting('lib.global.pets.mod_perm');
-
 interface Args {
   code: string;
   quiet?: boolean;
 }
 
 const evalCommand: Command<Args> = async (args) => {
-  const { interaction, member, guild, reply, embed, client, opts, lib } = args;
+  const { interaction, member, guild, embed, client, opts, lib } = args;
   const database = databaseImport;
   const Settings = SettingsImport;
 

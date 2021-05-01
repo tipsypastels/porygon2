@@ -8,12 +8,20 @@ import { isDev } from 'support/dev';
 import { PORY_THUMBS } from './asset';
 import COLORS from './colors.json';
 
-type Reply = CommandInteraction['reply'];
+type Reply = (embed: PorygonEmbed) => Promise<void>;
 type EmbeddableFn = (embed: PorygonEmbed) => void;
 type Embeddable = EmbeddableFn | { intoEmbed: EmbeddableFn };
 
 export class PorygonEmbed extends MessageEmbed {
-  constructor(private _reply: Reply) {
+  static fromInteraction(interaction: CommandInteraction) {
+    return new this(async (embed) => {
+      interaction.replied
+        ? await interaction.editReply(embed)
+        : await interaction.reply(embed);
+    });
+  }
+
+  constructor(private _reply?: Reply) {
     super();
   }
 
@@ -26,6 +34,12 @@ export class PorygonEmbed extends MessageEmbed {
   }
 
   reply() {
+    if (!this._reply) {
+      throw new Error(
+        "Can't use PorygonEmbed#reply when a reply callback is not provided to the constructor.",
+      );
+    }
+
     return this._reply(this);
   }
 

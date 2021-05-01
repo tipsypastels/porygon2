@@ -16,7 +16,6 @@ export type CommandArgs<T> = {
   channel: TextChannel;
   embed: PorygonEmbed;
   interaction: CommandInteraction;
-  reply: CommandInteraction['reply'];
   opts: T;
   lib: Lib;
 };
