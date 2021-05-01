@@ -14,7 +14,7 @@ const BASE_GITHUB_URL =
  * is fairly trivial.
  */
 function toGithubUrl(path: string) {
-  return `${BASE_GITHUB_URL}/${path}`;
+  return `${BASE_GITHUB_URL}/${path}?x=1`;
 }
 
 export const PORY_THUMBS = {

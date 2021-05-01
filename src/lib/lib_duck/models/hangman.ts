@@ -4,19 +4,14 @@ import {
   MessageCollector,
   TextChannel,
 } from 'discord.js';
-import { hangmanThumb } from 'porygon/asset';
 import { PorygonEmbed } from 'porygon/embed';
-import { codeBlock } from 'support/format';
+import { HangmanNoose } from './hangman/noose';
+import { HangmanState } from './hangman/state';
+import { HangmanWord } from './hangman/word';
 
 interface GameOpts {
   channel: TextChannel;
   interaction: CommandInteraction;
-}
-
-enum GameState {
-  Ongoing,
-  Won,
-  Lost,
 }
 
 export class Hangman {
@@ -24,9 +19,9 @@ export class Hangman {
   readonly interaction: CommandInteraction;
   readonly collector: MessageCollector;
 
-  private noose = new Noose();
-  private word = new Word();
-  private state = GameState.Ongoing;
+  readonly noose = new HangmanNoose();
+  readonly word = new HangmanWord();
+  private state = new HangmanState.Ongoing(this);
 
   constructor(opts: GameOpts) {
     this.channel = opts.channel;
@@ -39,74 +34,35 @@ export class Hangman {
   }
 
   async start() {
-    await this.word.pick();
     await this.render();
   }
 
   private async call(message: Message) {
     this.word.guess(message.content) || this.noose.increment();
+    this.nextState();
+
+    if (!this.state.isOngoing) {
+      this.collector.stop();
+    }
 
     await this.render();
   }
 
   private async render() {
     await PorygonEmbed.fromInteraction(this.interaction)
-      .setTitle('Hangman!')
-      .infoColor()
       .merge(this.word)
       .merge(this.noose)
+      .merge(this.state)
       .reply();
   }
-}
 
-class Word {
-  private word!: string;
-  private correctGuesses = new Set<string>();
-
-  async pick() {
-    this.word = 'hello';
-  }
-
-  get isWon() {
-    return this.word.length <= this.correctGuesses.size;
-  }
-
-  isGuessable(char: string) {
-    return char.length === 1 && !this.correctGuesses.has(char);
-  }
-
-  guess(char: string) {
-    if (this.word.includes(char)) {
-      this.correctGuesses.add(char);
-      return true;
+  private nextState() {
+    if (this.word.isWon) {
+      this.state = new HangmanState.Won(this);
     }
 
-    return false;
-  }
-
-  intoEmbed(embed: PorygonEmbed) {
-    embed.setDescription(this.toString());
-  }
-
-  private toString() {
-    let buffer = '';
-
-    for (const char of this.word) {
-      buffer += this.correctGuesses.has(char) ? char : '_';
+    if (this.noose.isLost) {
+      this.state = new HangmanState.Lost(this);
     }
-
-    return codeBlock(buffer);
-  }
-}
-
-class Noose {
-  private stage = 0;
-
-  increment() {
-    this.stage++;
-  }
-
-  intoEmbed(embed: PorygonEmbed) {
-    embed.setThumbnail(hangmanThumb(this.stage));
   }
 }
