@@ -4,9 +4,9 @@ import { code, codeBlock } from 'support/format';
 import { OWNER } from 'secrets.json';
 import * as Settings from 'porygon/settings';
 
-type GetOpts = { get: { key: string } };
-type SetOpts = { set: { key: string; value: string } };
-type UpdateOpts = { update: { key: string; expression: string } };
+type GetOpts = { get: { key: never } };
+type SetOpts = { set: { key: never; value: string } };
+type UpdateOpts = { update: { key: never; expression: string } };
 type Opts = GetOpts | SetOpts | UpdateOpts;
 
 const setting: Command<Opts> = async (opts) => {
@@ -19,7 +19,7 @@ const setting: Command<Opts> = async (opts) => {
 
 const settingGet: CommandHandler<GetOpts> = async ({ opts, embed }) => {
   const { key } = opts.get;
-  const { value } = Settings.setting(key as never);
+  const { value } = Settings.setting(key);
 
   await embed
     .infoColor()
@@ -62,7 +62,7 @@ const settingUpdate: CommandHandler<UpdateOpts> = async ({
   }
 
   const { key, expression } = opts.update;
-  const { value: currentValue } = await Settings.setting(key as never);
+  const { value: currentValue } = await Settings.setting(key);
   const nextValue = evaluate(expression, currentValue);
 
   Settings.setSetting(key, nextValue);
