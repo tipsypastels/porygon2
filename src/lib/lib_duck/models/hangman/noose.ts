@@ -1,7 +1,7 @@
 import { hangmanThumb } from 'porygon/asset';
 import { PorygonEmbed } from 'porygon/embed';
 
-const MAX = 6;
+const MAX = 10;
 
 export class HangmanNoose {
   private stage = 0;

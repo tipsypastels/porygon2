@@ -32,6 +32,6 @@ export const PORY_THUMBS = {
 };
 
 export function hangmanThumb(stage: number) {
-  stage = clamp(stage, 0, 6);
+  stage = clamp(stage, 0, 10);
   return toGithubUrl(`pory/hangman/${stage}.png`);
 }
