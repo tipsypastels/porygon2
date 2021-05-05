@@ -6,6 +6,7 @@ import { logger } from './logger';
 import { uptime } from './stats';
 import { setupActivityMessages } from './activity_message';
 import { setupLibs } from 'lib/lib/setup';
+import { setupAssets } from './asset/setup';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.
@@ -34,6 +35,7 @@ export class Porygon extends DiscordClient {
       this.setupLibs(),
       this.setupActivityMessages(),
       this.setupStats(),
+      this.setupAssets(),
     ]);
   }
 
@@ -47,6 +49,10 @@ export class Porygon extends DiscordClient {
 
   private setupStats() {
     uptime.startTiming();
+  }
+
+  private async setupAssets() {
+    await setupAssets();
   }
 }
 

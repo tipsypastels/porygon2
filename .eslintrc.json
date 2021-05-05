@@ -16,6 +16,7 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "indent": ["error", 2, { "SwitchCase": 1 }],
+    "no-inner-declarations": "off",
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single", { "avoidEscape": true }],
     "semi": ["error", "always"]

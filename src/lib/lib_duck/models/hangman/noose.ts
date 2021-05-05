@@ -1,4 +1,4 @@
-import { hangmanThumb } from 'porygon/asset';
+import { HANGMAN_ASSETS } from 'porygon/assets';
 import { PorygonEmbed } from 'porygon/embed';
 
 const MAX = 10;
@@ -15,6 +15,6 @@ export class HangmanNoose {
   }
 
   intoEmbed(embed: PorygonEmbed) {
-    embed.setThumbnail(hangmanThumb(this.stage));
+    embed.setThumbnail(HANGMAN_ASSETS[this.stage].url);
   }
 }

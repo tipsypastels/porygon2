@@ -4,3 +4,4 @@ dist/
 *.log
 .markov/*.markov
 .env
+assets/upload_cache.json
