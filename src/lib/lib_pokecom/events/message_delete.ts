@@ -9,7 +9,9 @@ import { code, codeBlock } from 'support/format';
 const CHANNEL_ID = setting('lib.pokecom.logging.log_channel');
 
 const messageDeleteHandler: GuildHandler = ({ em }) => {
-  em.on('messageDelete', run);
+  if (em.guild) {
+    em.on('messageDelete', run);
+  }
 };
 
 export default messageDeleteHandler;

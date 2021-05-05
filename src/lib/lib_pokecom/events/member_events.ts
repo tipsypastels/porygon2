@@ -19,10 +19,12 @@ const WARN_CHANNEL_ID = setting('lib.pokecom.logging.warning_channel');
 const NO_REASON = italics('(no reason given)');
 
 const memberEventsHandler: GuildHandler = ({ em }) => {
-  em.on('guildMemberAdd', onAdd)
-    .on('guildMemberRemove', onRemove)
-    .on('guildBanAdd', onBanned)
-    .on('guildBanRemove', onUnbanned);
+  if (em.guild) {
+    em.on('guildMemberAdd', onAdd)
+      .on('guildMemberRemove', onRemove)
+      .on('guildBanAdd', onBanned)
+      .on('guildBanRemove', onUnbanned);
+  }
 };
 
 export default memberEventsHandler;
