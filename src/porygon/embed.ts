@@ -3,6 +3,7 @@ import {
   CommandInteraction,
   GuildMember,
   MessageEmbed,
+  User,
 } from 'discord.js';
 import { PORY_ASSETS } from './assets';
 import COLORS from './colors.json';
@@ -83,12 +84,32 @@ export class PorygonEmbed extends MessageEmbed {
     return this;
   }
 
-  setAuthor(member: GuildMember): this;
+  // HACK: this is pretty messy
+  setAuthor(user: User, opts?: { withDisciminator: boolean }): this;
+  setAuthor(member: GuildMember, opts?: { withDisciminator: boolean }): this;
   setAuthor(name: string, iconUrl?: string, url?: string): this;
   setAuthor(...args: any[]): this {
     if (args[0] instanceof GuildMember) {
       const [member] = args;
-      return super.setAuthor(member.displayName, member.user.avatarURL()!);
+
+      let name = member.displayName;
+
+      if (args[1]?.withDisciminator) {
+        name += `#${member.user.discriminator}`;
+      }
+
+      return super.setAuthor(name, member.user.avatarURL()!);
+    }
+
+    if (args[0] instanceof User) {
+      const [user] = args;
+      let name = user.username;
+
+      if (args[1]?.withDisciminator) {
+        name += `#${user.discriminator}`;
+      }
+
+      return super.setAuthor(name, user.avatarURL()!);
     }
 
     const [name, iconUrl, url] = args;
