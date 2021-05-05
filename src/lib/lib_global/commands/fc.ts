@@ -20,7 +20,7 @@ const fcGet: CommandHandler<GetOpts> = async ({ embed, opts }) => {
   await embed
     .infoColor()
     .setTitle('Friend Codes')
-    .setAuthor(opts.get.member)
+    .setAuthorFromMember(opts.get.member)
     .setFooter('Set or update friend codes with `/fc set`.')
     .merge(manager)
     .reply();
@@ -33,7 +33,7 @@ const fcSet: CommandHandler<SetOpts> = async ({ opts, embed, member }) => {
   await embed
     .okColor()
     .setTitle('Friend Codes updated!')
-    .setAuthor(member)
+    .setAuthorFromMember(member)
     .merge(manager)
     .reply();
 };

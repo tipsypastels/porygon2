@@ -11,6 +11,10 @@ import COLORS from './colors.json';
 type Reply = (embed: PorygonEmbed) => Promise<void>;
 type EmbeddableFn = (embed: PorygonEmbed) => void;
 type Embeddable = EmbeddableFn | { intoEmbed: EmbeddableFn };
+type SetAuthorFromOpts = {
+  withDiscriminator?: boolean;
+  url?: string;
+};
 
 export class PorygonEmbed extends MessageEmbed {
   static fromInteraction(interaction: CommandInteraction) {
@@ -77,42 +81,27 @@ export class PorygonEmbed extends MessageEmbed {
   }
 
   addFieldIfPresent(name: any, value: any) {
-    if (value) {
-      this.addField(name, value);
-    }
-
+    value && this.addField(name, value);
     return this;
   }
 
-  // HACK: this is pretty messy
-  setAuthor(user: User, opts?: { withDisciminator: boolean }): this;
-  setAuthor(member: GuildMember, opts?: { withDisciminator: boolean }): this;
-  setAuthor(name: string, iconUrl?: string, url?: string): this;
-  setAuthor(...args: any[]): this {
-    if (args[0] instanceof GuildMember) {
-      const [member] = args;
-
-      let name = member.displayName;
-
-      if (args[1]?.withDisciminator) {
-        name += `#${member.user.discriminator}`;
-      }
-
-      return super.setAuthor(name, member.user.avatarURL()!);
+  setAuthorFromUser(user: User | GuildMember, opts?: SetAuthorFromOpts): this {
+    if (user instanceof GuildMember) {
+      return this.setAuthorFromUser(user.user, opts);
     }
 
-    if (args[0] instanceof User) {
-      const [user] = args;
-      let name = user.username;
+    const name = opts?.withDiscriminator
+      ? `${user.username}#${user.discriminator}`
+      : user.username;
 
-      if (args[1]?.withDisciminator) {
-        name += `#${user.discriminator}`;
-      }
+    return this.setAuthor(name, user.avatarURL()!, opts?.url);
+  }
 
-      return super.setAuthor(name, user.avatarURL()!);
-    }
+  setAuthorFromMember(member: GuildMember, opts?: SetAuthorFromOpts) {
+    const name = opts?.withDiscriminator
+      ? `${member.displayName}#${member.user.discriminator}`
+      : member.displayName;
 
-    const [name, iconUrl, url] = args;
-    return super.setAuthor(name, iconUrl, url);
+    return this.setAuthor(name, member.user.avatarURL()!, opts?.url);
   }
 }

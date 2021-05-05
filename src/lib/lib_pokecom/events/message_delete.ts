@@ -27,7 +27,7 @@ function run(message: Message | PartialMessage) {
 
   embed
     .infoColor()
-    .setAuthor(message.author!, { withDisciminator: true })
+    .setAuthorFromUser(message.author!, { withDiscriminator: true })
     .setTitle('Message Deleted')
     .setDescription(message.content)
     .addInlineField('Channel', message.channel.toString())

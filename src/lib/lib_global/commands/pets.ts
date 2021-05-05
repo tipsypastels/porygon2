@@ -82,7 +82,7 @@ const petsRand: CommandHandler<RandOpts> = async ({ opts, embed, guild }) => {
 
   await embed
     .infoColor()
-    .setAuthor(petOwner)
+    .setAuthorFromMember(petOwner)
     .setImage(entry.url)
     .setFooter(`Delete this entry with /pets delete ${entry.id}.`)
     .reply();

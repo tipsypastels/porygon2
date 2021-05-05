@@ -34,7 +34,7 @@ function onAdd(member: GuildMember) {
 
   embed
     .infoColor()
-    .setAuthor(member.user, { withDisciminator: true })
+    .setAuthorFromUser(member, { withDiscriminator: true })
     .setTitle('Member Joined')
     .addField('Account Age', timeAgo(member.user.createdAt))
     .addField('ID', codeBlock(member.user.id));
@@ -59,7 +59,7 @@ function onLeave(member: GuildMember) {
 
   embed
     .warningColor()
-    .setAuthor(member.user, { withDisciminator: true })
+    .setAuthorFromUser(member, { withDiscriminator: true })
     .setTitle('Member Left')
     .addFieldIfPresent('Joined At', format(member.joinedAt))
     .addField('ID', codeBlock(member.user.id));
@@ -73,7 +73,7 @@ function onKicked(member: GuildMember, kick: GuildAuditLogsEntry) {
 
   embed
     .dangerColor()
-    .setAuthor(member.user, { withDisciminator: true })
+    .setAuthorFromUser(member, { withDiscriminator: true })
     .setTitle(`${member.user.username} was kicked by ${kick.executor.username}`)
     .addField('Reason', kick.reason ?? NO_REASON)
     .addFieldIfPresent('Joined At', format(member.joinedAt));
@@ -89,7 +89,7 @@ async function onBanned(guild: Guild, user: User) {
 
   embed
     .errorColor()
-    .setAuthor(user, { withDisciminator: true })
+    .setAuthorFromUser(user, { withDiscriminator: true })
     .setTitle(`${user.username} was banned by ${executor}`)
     .addField('Reason', ban?.reason ?? NO_REASON);
 
@@ -104,7 +104,7 @@ async function onUnbanned(guild: Guild, user: User) {
 
   embed
     .okColor()
-    .setAuthor(user, { withDisciminator: true })
+    .setAuthorFromUser(user, { withDiscriminator: true })
     .setTitle(`${user.username} was unbanned by ${executor}`);
 
   logChannel(guild).send(embed);
