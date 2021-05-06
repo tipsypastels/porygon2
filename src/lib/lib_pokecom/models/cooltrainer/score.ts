@@ -28,8 +28,9 @@ export class CtScoreManager {
 
   constructor(readonly member: GuildMember) {}
 
-  increment(amount: number) {
-    return database.$executeRaw`
+  async increment(amount: number) {
+    // can't use return, $executeRaw is no-op unless await/then'd
+    await database.$executeRaw`
       INSERT INTO 
         "public"."CtScore" ("userId", "pointsThisCycle")
       VALUES 
@@ -63,7 +64,7 @@ export class CtScoreManager {
   }
 
   private fetchEntry() {
-    return table.findFirst({ where: { userId: this.member.user.id } });
+    return table.findFirst({ where: { userId: this.member.id } });
   }
 
   private aboveThreshold(points: number) {
