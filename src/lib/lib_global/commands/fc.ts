@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { FriendCodeManager } from '../models/friend_code_manager';
 
@@ -13,7 +13,7 @@ const fc: Command<Opts> = async (args) => {
   await disambiguate(args, { get: fcGet, set: fcSet });
 };
 
-const fcGet: CommandHandler<GetOpts> = async ({ embed, opts }) => {
+const fcGet: CommandFn<GetOpts> = async ({ embed, opts }) => {
   const manager = new FriendCodeManager(opts.get.member);
   await manager.load();
 
@@ -26,7 +26,7 @@ const fcGet: CommandHandler<GetOpts> = async ({ embed, opts }) => {
     .reply();
 };
 
-const fcSet: CommandHandler<SetOpts> = async ({ opts, embed, member }) => {
+const fcSet: CommandFn<SetOpts> = async ({ opts, embed, member }) => {
   const manager = new FriendCodeManager(member);
   await manager.save(opts.set);
 

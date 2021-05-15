@@ -1,5 +1,4 @@
 import {
-  ColorResolvable,
   CommandInteraction,
   GuildMember,
   MessageEmbed,
@@ -9,8 +8,13 @@ import { PORY_ASSETS } from './assets';
 import COLORS from './colors.json';
 
 type Reply = (embed: PorygonEmbed) => Promise<void>;
+
 type EmbeddableFn = (embed: PorygonEmbed) => void;
 type Embeddable = EmbeddableFn | { intoEmbed: EmbeddableFn };
+
+type Nullish<T> = T | null | undefined;
+type Transform<T> = (from: T) => any;
+
 type SetAuthorFromOpts = {
   withDiscriminator?: boolean;
   url?: string;
@@ -29,7 +33,7 @@ export class PorygonEmbed extends MessageEmbed {
     super();
   }
 
-  setColorIfNonZero(color: ColorResolvable) {
+  setColorIfNonZero(color: number) {
     if (color !== 0) {
       this.setColor(color);
     }
@@ -80,8 +84,12 @@ export class PorygonEmbed extends MessageEmbed {
     return this.addField(name, value, true);
   }
 
-  addFieldIfPresent(name: any, value: any) {
-    value && this.addField(name, value);
+  addFieldIfPresent<T>(name: any, value: Nullish<T>, transform?: Transform<T>) {
+    if (value) {
+      if (transform) value = transform(value);
+      this.addField(name, value);
+    }
+
     return this;
   }
 

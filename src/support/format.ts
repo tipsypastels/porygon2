@@ -30,7 +30,6 @@ export interface CodeBlockOpts {
  * Converts a string to a code block, optionally with a provided language.
  */
 export function codeBlock(value: any, opts: CodeBlockOpts = {}) {
-  if (!value) return value;
   if (opts.inspect) value = inspect(value);
   return `\`\`\`${opts.lang}\n${value}\`\`\``;
 }

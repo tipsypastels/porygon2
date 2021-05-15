@@ -1,5 +1,5 @@
 import { Role } from 'discord.js';
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { InteractionWarning } from 'interaction/errors';
 import { assertRequestable } from '../models/role_mod/policy';
@@ -12,12 +12,7 @@ const role: Command<Opts> = async (args) => {
   await disambiguate(args, { add: roleAdd, remove: roleRem });
 };
 
-const roleAdd: CommandHandler<AddOpts> = async ({
-  opts,
-  embed,
-  lib,
-  member,
-}) => {
+const roleAdd: CommandFn<AddOpts> = async ({ opts, embed, lib, member }) => {
   const { role } = opts.add;
 
   if (member.roles.cache.has(role.id)) {
@@ -29,12 +24,7 @@ const roleAdd: CommandHandler<AddOpts> = async ({
   await embed.okColor().setTitle(`Gave you "${role.name}"!`).reply();
 };
 
-const roleRem: CommandHandler<RemOpts> = async ({
-  opts,
-  embed,
-  lib,
-  member,
-}) => {
+const roleRem: CommandFn<RemOpts> = async ({ opts, embed, lib, member }) => {
   const { role } = opts.remove;
 
   if (!member.roles.cache.has(role.id)) {

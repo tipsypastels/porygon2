@@ -1,5 +1,5 @@
 import { OWNER } from 'secrets.json';
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { InteractionDanger } from 'interaction/errors';
 import {
@@ -20,7 +20,7 @@ const op: Command<Opts> = async (args) => {
   await disambiguate(args, { stats: opStats });
 };
 
-const opStats: CommandHandler<StatsOpts> = async ({ embed, client }) => {
+const opStats: CommandFn<StatsOpts> = async ({ embed, client }) => {
   await embed
     .infoColor()
     .setTitle('Stats for operators')

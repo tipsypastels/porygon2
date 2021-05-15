@@ -1,4 +1,4 @@
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { code, codeBlock } from 'support/format';
 import { OWNER } from 'secrets.json';
@@ -17,7 +17,7 @@ const setting: Command<Opts> = async (opts) => {
   });
 };
 
-const settingGet: CommandHandler<GetOpts> = async ({ opts, embed }) => {
+const settingGet: CommandFn<GetOpts> = async ({ opts, embed }) => {
   const { key } = opts.get;
   const { value } = Settings.setting(key);
 
@@ -29,7 +29,7 @@ const settingGet: CommandHandler<GetOpts> = async ({ opts, embed }) => {
     .reply();
 };
 
-const settingSet: CommandHandler<SetOpts> = async ({ opts, embed }) => {
+const settingSet: CommandFn<SetOpts> = async ({ opts, embed }) => {
   const { key, value: rawValue } = opts.set;
 
   await parse(rawValue)
@@ -52,7 +52,7 @@ const settingSet: CommandHandler<SetOpts> = async ({ opts, embed }) => {
     });
 };
 
-const settingUpdate: CommandHandler<UpdateOpts> = async ({
+const settingUpdate: CommandFn<UpdateOpts> = async ({
   opts,
   embed,
   member,

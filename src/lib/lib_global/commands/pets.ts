@@ -1,6 +1,6 @@
 import { Pet } from '.prisma/client';
 import { Guild, GuildMember } from 'discord.js';
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { InteractionWarning, InteractionDanger } from 'interaction/errors';
 import { database } from 'porygon/database';
@@ -18,12 +18,7 @@ const pets: Command<Opts> = async (args) => {
   await disambiguate(args, { add: petsAdd, delete: petsDel, random: petsRand });
 };
 
-const petsAdd: CommandHandler<AddOpts> = async ({
-  opts,
-  embed,
-  guild,
-  member,
-}) => {
+const petsAdd: CommandFn<AddOpts> = async ({ opts, embed, guild, member }) => {
   const { url } = opts.add;
   const data = { url, guildId: guild.id, userId: member.id };
   const entry = await database.pet.create({ data });
@@ -39,12 +34,7 @@ const petsAdd: CommandHandler<AddOpts> = async ({
     .reply();
 };
 
-const petsDel: CommandHandler<DelOpts> = async ({
-  opts,
-  embed,
-  guild,
-  member,
-}) => {
+const petsDel: CommandFn<DelOpts> = async ({ opts, embed, guild, member }) => {
   const { id } = opts.delete;
   const entry = await database.pet.findFirst({
     where: { id, guildId: guild.id },
@@ -68,7 +58,7 @@ const petsDel: CommandHandler<DelOpts> = async ({
   await embed.okColor().setTitle('Pet deleted!').reply();
 };
 
-const petsRand: CommandHandler<RandOpts> = async ({ opts, embed, guild }) => {
+const petsRand: CommandFn<RandOpts> = async ({ opts, embed, guild }) => {
   const { by } = opts.random;
   const entry = await randomEntry(guild, by);
 

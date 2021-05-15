@@ -1,6 +1,6 @@
 import { Asset } from './asset/index';
-import fromEntries from 'object.fromentries';
 import { range } from 'support/array';
+import { mapToObjectWithKeys } from 'support/object';
 
 export const COIN_ASSETS = Asset.group('coins', {
   heads: 'heads.png',
@@ -21,7 +21,7 @@ export const PORY_ASSETS = Asset.group('pory', {
   'warning': 'warning.png',
 });
 
-export const HANGMAN_ASSETS = Asset.group<number>(
+export const HANGMAN_ASSETS = Asset.group(
   'hangman',
-  fromEntries(range(0, 10).map((r) => [r, `${r}.png`])),
+  mapToObjectWithKeys(range(0, 10), (n) => `${n}.png`),
 );

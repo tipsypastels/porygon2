@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import {
   CtCycleRunner,
@@ -23,10 +23,7 @@ const ct: Command<Opts> = async (args) => {
   });
 };
 
-const ctScoreboard: CommandHandler<ScoreboardOpts> = async ({
-  embed,
-  guild,
-}) => {
+const ctScoreboard: CommandFn<ScoreboardOpts> = async ({ embed, guild }) => {
   const scoreboard = new CtScoreboard(guild);
 
   embed.infoColor().setTitle('COOLTRAINER Scoreboard');
@@ -38,17 +35,17 @@ const ctScoreboard: CommandHandler<ScoreboardOpts> = async ({
   await embed.reply();
 };
 
-const ctTick: CommandHandler<TickOpts> = async ({ embed, guild }) => {
+const ctTick: CommandFn<TickOpts> = async ({ embed, guild }) => {
   CtTickRunner.run(guild);
   await embed.okColor().setTitle('Initiated a cooltrainer tick.').reply();
 };
 
-const ctCycle: CommandHandler<CycleOpts> = async ({ embed, guild }) => {
+const ctCycle: CommandFn<CycleOpts> = async ({ embed, guild }) => {
   CtCycleRunner.run(guild);
   await embed.okColor().setTitle('Initiated a cooltrainer cycle.').reply();
 };
 
-const ctShow: CommandHandler<ShowOpts> = async ({ opts, embed }) => {
+const ctShow: CommandFn<ShowOpts> = async ({ opts, embed }) => {
   const { member } = opts.show;
   const summary = await CtScoreManager.fetchSummary(member);
 

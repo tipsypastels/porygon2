@@ -46,17 +46,18 @@ export class FriendCodeManager {
   }
 
   intoEmbed(embed: PorygonEmbed) {
-    if (!this.codes) {
+    const { codes } = this;
+
+    if (!codes) {
       return embed.setDescription(
         `${this.member.displayName} has no friend code data set.`,
       );
     }
 
-    const { ds, switch: _switch, go } = this.codes;
     return embed
-      .addFieldIfPresent('Switch', codeBlock(_switch))
-      .addFieldIfPresent('3DS', codeBlock(ds))
-      .addFieldIfPresent('Pokémon Go', codeBlock(go));
+      .addFieldIfPresent('Switch', codes.switch, codeBlock)
+      .addFieldIfPresent('3DS', codes.ds, codeBlock)
+      .addFieldIfPresent('Pokémon Go', codes.go, codeBlock);
   }
 
   private normalize(rawData: RawData): Data {

@@ -1,9 +1,9 @@
 import { logger } from 'porygon/logger';
-import { CommandArgs, CommandHandler } from '.';
+import { CommandArgs, CommandFn } from '.';
 import { inspect } from 'util';
 
 type Groups<T, G> = {
-  [K in keyof G]: CommandHandler<Extract<T, Record<K, any>>>;
+  [K in keyof G]: CommandFn<Extract<T, Record<K, any>>>;
 };
 
 export function disambiguate<T, G>(args: CommandArgs<T>, groups: Groups<T, G>) {

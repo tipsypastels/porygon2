@@ -12,4 +12,13 @@ export class CollectionCache<K, V> extends Collection<K, V> {
     this.set(key, created);
     return created;
   }
+
+  async findOrAsync(key: K, gen: () => V | Promise<V>) {
+    const existing = this.get(key);
+    if (existing) return existing;
+
+    const created = await gen();
+    this.set(key, created);
+    return created;
+  }
 }

@@ -1,5 +1,5 @@
-import fromEntries from 'object.fromentries';
 import { create, all } from 'mathjs';
+import { mapToObjectWithKeys } from 'support/object';
 
 const math = create(all);
 export const evaluate = math.evaluate!;
@@ -23,6 +23,6 @@ function disabled(fn: string) {
   };
 }
 
-math.import!(fromEntries(UNSAFE_FNS.map((f) => [f, disabled(f)])), {
+math.import!(mapToObjectWithKeys(UNSAFE_FNS, disabled), {
   override: true,
 });

@@ -19,13 +19,13 @@ export type CommandArgs<T> = {
   opts: T;
   lib: Lib;
 };
-export type CommandHandler<T> = (args: CommandArgs<T>) => Promise<void>;
+export type CommandFn<T> = (args: CommandArgs<T>) => Promise<void>;
 export type CommandWithNoConflictName = { commandName?: string };
-export type Command<T = unknown> = CommandHandler<T> &
+export type Command<T = unknown> = CommandFn<T> &
   ApplicationCommandData &
   CommandWithNoConflictName;
 
-export function removeCommandHandler(command: Command): ApplicationCommandData {
+export function removeCommandFn(command: Command): ApplicationCommandData {
   return { ...command, name: effectiveCommandName(command) };
 }
 

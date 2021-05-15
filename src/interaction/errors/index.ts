@@ -31,7 +31,7 @@ export abstract class InteractionBaseError {
   intoEmbed(embed: PorygonEmbed) {
     if (this.title) embed.setTitle(this.title);
     if (this.message) embed.setDescription(this.message);
-    return embed.merge({ intoEmbed: (e) => this.yieldEmbed?.(e) });
+    return embed.merge((e) => this.yieldEmbed?.(e));
   }
 }
 

@@ -6,7 +6,7 @@ import { random } from 'support/array';
 const thanos: Command = async ({ embed, member }) => {
   const rng = seedRandom(member.id);
   const result = random(RESULTS, rng);
-  await embed.poryThumb('thanos').merge({ intoEmbed: result }).reply();
+  await embed.poryThumb('thanos').merge(result).reply();
 };
 
 thanos.description = 'Rolls the dice on your fate.';

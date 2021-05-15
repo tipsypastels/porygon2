@@ -8,7 +8,7 @@ import {
 import {
   Command,
   effectiveCommandName,
-  removeCommandHandler,
+  removeCommandFn,
 } from 'interaction/command';
 import { runCommand } from 'interaction/command/runtime';
 import type { Lib } from 'lib/lib';
@@ -84,7 +84,7 @@ export class LibCommandManager {
   }
 
   protected upload(commands: Command[]) {
-    const data = commands.map(removeCommandHandler);
+    const data = commands.map(removeCommandFn);
 
     if (this.isGlobal) return this.uploadGlobal(data);
     if (this.guild) return this.uploadGuild(data, this.guild);

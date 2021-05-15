@@ -1,5 +1,5 @@
 import { ApplicationCommandOption, Role } from 'discord.js';
-import { Command, CommandHandler } from 'interaction/command';
+import { Command, CommandFn } from 'interaction/command';
 import { disambiguate } from 'interaction/command/disambiguate';
 import { isDev } from 'support/dev';
 import {
@@ -22,14 +22,14 @@ const rolemod: Command<Opts> = async (args) => {
   });
 };
 
-const rolemodGet: CommandHandler<GetOpts> = async ({ embed, opts }) => {
+const rolemodGet: CommandFn<GetOpts> = async ({ embed, opts }) => {
   const { role } = opts.get;
   const result = await fetchRoleMod(role);
 
   await embed.infoColor().setTitle(role.name).merge(result).reply();
 };
 
-const rolemodSet: CommandHandler<SetOpts> = async ({ embed, opts }) => {
+const rolemodSet: CommandFn<SetOpts> = async ({ embed, opts }) => {
   const { role, ...roleOpts } = opts.set;
   const result = await updateRoleMod(role, roleOpts);
 
@@ -40,11 +40,7 @@ const rolemodSet: CommandHandler<SetOpts> = async ({ embed, opts }) => {
     .reply();
 };
 
-const rolemodCreate: CommandHandler<CreateOpts> = async ({
-  embed,
-  opts,
-  guild,
-}) => {
+const rolemodCreate: CommandFn<CreateOpts> = async ({ embed, opts, guild }) => {
   const result = await createRoleMod(guild, opts.create);
   await embed.okColor().merge(result).reply();
 };
