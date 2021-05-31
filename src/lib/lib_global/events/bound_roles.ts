@@ -1,37 +1,34 @@
+import { GuildMember, PartialGuildMember, Collection, Role } from 'discord.js';
 import { GuildHandler } from 'lib/lib/event';
-
-// TODO: revisit this when @discordjs/collection is consistently used
+import {
+  regainBoundRoles,
+  tryAddBoundRole,
+  tryRemoveBoundRole,
+} from '../models/bound_role';
 
 const boundRoleHandler: GuildHandler = ({ em }) => {
-  // em.on('guildMemberUpdate', onUpdate);
+  em.on('guildMemberUpdate', onUpdate).on('guildMemberAdd', onJoin);
 };
 
 export default boundRoleHandler;
 
-// function onUpdate(from: GuildMember | PartialGuildMember, to: GuildMember) {
-//   const [added, removed] = findRoleChanges(from.roles.cache, to.roles.cache);
+type Roles = Collection<string, Role>;
+type RolesTuple = [Roles, Roles];
 
-//   Promise.all([eachAddedRole(added, to)]);
-// }
+function onUpdate(from: GuildMember | PartialGuildMember, to: GuildMember) {
+  const [added, removed] = findRoleChanges(from.roles.cache, to.roles.cache);
 
-// function findRoleChanges(
-//   from: Collection<string, Role>,
-//   to: Collection<string, Role>,
-// ) {
-//   return from.difference(to).partition((role) => to.has(role.id));
-// }
+  const addedPromises = added.map((role) => tryAddBoundRole(to, role));
+  const removedPromises = removed.map((role) => tryRemoveBoundRole(to, role));
 
-// async function eachAddedRole(
-//   added: Collection<string, Role>,
-//   member: GuildMember,
-// ) {
-//   if (added.size === 0) {
-//     return;
-//   }
+  return Promise.all(addedPromises.concat(removedPromises));
+}
 
-//   const promises = added.map((role) => {
-//     return tryBindRoleToMember(member, role);
-//   });
+function onJoin(member: GuildMember) {
+  regainBoundRoles(member);
+}
 
-//   await Promise.all(promises);
-// }
+// NOTE: typecast needed bc this technically returns a BaseCollection
+function findRoleChanges(from: Roles, to: Roles) {
+  return from.difference(to).partition((role) => to.has(role.id)) as RolesTuple;
+}
