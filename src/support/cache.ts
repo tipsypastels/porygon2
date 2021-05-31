@@ -2,7 +2,7 @@ import { Collection } from 'discord.js';
 
 /**
  * Same as `Collection`, but provides utility for one-liner memoization.
- * @deprecated - Use `Cache` or `AsyncCache`.
+ * @deprecated Use `Cache` or `AsyncCache`.
  */
 export class CollectionCache<K, V> extends Collection<K, V> {
   findOr(key: K, gen: () => V) {

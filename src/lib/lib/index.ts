@@ -17,7 +17,7 @@ import { LibEventManager } from './event/manager';
  * passed to each setup callback automatically.
  */
 export class Lib {
-  static instances = new CollectionCache<string, Lib>();
+  private static instances = new CollectionCache<string, Lib>();
 
   static findOrCreate(client: Porygon, guildId: string) {
     return this.instances.findOr(guildId, () => new this(client, guildId));

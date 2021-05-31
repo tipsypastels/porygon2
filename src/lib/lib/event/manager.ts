@@ -16,7 +16,7 @@ export class LibEventManager {
     this.client.on<K>(key, (...args) => {
       const guild = this.extractGuild(args[0]);
 
-      if (guild?.id === thisGuild.id) {
+      if (this.isGlobal || guild?.id === thisGuild?.id) {
         handler(...args);
       }
     });
@@ -32,9 +32,15 @@ export class LibEventManager {
     return this.lib.guild;
   }
 
-  private assertGuild() {
-    if (!this.guild) {
-      throw new Error('Tried to use lib handler on a nonexistant guild.');
+  get isGlobal() {
+    return this.lib.isGlobal;
+  }
+
+  private assertGuild(): Guild | undefined {
+    if (!this.isGlobal && !this.guild) {
+      throw new Error(
+        `Tried to use lib handler on a nonexistant guild: ${this.lib.guildId}`,
+      );
     }
 
     return this.guild;
