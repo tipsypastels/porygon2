@@ -25,5 +25,5 @@ export const HANGMAN_ASSETS = Asset.numberedGroup('hangman', extension('png'));
 // export const HEADPAT_ASSETS = Asset.numberedGroup('headpats', extension('gif'));
 export const HEADPAT_ASSETS = Asset.group(
   'headpats',
-  mapToObjectWithKeys(range(0, 25), (n) => `${n}.gif`),
+  mapToObjectWithKeys(range(0, 30), (n) => `${n}.gif`),
 );
