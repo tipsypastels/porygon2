@@ -4,6 +4,7 @@ import {
   MessageEmbed,
   User,
 } from 'discord.js';
+import { AssetGroupKey } from './asset/group';
 import { PORY_ASSETS } from './assets';
 import COLORS from './colors.json';
 
@@ -56,8 +57,8 @@ export class PorygonEmbed extends MessageEmbed {
     return this;
   }
 
-  poryThumb(thumb: keyof typeof PORY_ASSETS) {
-    return this.setThumbnail(PORY_ASSETS[thumb].url);
+  poryThumb(thumb: AssetGroupKey<typeof PORY_ASSETS>) {
+    return this.setThumbnail(PORY_ASSETS.get(thumb).url);
   }
 
   okColor() {

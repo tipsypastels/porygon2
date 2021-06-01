@@ -15,6 +15,6 @@ export class HangmanNoose {
   }
 
   intoEmbed(embed: PorygonEmbed) {
-    embed.setThumbnail(HANGMAN_ASSETS[this.stage].url);
+    embed.setThumbnail(HANGMAN_ASSETS.get(this.stage).url);
   }
 }

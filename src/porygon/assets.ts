@@ -1,6 +1,4 @@
-import { Asset } from './asset/index';
-import { range } from 'support/array';
-import { mapToObjectWithKeys } from 'support/object';
+import { Asset, extension } from './asset/index';
 
 export const COIN_ASSETS = Asset.group('coins', {
   heads: 'heads.png',
@@ -21,7 +19,5 @@ export const PORY_ASSETS = Asset.group('pory', {
   'warning': 'warning.png',
 });
 
-export const HANGMAN_ASSETS = Asset.group(
-  'hangman',
-  mapToObjectWithKeys(range(0, 10), (n) => `${n}.png`),
-);
+export const HANGMAN_ASSETS = Asset.numberedGroup('hangman', extension('png'));
+export const HEADPAT_ASSETS = Asset.numberedGroup('headpats', extension('gif'));

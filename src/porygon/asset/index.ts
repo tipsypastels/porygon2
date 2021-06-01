@@ -1,18 +1,20 @@
+import { readdirSync } from 'fs';
+import { range } from 'support/array';
+import { mapToObjectWithKeys } from 'support/object';
+import { AssetGroup } from './group';
 import { assetCache, assetGet } from './map';
 import { assetSetupIsDone } from './setup';
 
-export type AssetGroup<K extends PropertyKey> = Record<K, Asset>;
-
 export class Asset {
   static group<K extends PropertyKey>(dir: string, files: Record<K, string>) {
-    const group: Partial<AssetGroup<K>> = {};
-    let key: K;
+    return new AssetGroup(dir, files);
+  }
 
-    for (key in files) {
-      group[key] = this.open(dir, files[key]);
-    }
+  static numberedGroup(dir: string, map: (index: number) => string) {
+    const filesCount = getAssetFilesCountInDir(this.path(dir, ''));
+    const inputRange = mapToObjectWithKeys(range(0, filesCount - 1), map);
 
-    return group as AssetGroup<K>;
+    return this.group(dir, inputRange);
   }
 
   static open(dir: string, file: string) {
@@ -53,4 +55,14 @@ export class Asset {
 
     this._url = url;
   }
+}
+
+export function extension(ext: string) {
+  return <K>(key: K) => `${key}.${ext}`;
+}
+
+const ASSET_EXTENSIONS = /\.(gif|jpg|jpeg|png)$/;
+
+function getAssetFilesCountInDir(dir: string) {
+  return readdirSync(dir).filter((f) => f.match(ASSET_EXTENSIONS)).length;
 }
