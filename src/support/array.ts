@@ -15,6 +15,24 @@ export function samples<T>(count: number, array: T[], rand = Math.random): T[] {
 }
 
 /**
+ * Splits `array` into an array of arrays, each of size `size`.
+ * The final sub-array may be smaller if the sizes don't match up.
+ */
+export function chunk<T>(size: number, array: T[]) {
+  const out: T[][] = [];
+
+  for (let i = 0; i < array.length; i++) {
+    if (i % size === 0) {
+      out.push([]);
+    }
+
+    out[out.length - 1].push(array[i]);
+  }
+
+  return out;
+}
+
+/**
  * Calls the callback `count` times. Acts like `Array.prototype.map` if the callback
  * returns a value.
  */

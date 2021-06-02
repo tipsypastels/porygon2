@@ -1,5 +1,3 @@
-import { range } from 'support/array';
-import { mapToObjectWithKeys } from 'support/object';
 import { Asset, extension } from './asset/index';
 
 export const COIN_ASSETS = Asset.group('coins', {

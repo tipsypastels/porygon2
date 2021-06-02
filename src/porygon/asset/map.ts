@@ -1,3 +1,4 @@
+import { chunk } from 'support/array';
 import type { Asset } from './index';
 
 const MAP = new Map<string, Asset>();
@@ -19,3 +20,9 @@ export function mapAssets<R>(map: (asset: Asset) => R) {
 
   return out;
 }
+
+export function chunkAssets() {
+  return chunk(CHUNK_SIZE, [...MAP.values()]);
+}
+
+const CHUNK_SIZE = 10;

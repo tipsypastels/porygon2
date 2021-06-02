@@ -2,7 +2,8 @@ import fromEntries from 'object.fromentries';
 import { stat, writeFile } from 'fs/promises';
 import { upload } from './imgur';
 import { logger } from 'porygon/logger';
-import { mapAssets } from './map';
+import { chunkAssets, mapAssets } from './map';
+import { Seconds } from 'support/time';
 
 type UploadCache = {
   lastRun: number;
@@ -21,28 +22,44 @@ export async function setupAssets() {
   // ensure all assets are loaded
   await import('../assets');
 
+  const chunks = chunkAssets();
   const cache = await fetchUploadCache();
   const lastRun = cache?.lastRun ?? 0;
 
   let shouldCreateNextUploadCache = !cache;
 
-  const promises = mapAssets(async (asset) => {
-    const { mtime } = await stat(asset.path);
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i];
+    const isNotLastChunk = i < chunks.length - 1;
 
-    if (cache?.urls[asset.path] && mtime.getTime() <= lastRun) {
-      asset.url = cache.urls[asset.path];
-      return;
+    let didUploadAnyThisChunk = false;
+
+    const promises = chunk.map(async (asset) => {
+      const { mtime } = await stat(asset.path);
+
+      if (cache?.urls[asset.path] && mtime.getTime() <= lastRun) {
+        asset.url = cache.urls[asset.path];
+        return;
+      }
+
+      logger.setup(`Uploading asset ${asset.path}...`);
+
+      const url = await upload(asset);
+
+      asset.url = url;
+
+      shouldCreateNextUploadCache = true;
+      didUploadAnyThisChunk = true;
+    });
+
+    await Promise.all(promises);
+
+    if (didUploadAnyThisChunk && isNotLastChunk) {
+      await pause();
     }
+  }
 
-    logger.setup(`Uploading asset ${asset.path}...`);
-
-    const url = await upload(asset);
-
-    asset.url = url;
-    shouldCreateNextUploadCache = true;
-  });
-
-  await Promise.all(promises);
+  logger.info('Done uploading.');
 
   if (shouldCreateNextUploadCache) {
     await createNextUploadCache();
@@ -69,4 +86,12 @@ async function createNextUploadCache() {
   const json = JSON.stringify(cache, null, 2);
 
   await writeFile(CACHE_FILE, json);
+}
+
+function pause() {
+  logger.warn('Pausing upload for a few seconds to avoid 429...');
+
+  return new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), Seconds(10));
+  });
 }
