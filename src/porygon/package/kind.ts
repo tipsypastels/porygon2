@@ -5,7 +5,7 @@ import {
 } from 'discord.js';
 import { Porygon } from 'porygon/client';
 import { TEST_SERVER } from 'secrets.json';
-import { isDev } from 'support/dev';
+import { Cache, Singleton } from 'support/cache';
 
 type UploadedCmds = Promise<Collection<string, Cmd> | undefined>;
 
@@ -14,6 +14,10 @@ type UploadedCmds = Promise<Collection<string, Cmd> | undefined>;
  * different settings for guild-locking, where to upload commands, etc.
  */
 export abstract class PackageKind {
+  protected constructor() {
+    /* nop */
+  }
+
   abstract matches(guildId: string | undefined): boolean;
   abstract upload(data: CmdData[], client: Porygon): UploadedCmds;
 }
@@ -31,6 +35,14 @@ export namespace PackageKind {
    * All `PackageKind`s are overridden to have this time in development mode.
    */
   export class Dev extends PackageKind {
+    private static VALUE = new Singleton<Dev>(() => {
+      return new PackageKind.Dev();
+    });
+
+    static init() {
+      return this.VALUE.get();
+    }
+
     matches() {
       return true;
     }
@@ -44,12 +56,20 @@ export namespace PackageKind {
   /**
    * The only `PackageKind` to exist in development.
    */
-  export const DEV_SINGLETON = new PackageKind.Dev();
+  export const DEV_SINGLETON = PackageKind.Dev.init();
 
   /**
    * A package that applies to all guilds. Commands will be uploaded globally.
    */
   export class Global extends PackageKind {
+    private static VALUE = new Singleton<Global>(() => {
+      return new PackageKind.Global();
+    });
+
+    static init() {
+      return this.VALUE.get();
+    }
+
     matches() {
       return true;
     }
@@ -63,7 +83,15 @@ export namespace PackageKind {
    * A package that matches a single guild.
    */
   export class Guild extends PackageKind {
-    constructor(private guildId: string) {
+    private static ALL = new Cache((guildId: string) => {
+      return new PackageKind.Guild(guildId);
+    });
+
+    static init(guildId: string) {
+      return this.ALL.get(guildId);
+    }
+
+    protected constructor(private guildId: string) {
       super();
     }
 
@@ -88,25 +116,29 @@ export namespace PackageKind {
 
   /**
    * A package that matches several known guilds.
+   *
+   * NOTE: Instead of storing guild IDs directly, it
+   * takes sub-`PackageKind`s. This is so the kinds
+   * can be de-duped properly and don't clobber
+   * each other's commands, as would happen
+   * if we uploaded them directly.
    */
   export class Guilds extends PackageKind {
-    constructor(private guildIds: string[]) {
+    packages: PackageKind.Guild[];
+
+    constructor(guildIds: string[]) {
       super();
+
+      this.packages = guildIds.map((i) => PackageKind.Guild.init(i));
     }
 
     matches(guildId: string | undefined) {
-      return !!guildId && this.guildIds.includes(guildId);
+      return !!guildId && this.packages.some((p) => p.matches(guildId));
     }
 
     async upload(data: CmdData[], client: Porygon) {
-      const promises = this.guildIds.map(async (id) => {
-        const guild = client.guilds.cache.get(id);
-
-        if (!guild) {
-          return;
-        }
-
-        return await guild.commands.set(data);
+      const promises = this.packages.map((pkg) => {
+        return pkg.upload(data, client);
       });
 
       // all entries should be the same

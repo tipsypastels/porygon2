@@ -1,29 +1,5 @@
 import { Collection } from 'discord.js';
 
-/**
- * Same as `Collection`, but provides utility for one-liner memoization.
- * @deprecated Use `Cache` or `AsyncCache`.
- */
-export class CollectionCache<K, V> extends Collection<K, V> {
-  findOr(key: K, gen: () => V) {
-    const existing = this.get(key);
-    if (existing) return existing;
-
-    const created = gen();
-    this.set(key, created);
-    return created;
-  }
-
-  async findOrAsync(key: K, gen: () => V | Promise<V>) {
-    const existing = this.get(key);
-    if (existing) return existing;
-
-    const created = await gen();
-    this.set(key, created);
-    return created;
-  }
-}
-
 type Default<K, V, C> = (key: K, cache: C) => V;
 
 class BaseCache<K, V> {
@@ -75,5 +51,20 @@ export class AsyncCache<K, V> extends BaseCache<K, V> {
     const newValue = await this._default(key, this);
     this.cache(key, newValue);
     return newValue;
+  }
+}
+
+const UNSET_SENTINEL: unique symbol = Symbol('UNSET_SENTINEL');
+
+export class Singleton<T> {
+  private value: T | typeof UNSET_SENTINEL = UNSET_SENTINEL;
+  constructor(private _default: () => T) {}
+
+  get() {
+    if (this.value === UNSET_SENTINEL) {
+      this.value = this._default();
+    }
+
+    return this.value;
   }
 }
