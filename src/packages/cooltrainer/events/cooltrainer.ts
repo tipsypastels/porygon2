@@ -7,10 +7,6 @@ const ctHandler: EventHandler<PackageKind.Guild> = ({
   kind,
   client,
 }) => {
-  if (kind instanceof PackageKind.Dev) {
-    return;
-  }
-
   const guild = kind.guild(client);
 
   if (guild) {

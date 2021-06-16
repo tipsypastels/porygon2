@@ -12,6 +12,10 @@ type UploadedCmds = Promise<Collection<string, Cmd> | undefined>;
 /**
  * Disambiguates a particular package by encapsulating
  * different settings for guild-locking, where to upload commands, etc.
+ *
+ * NOTE: This is *not* a unique ID for each package. Quite the opposite,
+ * as `PackageKind` construction is memoized based on the constructor
+ * parameters (those that take no parameters are singletons).
  */
 export abstract class PackageKind {
   protected constructor() {
@@ -43,13 +47,16 @@ export namespace PackageKind {
       return this.VALUE.get();
     }
 
+    guild(client: Porygon) {
+      return client.guilds.cache.get(TEST_SERVER)!;
+    }
+
     matches() {
       return true;
     }
 
     upload(data: CmdData[], client: Porygon) {
-      const guild = client.guilds.cache.get(TEST_SERVER)!;
-      return guild.commands.set(data);
+      return this.guild(client).commands.set(data);
     }
   }
 

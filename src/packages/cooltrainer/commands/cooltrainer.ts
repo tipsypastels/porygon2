@@ -1,5 +1,6 @@
 import { GuildMember } from 'discord.js';
 import { Command } from 'porygon/interaction/command';
+import { isDev } from 'support/dev';
 import {
   CtCycleRunner,
   CtScoreboard,
@@ -48,6 +49,7 @@ export default new Command.Multipart(
   {
     name: 'cooltrainer',
     description: 'Commands relating to cooltrainer.',
+    defaultPermission: isDev,
     options: [
       {
         name: 'scoreboard',
