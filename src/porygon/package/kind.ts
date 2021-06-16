@@ -31,16 +31,6 @@ export namespace PackageKind {
    * All `PackageKind`s are overridden to have this time in development mode.
    */
   export class Dev extends PackageKind {
-    constructor() {
-      if (!isDev) {
-        throw new Error(
-          'Tried to create a `PackageKind.Dev` in production. This is almost certainly a bug.',
-        );
-      }
-
-      super();
-    }
-
     matches() {
       return true;
     }
