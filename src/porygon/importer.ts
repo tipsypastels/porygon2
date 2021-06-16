@@ -81,6 +81,10 @@ export class Importer<T, R = T> {
 
   protected onImportFailure(error: any, file: string) {
     this.error(`file ${basename(file)} failed to import: ${error}`);
+
+    if ('stack' in error) {
+      this.error(error.stack);
+    }
   }
 
   protected onMissingDefaultExport(file: string) {

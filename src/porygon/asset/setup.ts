@@ -44,9 +44,7 @@ export async function setupAssets() {
 
       logger.setup(`Uploading asset ${asset.path}...`);
 
-      const url = await upload(asset);
-
-      asset.url = url;
+      asset.url = await upload(asset);
 
       shouldCreateNextUploadCache = true;
       didUploadAnyThisChunk = true;

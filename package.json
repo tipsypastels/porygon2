@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@prisma/client": "^2.20.1",
+    "@tipsypastels/pokemon": "^0.0.3",
     "@types/node-cron": "^2.0.3",
     "canvas": "^2.7.0",
     "date-fns": "^2.20.0",
