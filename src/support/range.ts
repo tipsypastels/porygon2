@@ -1,3 +1,5 @@
+import { randomInt } from 'mathjs';
+
 /**
  * A range type. Distinct from the `range` function by not producing an array,
  * but a custom type holding the bounds instead.
@@ -25,7 +27,7 @@ export class LazyRange {
   }
 
   sample() {
-    return Math.random() * (this.min - this.max) + this.min;
+    return randomInt(this.min, this.max + 1);
   }
 
   toArray() {
