@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { DiceRoll, DiceRollOpts } from '../dice_roll';
 
 const dice: Command.Fn<DiceRollOpts> = async ({ opts, embed }) => {

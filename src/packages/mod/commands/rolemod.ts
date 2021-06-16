@@ -1,5 +1,5 @@
 import { ApplicationCommandOption, Role } from 'discord.js';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { isDev } from 'support/dev';
 import {
   RoleModOpts,

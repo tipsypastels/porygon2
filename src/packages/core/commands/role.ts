@@ -1,5 +1,5 @@
 import { Role } from 'discord.js';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { InteractionWarning } from 'interaction/errors';
 import { assertRequestable } from 'packages/mod/role_mod/policy';
 

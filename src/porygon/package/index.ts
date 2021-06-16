@@ -18,5 +18,10 @@ export async function setupPackages(client: Porygon) {
 
 async function clearGlobalCommandsInDevelopment(client: Porygon) {
   if (!isDev) return;
-  await client.application!.commands.set([]);
+  await client.application!.commands.set([
+    {
+      name: 'ping',
+      description: 'yo',
+    },
+  ]);
 }

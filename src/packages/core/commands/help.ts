@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { OWNER } from 'secrets.json';
 

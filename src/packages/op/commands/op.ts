@@ -1,5 +1,5 @@
 import { OWNER } from 'secrets.json';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { InteractionDanger } from 'interaction/errors';
 import {
   missedPartialDeletions,

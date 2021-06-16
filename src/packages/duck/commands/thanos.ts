@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { PorygonEmbed } from 'porygon/embed';
 import seedRandom from 'seedrandom';
 import { random } from 'support/array';

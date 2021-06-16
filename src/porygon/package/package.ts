@@ -1,6 +1,6 @@
 import { ApplicationCommand, Collection, CommandInteraction } from 'discord.js';
 import { Porygon } from 'porygon/client';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { logger } from 'porygon/logger';
 import { PackageKind } from './kind';
 

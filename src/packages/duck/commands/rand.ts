@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { randomInt } from 'mathjs';
 
 interface Opts {

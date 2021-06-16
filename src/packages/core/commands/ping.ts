@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { uptime } from 'porygon/stats';
 
 const ping: Command.Fn = async ({ embed }) => {

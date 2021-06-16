@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { code, codeBlock } from 'support/format';
 import { OWNER } from 'secrets.json';
 import * as Settings from 'porygon/settings';

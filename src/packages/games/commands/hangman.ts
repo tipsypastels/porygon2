@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { Hangman } from '../hangman';
 
 const hangman: Command.Fn = async ({ channel, interaction }) => {

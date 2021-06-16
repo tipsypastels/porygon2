@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { OWNER } from 'secrets.json';
 import { isDev } from 'support/dev';
 import { codeBlock } from 'support/format';

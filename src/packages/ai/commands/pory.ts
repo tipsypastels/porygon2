@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { Markov } from '../markov';
 import { codeBlock } from 'support/format';
 

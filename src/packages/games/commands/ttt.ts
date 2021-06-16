@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { TicTacToe } from '../tic_tac_toe';
 
 interface Opts {

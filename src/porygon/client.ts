@@ -6,6 +6,7 @@ import { uptime } from './stats';
 import { setupActivityMessages } from './activity_message';
 import { setupAssets } from './asset/setup';
 import { Package, setupPackages } from './package';
+import { onDMCommand } from './interaction';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.
@@ -21,12 +22,17 @@ export class Porygon extends DiscordClient {
     });
 
     this.on('interaction', (interaction) => {
-      if (!interaction.guild || !interaction.isCommand()) {
+      if (!interaction.isCommand()) {
+        // we're not ready to handle these yet
         return;
       }
 
+      if (!interaction.guild) {
+        // inform user that commands can't be used in DMs
+        return onDMCommand(this, interaction);
+      }
+
       Package.runCommand(this, interaction);
-      // LibCommandManager.handle(this, interaction);
     });
   }
 

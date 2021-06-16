@@ -1,5 +1,5 @@
 import { Guild } from 'discord.js';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { random, range, toSentence } from 'support/array';
 

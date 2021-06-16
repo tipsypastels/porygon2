@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 
 const COLOR = 'E1A339';
 const FACES = {

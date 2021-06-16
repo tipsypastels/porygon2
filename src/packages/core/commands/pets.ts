@@ -1,6 +1,6 @@
 import { Pet } from '.prisma/client';
 import { Guild, GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { InteractionWarning, InteractionDanger } from 'interaction/errors';
 import { database } from 'porygon/database';
 import { setting } from 'porygon/settings';

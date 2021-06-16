@@ -1,5 +1,5 @@
 import { stat } from 'fs/promises';
-import { Command } from 'porygon/interaction/command';
+import { Command } from 'porygon/interaction';
 import { basename } from 'path';
 import { Porygon } from 'porygon/client';
 import { Importer } from 'porygon/importer';
