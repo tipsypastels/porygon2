@@ -1,12 +1,11 @@
 import './client/ascii';
 import { Client as DiscordClient } from 'discord.js';
-import { LibCommandManager } from 'lib/lib/command/manager';
 import { intents } from './client/intents';
 import { logger } from './logger';
 import { uptime } from './stats';
 import { setupActivityMessages } from './activity_message';
-import { setupLibs } from 'lib/lib/setup';
 import { setupAssets } from './asset/setup';
+import { Package, setupPackages } from './package';
 
 /**
  * The base Porygon class, which is a wrapper around discord.js's `Client`.
@@ -26,21 +25,22 @@ export class Porygon extends DiscordClient {
         return;
       }
 
-      LibCommandManager.handle(this, interaction);
+      Package.runCommand(this, interaction);
+      // LibCommandManager.handle(this, interaction);
     });
   }
 
   private async setup() {
     await Promise.all([
-      this.setupLibs(),
+      this.setupPackages(),
       this.setupActivityMessages(),
       this.setupStats(),
       this.setupAssets(),
     ]);
   }
 
-  private async setupLibs() {
-    await setupLibs(this);
+  private async setupPackages() {
+    await setupPackages(this);
   }
 
   private async setupActivityMessages() {

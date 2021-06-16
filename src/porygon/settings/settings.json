@@ -1,6 +1,74 @@
 {
-  "lib": {
+  "guilds": {
+    "pokecom": "157983957902819328",
+    "duck": "322199235825238017",
+    "dev": "746219046374080532"
+  },
+  "pkg": {
+    "core": {
+      "pets": {
+        "mod_perm": "KICK_MEMBERS"
+      }
+    },
+    "mod": {
+      "role": {
+        "staff_roles": ["owner", "admin", "moderator", "moderoid"]
+      }
+    },
     "duck": {
+      "joins": {
+        "duck_role": {
+          "prod": "754835519359418448",
+          "dev": "817479194279542794"
+        },
+        "channel": {
+          "prod": "380164124774236171",
+          "dev": "746219046374080535"
+        }
+      },
+      "8ball": {
+        "lines": [
+          "As I see it, yes.",
+          "Ask again later.",
+          "Better not tell you now.",
+          "Cannot predict now.",
+          "Concentrate and ask again.",
+          "Don’t count on it.",
+          "It is certain.",
+          "It is decidedly so.",
+          "Most likely.",
+          "My reply is no.",
+          "My sources say no.",
+          "Outlook not so good.",
+          "Outlook good.",
+          "Reply hazy, try again.",
+          "Signs point to yes.",
+          "Very doubtful.",
+          "Without a doubt.",
+          "Yes.",
+          "Yes – definitely.",
+          "You may rely on it."
+        ]
+      },
+      "nudge": {
+        "disasters": [
+          "Buildings crumble",
+          "Earthquakes makin their way downtown ziggin fast",
+          "Cookies crumble",
+          "Groudon: Emerges",
+          "A Porytude 7 earthquake!",
+          "Just imagine Discord shaking",
+          "Cars tumble down the roads",
+          "Earthquakes are uncomf",
+          "Hundreds of books drop from the shelves",
+          "All the chairs roll away",
+          "Vases fall and shatter",
+          "A glass of water spills",
+          "A plant falls over leaving dirt everywhere",
+          "Random ceiling tiles fall down",
+          "The floor shakes and cracks"
+        ]
+      },
       "inky": {
         "messages": [
           "🥺",
@@ -20,7 +88,9 @@
           "dev": "775630182521634846",
           "prod": "830569145204342794"
         }
-      },
+      }
+    },
+    "games": {
       "hangman": {
         "words": [
           "abruptly",
@@ -237,59 +307,41 @@
           "zodiac",
           "zombie"
         ]
-      },
-      "joins": {
-        "duck_role": {
-          "prod": "754835519359418448",
-          "dev": "817479194279542794"
-        },
-        "channel": {
-          "prod": "380164124774236171",
-          "dev": "746219046374080535"
-        }
       }
     },
-    "global": {
-      "pets": {
-        "mod_perm": "KICK_MEMBERS"
-      },
+    "cooltrainer": {
       "role": {
-        "staff_roles": ["owner", "admin", "moderator", "moderoid"]
+        "dev": "775261617805459486",
+        "prod": "531984098038775842"
+      },
+      "threshold": {
+        "dev": 10,
+        "prod": 600
+      },
+      "ppm_exceptions": {
+        "dev": {
+          "775630182521634846": 0
+        },
+        "prod": {
+          "185850117918556161": 0,
+          "423905036859604993": 0,
+          "613756774234718209": 0,
+          "159086206385258496": 0,
+          "722939153242652723": 0,
+          "603285325334446090": 0,
+          "162925288362082304": 0,
+          "469134262462054400": 0,
+          "469134365952049193": 0,
+          "582487187409469440": 0,
+          "222724364276072448": 2,
+          "182278504648278017": 2,
+          "211178182856933376": 2,
+          "239067868174483456": 2
+        }
       }
     },
     "pokecom": {
       "role_list_url": "https://pokecommunity.com/about/discordroles",
-      "cooltrainer": {
-        "role": {
-          "dev": "775261617805459486",
-          "prod": "531984098038775842"
-        },
-        "threshold": {
-          "dev": 10,
-          "prod": 600
-        },
-        "ppm_exceptions": {
-          "dev": {
-            "775630182521634846": 0
-          },
-          "prod": {
-            "185850117918556161": 0,
-            "423905036859604993": 0,
-            "613756774234718209": 0,
-            "159086206385258496": 0,
-            "722939153242652723": 0,
-            "603285325334446090": 0,
-            "162925288362082304": 0,
-            "469134262462054400": 0,
-            "469134365952049193": 0,
-            "582487187409469440": 0,
-            "222724364276072448": 2,
-            "182278504648278017": 2,
-            "211178182856933376": 2,
-            "239067868174483456": 2
-          }
-        }
-      },
       "logging": {
         "log_channel": {
           "prod": "423905036859604993",

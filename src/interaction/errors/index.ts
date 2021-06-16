@@ -1,3 +1,5 @@
+// TODO: figure out what you're doing with this and move it into porygon/interaction
+
 import { PorygonEmbed } from 'porygon/embed';
 
 type YieldEmbed = (embed: PorygonEmbed) => unknown;

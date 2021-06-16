@@ -7,7 +7,7 @@ import { logger } from './logger';
 const SKIP_FILE_SENTINEL = '__SKIP_FILE__';
 
 type Each = (dir: string) => Generator<string>;
-type ImportCb<R> = (result: R, file: string) => unknown;
+type ImportCb<R> = (result: R, file: string) => void;
 
 export interface ImporterOpts {
   dir: string;
