@@ -5,7 +5,7 @@ import {
   MessageEmbed,
   TextChannel,
 } from 'discord.js';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { ChoiceCollector } from './choice_collector';
 import { Choice, CHOICES } from './constants';
 import { PlayerList } from './player_list';
@@ -76,7 +76,9 @@ export class RPS {
   }
 
   private embed() {
-    return new PorygonEmbed(this.reply.bind(this)).infoColor().setTitle(TITLE);
+    return new Embed.Replyable(this.reply.bind(this))
+      .infoColor()
+      .setTitle(TITLE);
   }
 
   private async eachChoice(callback: (choice: Choice) => Promise<void>) {

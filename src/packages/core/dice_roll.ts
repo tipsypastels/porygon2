@@ -1,4 +1,4 @@
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { random, range, times } from 'support/array';
 import { code } from 'support/format';
 import { clamp } from 'support/number';
@@ -28,7 +28,7 @@ export class DiceRoll {
     times(this.count, () => this.roll());
   }
 
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     embed.setDescription(`Rolling ${this.toDiceNotation()}...`);
     embed.addField('Result', `:game_die: ${this.rolls.join(', ')}`);
 

@@ -1,6 +1,6 @@
 import { Guild } from 'discord.js';
 import { database } from 'porygon/database';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { RoleModOpts } from './types';
 import { embedRoleFields } from './shared';
 
@@ -12,7 +12,7 @@ export async function createRoleMod(guild: Guild, opts: Partial<RoleModOpts>) {
     data: { roleId: role.id, requestable, bound },
   });
 
-  return (embed: PorygonEmbed) => {
+  return (embed: Embed) => {
     embed.setTitle(`Role "${role.name}" created!`);
     embedRoleFields(embed, role, behaviors);
   };

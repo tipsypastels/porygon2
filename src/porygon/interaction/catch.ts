@@ -1,10 +1,10 @@
 import { InteractionBaseError } from 'interaction/errors';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { codeBlock } from 'support/format';
 
 type ShouldRethrow = boolean;
 
-export function catchInteractionError(error: any, embed: PorygonEmbed) {
+export function catchInteractionError(error: any, embed: Embed.Replyable) {
   const shouldRethrow = injectErrorResponse(error, embed);
   embed.reply();
 
@@ -13,7 +13,7 @@ export function catchInteractionError(error: any, embed: PorygonEmbed) {
   }
 }
 
-function injectErrorResponse(error: any, embed: PorygonEmbed): ShouldRethrow {
+function injectErrorResponse(error: any, embed: Embed): ShouldRethrow {
   if (error instanceof InteractionBaseError) {
     error.intoEmbed(embed);
     return false;

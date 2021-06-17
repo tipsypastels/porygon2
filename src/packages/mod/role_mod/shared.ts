@@ -1,6 +1,6 @@
 import { Role } from 'discord.js';
 import { database } from 'porygon/database';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { yesNo } from 'support/format';
 import {
   RoleBehaviorSettings,
@@ -23,7 +23,7 @@ export async function fetchRoleOpts(role: Role): Promise<RoleModOpts> {
 }
 
 export function embedRoleFields(
-  embed: PorygonEmbed,
+  embed: Embed,
   role: RoleBuiltinSettings,
   behaviors: RoleBehaviorSettings,
 ) {

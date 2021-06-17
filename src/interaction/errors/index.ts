@@ -1,8 +1,8 @@
 // TODO: figure out what you're doing with this and move it into porygon/interaction
 
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 
-type YieldEmbed = (embed: PorygonEmbed) => unknown;
+type YieldEmbed = (embed: Embed) => unknown;
 
 interface Opts {
   title?: string;
@@ -30,7 +30,7 @@ export abstract class InteractionBaseError {
     }
   }
 
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     if (this.title) embed.setTitle(this.title);
     if (this.message) embed.setDescription(this.message);
     return embed.merge((e) => this.yieldEmbed?.(e));
@@ -38,7 +38,7 @@ export abstract class InteractionBaseError {
 }
 
 export class InteractionWarning extends InteractionBaseError {
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     return embed
       .poryThumb('warning')
       .warningColor()
@@ -47,7 +47,7 @@ export class InteractionWarning extends InteractionBaseError {
 }
 
 export class InteractionDanger extends InteractionBaseError {
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     return embed
       .poryThumb('danger')
       .dangerColor()
@@ -56,7 +56,7 @@ export class InteractionDanger extends InteractionBaseError {
 }
 
 export class InteractionError extends InteractionBaseError {
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     return embed
       .poryThumb('danger')
       .dangerColor()

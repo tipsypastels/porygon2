@@ -1,5 +1,5 @@
 import { Role } from 'discord.js';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { fetchRoleOpts, embedRoleFields } from './shared';
 
 export async function fetchRoleMod(role: Role) {
@@ -7,7 +7,7 @@ export async function fetchRoleMod(role: Role) {
     role,
   );
 
-  return (embed: PorygonEmbed) => {
+  return (embed: Embed) => {
     embedRoleFields(
       embed,
       { name, hoist, mentionable },

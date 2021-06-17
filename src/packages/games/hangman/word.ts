@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { setting } from 'porygon/settings';
 import { random } from 'support/array';
 import { codeBlock } from 'support/format';
@@ -39,7 +39,7 @@ export class HangmanWord {
     return false;
   }
 
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     embed.setDescription(this.toString());
   }
 

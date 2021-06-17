@@ -8,7 +8,7 @@ import {
   TextChannel,
 } from 'discord.js';
 import { latestAuditLog } from 'porygon/audit_logs';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { EventHandler } from 'porygon/package';
 import { setting } from 'porygon/settings';
 import { missedPartialLeaves } from 'porygon/stats';
@@ -29,7 +29,7 @@ const memberEventsHandler: EventHandler = ({ events }) => {
 export default memberEventsHandler;
 
 function onAdd(member: GuildMember) {
-  const embed = new PorygonEmbed();
+  const embed = new Embed();
 
   embed
     .infoColor()
@@ -54,20 +54,20 @@ async function onRemove(member: GuildMember | PartialGuildMember) {
 }
 
 function onLeave(member: GuildMember) {
-  const embed = new PorygonEmbed();
+  const embed = new Embed();
 
   embed
     .warningColor()
     .setAuthorFromUser(member, { withDiscriminator: true })
     .setTitle('Member Left')
-    .addFieldIfPresent('Joined At', member.joinedAt, codeBlock)
+    .if(member.joinedAt, (date) => embed.addField('Joined At', codeBlock(date)))
     .addField('ID', codeBlock(member.user.id));
 
   logChannel(member.guild).send(embed);
 }
 
 function onKicked(member: GuildMember, kick: GuildAuditLogsEntry) {
-  const embed = new PorygonEmbed();
+  const embed = new Embed();
   const { guild } = member;
 
   embed
@@ -77,7 +77,7 @@ function onKicked(member: GuildMember, kick: GuildAuditLogsEntry) {
       `${member.user.username} was kicked by ${kick.executor?.username}`,
     )
     .addField('Reason', kick.reason ?? NO_REASON)
-    .addFieldIfPresent('Joined At', member.joinedAt, format);
+    .if(member.joinedAt, (date) => embed.addField('Joined At', format(date)));
 
   logChannel(guild).send(embed);
   warnChannel(guild).send(embed);
@@ -86,7 +86,7 @@ function onKicked(member: GuildMember, kick: GuildAuditLogsEntry) {
 async function onBanned(ban: GuildBan) {
   const log = await latestAuditLog(ban.guild, 'MEMBER_BAN_ADD');
   const executor = log?.executor?.username ?? '(unknown)';
-  const embed = new PorygonEmbed();
+  const embed = new Embed();
 
   embed
     .errorColor()
@@ -101,7 +101,7 @@ async function onBanned(ban: GuildBan) {
 async function onUnbanned(ban: GuildBan) {
   const log = await latestAuditLog(ban.guild, 'MEMBER_BAN_REMOVE');
   const executor = log?.executor?.username ?? '(unknown)';
-  const embed = new PorygonEmbed();
+  const embed = new Embed();
 
   embed
     .okColor()

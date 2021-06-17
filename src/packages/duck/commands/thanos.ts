@@ -1,5 +1,5 @@
 import { Command } from 'porygon/interaction';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import seedRandom from 'seedrandom';
 import { random } from 'support/array';
 
@@ -14,14 +14,14 @@ export default new Command(thanos, {
 });
 
 const RESULTS = [
-  (e: PorygonEmbed) => {
+  (e: Embed) => {
     e.okColor()
       .setTitle('You were spared by Thanos.')
       .setDescription(
         'The universe is now perfectly balanced, as all things should be.',
       );
   },
-  (e: PorygonEmbed) => {
+  (e: Embed) => {
     e.dangerColor()
       .setTitle("Miss Pory... I don't feel so good, you say...")
       .setDescription(

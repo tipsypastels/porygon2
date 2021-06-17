@@ -1,7 +1,7 @@
 import { Role } from 'discord.js';
 import { database } from 'porygon/database';
 import { Diff } from 'porygon/diff';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { RoleModOpts } from './types';
 import { fetchRoleOpts } from './shared';
 import { InteractionWarning } from 'interaction/errors';
@@ -22,7 +22,7 @@ export async function updateRoleMod(role: Role, opts: Partial<RoleModOpts>) {
     }),
   ]);
 
-  return (embed: PorygonEmbed) => {
+  return (embed: Embed) => {
     embed
       .addField('Name', diff.getChangeString('name'))
       .addField('Hoist', diff.getChangeString('hoist'))

@@ -1,6 +1,6 @@
 import { format as formatWith } from 'date-fns';
 import { Guild, Message, PartialMessage, TextChannel } from 'discord.js';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { EventHandler } from 'porygon/package';
 import { setting } from 'porygon/settings';
 import { missedPartialDeletions } from 'porygon/stats';
@@ -21,7 +21,7 @@ function run(message: Message | PartialMessage) {
 
   missedPartialDeletions.succeed();
 
-  const embed = new PorygonEmbed();
+  const embed = new Embed();
 
   embed
     .infoColor()

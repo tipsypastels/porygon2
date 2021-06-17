@@ -7,7 +7,7 @@ import {
   TextChannel,
 } from 'discord.js';
 import { Porygon } from 'porygon/client';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { logger } from 'porygon/logger';
 import { Package } from 'porygon/package';
 import { extractOnlyKey } from 'support/object';
@@ -30,7 +30,7 @@ export class Command<O = never> {
 
   async call({ pkg, client, interaction }: Command.CallArgs) {
     const opts = extractOptions<O>(interaction);
-    const embed = PorygonEmbed.fromInteraction(interaction);
+    const embed = new Embed.Replyable(interaction);
     const guild = interaction.guild!; // safe, porygon doesnt support globals
     const member = interaction.member as GuildMember;
     const channel = interaction.channel as TextChannel;
@@ -70,7 +70,7 @@ export namespace Command {
     guild: Guild;
     member: GuildMember;
     channel: TextChannel;
-    embed: PorygonEmbed;
+    embed: Embed.Replyable;
     interaction: CommandInteraction;
     opts: O;
     pkg: Package;

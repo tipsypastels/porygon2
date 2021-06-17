@@ -1,6 +1,6 @@
 import { GuildMember, TextChannel } from 'discord.js';
 import { setting } from 'porygon/settings';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { EventHandler, PackageKind } from 'porygon/package';
 
 const CHANNEL_ID = setting('pkg.duck.joins.channel');
@@ -21,7 +21,7 @@ function runWelcome(member: GuildMember) {
   const { guild } = member;
   const channel = guild.channels.cache.get(CHANNEL_ID.value) as TextChannel;
 
-  const embed = new PorygonEmbed()
+  const embed = new Embed()
     .okColor()
     .setDescription(`Welcome to the duck zone, ${member.toString()}!`)
     .poryThumb('smile');

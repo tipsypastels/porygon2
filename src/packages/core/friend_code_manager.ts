@@ -2,7 +2,7 @@ import { FriendCodes } from '.prisma/client';
 import { GuildMember } from 'discord.js';
 import { InteractionWarning } from 'interaction/errors';
 import { database } from 'porygon/database';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { codeBlock } from 'support/format';
 
 // NOTE "3ds" isn't a valid column, so we use "ds" internally, hence
@@ -45,7 +45,7 @@ export class FriendCodeManager {
     return this;
   }
 
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     const { codes } = this;
 
     if (!codes) {
@@ -55,9 +55,9 @@ export class FriendCodeManager {
     }
 
     return embed
-      .addFieldIfPresent('Switch', codes.switch, codeBlock)
-      .addFieldIfPresent('3DS', codes.ds, codeBlock)
-      .addFieldIfPresent('Pokémon Go', codes.go, codeBlock);
+      .if(codes.switch, (code) => embed.addField('Switch', codeBlock(code)))
+      .if(codes.ds, (code) => embed.addField('3DS', codeBlock(code)))
+      .if(codes.go, (code) => embed.addField('Go', codeBlock(code)));
   }
 
   private normalize(rawData: RawData): Data {

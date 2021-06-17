@@ -4,7 +4,7 @@ import {
   MessageCollector,
   TextChannel,
 } from 'discord.js';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { HangmanNoose } from './noose';
 import { HangmanState } from './state';
 import { HangmanWord } from './word';
@@ -49,7 +49,7 @@ export class Hangman {
   }
 
   private async render() {
-    await PorygonEmbed.fromInteraction(this.interaction)
+    await new Embed.Replyable(this.interaction)
       .merge(this.word)
       .merge(this.noose)
       .merge(this.state)

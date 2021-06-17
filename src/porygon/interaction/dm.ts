@@ -1,13 +1,13 @@
 import { CommandInteraction, Guild, User } from 'discord.js';
 import { Porygon } from 'porygon/client';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 import { MISPLACED_GLOBAL_CONSOLATION_DUCKS } from 'porygon/assets';
 
 export async function onDMCommand(
   client: Porygon,
   interaction: CommandInteraction,
 ) {
-  const embed = PorygonEmbed.fromInteraction(interaction);
+  const embed = new Embed.Replyable(interaction);
   const guilds = await getSharedGuilds(client, interaction.user);
 
   if (guilds.length) {

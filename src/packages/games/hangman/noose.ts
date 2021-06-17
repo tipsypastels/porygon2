@@ -1,5 +1,5 @@
 import { HANGMAN_ASSETS } from 'porygon/assets';
-import { PorygonEmbed } from 'porygon/embed';
+import { Embed } from 'porygon/embed';
 
 const MAX = 10;
 
@@ -14,7 +14,7 @@ export class HangmanNoose {
     this.stage++;
   }
 
-  intoEmbed(embed: PorygonEmbed) {
+  intoEmbed(embed: Embed) {
     embed.setThumbnail(HANGMAN_ASSETS.get(this.stage).url);
   }
 }
