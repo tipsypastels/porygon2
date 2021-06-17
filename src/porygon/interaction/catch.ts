@@ -2,21 +2,24 @@ import { InteractionBaseError } from 'interaction/errors';
 import { Embed } from 'porygon/embed';
 import { codeBlock } from 'support/format';
 
-type ShouldRethrow = boolean;
+const enum After {
+  Rethrow,
+  Ignore,
+}
 
 export function catchInteractionError(error: any, embed: Embed.Replyable) {
-  const shouldRethrow = injectErrorResponse(error, embed);
+  const after = injectErrorResponse(error, embed);
   embed.reply();
 
-  if (shouldRethrow) {
+  if (after === After.Rethrow) {
     throw error;
   }
 }
 
-function injectErrorResponse(error: any, embed: Embed): ShouldRethrow {
+function injectErrorResponse(error: any, embed: Embed): After {
   if (error instanceof InteractionBaseError) {
     error.intoEmbed(embed);
-    return false;
+    return After.Ignore;
   }
 
   if (typeof error === 'object' && 'message' in error) {
@@ -25,9 +28,11 @@ function injectErrorResponse(error: any, embed: Embed): ShouldRethrow {
       .poryThumb('error')
       .setTitle("Whoops, that's an error.")
       .setDescription(codeBlock(error.message));
-    return true;
+
+    return After.Rethrow;
   }
 
   embed.errorColor().poryThumb('error').setTitle('An unknown error occurred.');
-  return true;
+
+  return After.Rethrow;
 }
