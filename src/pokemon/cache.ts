@@ -1,7 +1,7 @@
 import { fetch } from './fetch';
-import { log } from './logger';
 import type { Kind, Kinds } from './kind';
 import type { Base } from './models';
+import { logger } from 'porygon/logger';
 
 const CACHE = new Map<string, Base<any>>();
 
@@ -9,11 +9,11 @@ export async function get<K extends Kind>(kind: K, id: string) {
   const key = toKey(kind, id);
 
   if (CACHE.has(key)) {
-    log(`Found ${key} in the cache.`);
+    logger.pkmn(`Found ${key} in the cache.`);
     return CACHE.get(key) as Kinds[K];
   }
 
-  log(`${key} was not in the cache, fetching...`);
+  logger.pkmn(`${key} was not in the cache, fetching...`);
   const res = await fetch(kind, id);
   CACHE.set(key, res);
 

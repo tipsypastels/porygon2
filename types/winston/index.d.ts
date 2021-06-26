@@ -5,5 +5,6 @@ declare module 'winston' {
     setup: winston.LeveledLogMethod;
     task: winston.LeveledLogMethod;
     cmd: winston.LeveledLogMethod;
+    pkmn: winston.LeveledLogMethod;
   }
 }

@@ -8,6 +8,7 @@ import { codeBlock } from 'support/format';
 import { database as databaseImport } from 'porygon/database';
 import { InteractionError } from 'interaction/errors';
 import * as SettingsImport from 'porygon/settings';
+import { logger as loggerImport } from 'porygon/logger';
 
 interface Opts {
   code: string;
@@ -18,6 +19,7 @@ const eval_: Command.Fn<Opts> = async (args) => {
   const { interaction, member, guild, embed, client, opts, pkg } = args;
   const database = databaseImport;
   const Settings = SettingsImport;
+  const logger = loggerImport;
 
   if (!isOwner(member)) {
     throw new InteractionError({
