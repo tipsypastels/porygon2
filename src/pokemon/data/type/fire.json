@@ -1,0 +1,15 @@
+{
+  "name": "Fire",
+  "color": "rgb(240, 128, 48)",
+  "faIcon": "fire",
+  "effectiveness": {
+    "offense": {
+      "grass": 2,
+      "fire": 0.5
+    },
+    "defense": {
+      "fire": 0.5,
+      "grass": 0.5
+    }
+  }
+}

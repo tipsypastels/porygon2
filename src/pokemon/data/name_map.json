@@ -1,0 +1,18 @@
+{
+  "bulbasaur": {
+    "id": "bulbasaur",
+    "kind": "pokemon"
+  },
+  "fire": {
+    "id": "fire",
+    "kind": "type"
+  },
+  "grass": {
+    "id": "grass",
+    "kind": "type"
+  },
+  "poison": {
+    "id": "poison",
+    "kind": "type"
+  }
+}

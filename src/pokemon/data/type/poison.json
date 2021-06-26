@@ -1,0 +1,15 @@
+{
+  "name": "Poison",
+  "color": "rgb(160, 64, 160)",
+  "faIcon": "flask",
+  "effectiveness": {
+    "offense": {
+      "grass": 2,
+      "poison": 0.5
+    },
+    "defense": {
+      "poison": 0.5,
+      "grass": 0.5
+    }
+  }
+}
