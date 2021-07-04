@@ -1,3 +1,1 @@
-export * from './models';
-export * from './cache';
-export * from './search';
+export * from './pokemon';

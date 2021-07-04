@@ -6,7 +6,7 @@ import {
   incrementHeadpatCount,
 } from '../headpats';
 
-type MemberOpts = { for: { member: GuildMember } };
+type MemberOpts = { member: GuildMember };
 type LeaderboardOpts = { leaderboard: never };
 
 const for_: Command.Fn<MemberOpts> = async ({
@@ -14,7 +14,7 @@ const for_: Command.Fn<MemberOpts> = async ({
   embed,
   member: author,
 }) => {
-  const { member } = opts.for;
+  const { member } = opts;
 
   if (member.id !== author.id) {
     incrementHeadpatCount(member);

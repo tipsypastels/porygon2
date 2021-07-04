@@ -1,7 +1,9 @@
 import fromEntries from 'object.fromentries';
 import { inspect } from 'util';
 
+type AnyObject = Record<string, unknown>;
 type Mapper<T, R> = (from: T) => R;
+type KeyMapper = Mapper<string, string>;
 
 export function objectIsEmpty(object: Record<string, unknown>) {
   return Object.keys(object).length === 0;
@@ -33,4 +35,14 @@ export function extractOnlyKey<T>(obj: T) {
   }
 
   return keys[0];
+}
+
+export function transformKeys(object: AnyObject, map: KeyMapper) {
+  const out: AnyObject = {};
+
+  for (const [key, value] of Object.entries(object)) {
+    out[map(key)] = value;
+  }
+
+  return out;
 }
