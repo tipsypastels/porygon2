@@ -8,6 +8,7 @@ import {
 } from 'porygon/stats';
 import { isDev } from 'support/dev';
 import { globallyLocateChannel } from 'porygon/global_channel_ref';
+import { GuildMember } from 'discord.js';
 
 interface SayOpts {
   code: string;
@@ -15,9 +16,7 @@ interface SayOpts {
 }
 
 const stats: Command.Fn = async ({ embed, client, member }) => {
-  if (member.user.id !== OWNER) {
-    throw new InteractionDanger('No.');
-  }
+  assertOwner(member);
 
   await embed
     .infoColor()
@@ -34,11 +33,17 @@ const say: Command.Fn<SayOpts> = async ({
   opts,
   client,
   guild,
+  member,
 }) => {
+  assertOwner(member);
+
   const { code, message } = opts;
   const channel = globallyLocateChannel({ code, client, currentGuild: guild });
 
-  await Promise.all([channel.send(message), interaction.reply('✅')]);
+  await Promise.all([
+    channel.send(message),
+    interaction.reply('✅', { ephemeral: true }),
+  ]);
 };
 
 export default new Command.Multipart(
@@ -75,3 +80,9 @@ export default new Command.Multipart(
     ],
   },
 );
+
+function assertOwner(member: GuildMember) {
+  if (member.id === OWNER) {
+    throw new InteractionDanger('No.');
+  }
+}
