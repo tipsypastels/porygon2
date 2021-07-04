@@ -43,7 +43,7 @@ export function globallyLocateChannel({ code, client, currentGuild }: Opts) {
 }
 
 function locateGuild(code: string, client: Porygon) {
-  return locate<Guild>(code, {
+  return locate(code, {
     byId(id) {
       return client.guilds.cache.get(id);
     },
@@ -54,45 +54,45 @@ function locateGuild(code: string, client: Porygon) {
     assertValid() {
       // all guilds are valid
     },
-    toErrorMessage(searchType, id) {
-      return `No guild with ${searchType}: ${id}`;
+    toErrorMessage(searchType) {
+      return `No guild with ${searchType}: ${code}`;
     },
   });
 }
 
 function locateChannel(code: string, guild: Guild) {
-  return locate<TextChannel>(code, {
+  return locate(code, {
     byId(id) {
       return guild.channels.cache.get(id);
     },
     byName(name) {
       return guild.channels.cache.find((ch) => ch.name === name);
     },
-    assertValid(channel: GuildChannel) {
+    assertValid(channel: GuildChannel): asserts channel is TextChannel {
       if (!(channel instanceof TextChannel)) {
         throw new Error(`${channel.name} is not a text channel`);
       }
     },
-    toErrorMessage(searchType, id) {
-      return `No channel with ${searchType}: ${id} on ${guild.name}`;
+    toErrorMessage(searchType) {
+      return `No channel with ${searchType}: ${code} on ${guild.name}`;
     },
   });
 }
 
-interface Locate<T> {
-  byId(id: string): unknown;
-  byName(name: string): unknown;
-  assertValid(value: unknown): asserts value is T;
-  toErrorMessage(searchType: string, id: string): string;
+interface Locate<T, R extends T = T> {
+  byId(id: string): T | undefined;
+  byName(name: string): T | undefined;
+  assertValid(value: T): asserts value is R;
+  toErrorMessage(searchType: string): string;
 }
 
-function locate<T>(code: string, opts: Locate<T>) {
+function locate<T, R extends T>(code: string, opts: Locate<T, R>): R {
   const isId = isIntLike(code);
   const value = isId ? opts.byId(code) : opts.byName(code);
 
   if (!value) {
     const searchType = isId ? 'ID' : 'name';
-    throw new Error(opts.toErrorMessage(searchType, code));
+    throw new Error(opts.toErrorMessage(searchType));
   }
 
   opts.assertValid(value);

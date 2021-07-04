@@ -15,19 +15,6 @@ interface SayOpts {
   message: string;
 }
 
-const stats: Command.Fn = async ({ embed, client, member }) => {
-  assertOwner(member);
-
-  await embed
-    .infoColor()
-    .setTitle('Stats for operators')
-    .addField('Porygon servers', client.guilds.cache.size)
-    .addField('Porygon uptime', uptime.inWords())
-    .addField('% of missed partial leaves', missedPartialLeaves.percent)
-    .addField('% of missed partial deletions', missedPartialDeletions.percent)
-    .reply();
-};
-
 const say: Command.Fn<SayOpts> = async ({
   interaction,
   opts,
@@ -46,18 +33,26 @@ const say: Command.Fn<SayOpts> = async ({
   ]);
 };
 
+const stats: Command.Fn = async ({ embed, client, member }) => {
+  assertOwner(member);
+
+  await embed
+    .infoColor()
+    .setTitle('Stats for operators')
+    .addField('Porygon servers', client.guilds.cache.size)
+    .addField('Porygon uptime', uptime.inWords())
+    .addField('% of missed partial leaves', missedPartialLeaves.percent)
+    .addField('% of missed partial deletions', missedPartialDeletions.percent)
+    .reply();
+};
+
 export default new Command.Multipart(
-  { stats, say },
+  { say, stats },
   {
     name: 'op',
     defaultPermission: isDev,
     description: 'Operator-only utilities.',
     options: [
-      {
-        name: 'stats',
-        description: 'Shows useful stats.',
-        type: 'SUB_COMMAND',
-      },
       {
         name: 'say',
         description: 'Send a message to any channel.',
@@ -77,12 +72,17 @@ export default new Command.Multipart(
           },
         ],
       },
+      {
+        name: 'stats',
+        description: 'Shows useful stats.',
+        type: 'SUB_COMMAND',
+      },
     ],
   },
 );
 
 function assertOwner(member: GuildMember) {
-  if (member.id === OWNER) {
+  if (member.id !== OWNER) {
     throw new InteractionDanger('No.');
   }
 }

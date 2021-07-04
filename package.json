@@ -4,8 +4,7 @@
     "start": "NODE_ENV=production NODE_PATH=./dist node ./dist/main.js",
     "watch": "NODE_ENV=development NODE_PATH=./src nodemon",
     "test": "jest --coverage",
-    "migrate": "prisma db push --preview-feature",
-    "pkmn:codegen": "apollo client:codegen ./src/pokemon/types.ts --target typescript --outputFlat"
+    "migrate": "prisma db push --preview-feature"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
@@ -15,13 +14,11 @@
     "@types/lodash.set": "^4.3.6",
     "@types/mathjs": "^6.0.11",
     "@types/node": "^14.14.33",
-    "@types/node-fetch": "^2.5.10",
     "@types/object.fromentries": "^2.0.0",
     "@types/seedrandom": "^3.0.0",
     "@types/string-similarity": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
-    "apollo": "^2.33.4",
     "eslint": "^7.21.0",
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
@@ -37,8 +34,6 @@
     "canvas": "^2.7.0",
     "date-fns": "^2.20.0",
     "discord.js": "discordjs/discord.js",
-    "graphql": "^15.5.1",
-    "graphql-request": "^3.4.0",
     "imgur": "^2.0.0-next.6",
     "lodash.get": "^4.4.2",
     "lodash.has": "^4.5.2",
