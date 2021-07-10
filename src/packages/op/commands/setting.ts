@@ -1,14 +1,14 @@
-import { Command } from 'porygon/interaction';
-import { code, codeBlock } from 'support/format';
-import { OWNER } from 'secrets.json';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
+import { assertOwner } from 'porygon/owner';
 import * as Settings from 'porygon/settings';
 import { isDev } from 'support/dev';
+import { code, codeBlock } from 'support/format';
 
 type GetOpts = { key: never };
 type SetOpts = { key: never; value: string };
 type UpdateOpts = { key: never; expression: string };
 
-const get: Command.Fn<GetOpts> = async ({ opts, embed }) => {
+const get: CommandFn<GetOpts> = async ({ opts, embed }) => {
   const { key } = opts;
   const { value } = Settings.setting(key);
 
@@ -20,7 +20,7 @@ const get: Command.Fn<GetOpts> = async ({ opts, embed }) => {
     .reply();
 };
 
-const set: Command.Fn<SetOpts> = async ({ opts, embed }) => {
+const set: CommandFn<SetOpts> = async ({ opts, embed }) => {
   const { key, value: rawValue } = opts;
 
   await parse(rawValue)
@@ -43,10 +43,8 @@ const set: Command.Fn<SetOpts> = async ({ opts, embed }) => {
     });
 };
 
-const update: Command.Fn<UpdateOpts> = async ({ opts, embed, member }) => {
-  if (member.id !== OWNER) {
-    throw new Error('nope');
-  }
+const update: CommandFn<UpdateOpts> = async ({ opts, embed, author }) => {
+  assertOwner(author);
 
   const { key, expression } = opts;
   const { value: currentValue } = await Settings.setting(key);
@@ -62,7 +60,7 @@ const update: Command.Fn<UpdateOpts> = async ({ opts, embed, member }) => {
     .reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { get, set, update },
   {
     name: 'setting',

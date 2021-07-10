@@ -1,35 +1,35 @@
 import { Role } from 'discord.js';
-import { Command } from 'porygon/interaction';
 import { InteractionWarning } from 'interaction/errors';
 import { assertRequestable } from 'packages/mod/role_mod/policy';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 
 type Opts = { role: Role };
 
-const add: Command.Fn<Opts> = async ({ opts, embed, pkg, member }) => {
+const add: CommandFn<Opts> = async ({ opts, embed, command, author }) => {
   const { role } = opts;
 
-  if (member.roles.cache.has(role.id)) {
+  if (author.roles.cache.has(role.id)) {
     throw new InteractionWarning(`You already have "${role.name}"!`);
   }
 
-  await assertRequestable(role, pkg);
-  await member.roles.add(role);
+  await assertRequestable(role, command.pkg);
+  await author.roles.add(role);
   await embed.okColor().setTitle(`Gave you "${role.name}"!`).reply();
 };
 
-const remove: Command.Fn<Opts> = async ({ opts, embed, pkg, member }) => {
+const remove: CommandFn<Opts> = async ({ opts, embed, command, author }) => {
   const { role } = opts;
 
-  if (!member.roles.cache.has(role.id)) {
+  if (!author.roles.cache.has(role.id)) {
     throw new InteractionWarning(`You don't have the role "${role.name}".`);
   }
 
-  await assertRequestable(role, pkg);
-  await member.roles.remove(role);
+  await assertRequestable(role, command.pkg);
+  await author.roles.remove(role);
   await embed.okColor().setTitle(`Took away "${role.name}!"`).reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { add, remove },
   {
     name: 'role',

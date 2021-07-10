@@ -1,9 +1,9 @@
 import { Guild } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { random, range, toSentence } from 'support/array';
 
-const nudge: Command.Fn = async ({ guild, embed }) => {
+const nudge: CommandFn = async ({ guild, embed }) => {
   await embed
     .okColor()
     .poryThumb('death')
@@ -12,7 +12,7 @@ const nudge: Command.Fn = async ({ guild, embed }) => {
     .reply();
 };
 
-export default new Command(nudge, {
+export default new LocalCommand(nudge, {
   description: 'Never use this it literally causes natural disasters.',
 });
 

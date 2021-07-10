@@ -1,28 +1,28 @@
-import { ApplicationCommand, Collection, CommandInteraction } from 'discord.js';
+import { Collection, CommandInteraction } from 'discord.js';
 import { Porygon } from 'porygon/client';
-import { Command } from 'porygon/interaction';
+import { Command, LocalCommand } from 'porygon/interaction';
 import { logger } from 'porygon/logger';
+import { areArraysStructurallyEqual } from 'support/array';
 import { PackageKind } from './kind';
 
 type CommandId = string;
 
 export class Package {
   static ALL = new Collection<PackageKind, Package>();
-  static SAVED_COMMANDS = new Collection<CommandId, [Command, Package]>();
-  private unsavedCommands: Command[] = [];
+  static SAVED_COMMANDS = new Collection<CommandId, Command>();
+  private unsavedCommands: LocalCommand[] = [];
 
-  static runCommand(client: Porygon, interaction: CommandInteraction) {
-    const entry = this.SAVED_COMMANDS.get(interaction.commandID);
+  static runCommand(interaction: CommandInteraction) {
+    const command = this.SAVED_COMMANDS.get(interaction.commandID);
 
-    if (!entry) {
+    if (!command) {
       logger.error(
         `Got an interaction for nonexistant command ${interaction.commandName}`,
       );
       return;
     }
 
-    const [command, pkg] = entry;
-    command.call({ pkg, client, interaction });
+    command.call(interaction);
   }
 
   static uploadAllCommands() {
@@ -37,43 +37,46 @@ export class Package {
     return new this(kind, client);
   }
 
-  private constructor(private kind: PackageKind, private client: Porygon) {
+  private constructor(private kind: PackageKind, readonly client: Porygon) {
     Package.ALL.set(kind, this);
   }
 
-  hasCommand(commandName: string) {
-    return !!Package.SAVED_COMMANDS.find(([command, pkg]) => {
-      return pkg === this && command.name === commandName;
+  hasCommand(name: string) {
+    return !!this.getCommand(name);
+  }
+
+  getCommand(name: string) {
+    return Package.SAVED_COMMANDS.find((command) => {
+      return command.pkg === this && command.name === name;
     });
   }
 
-  addCommand(command: Command) {
-    this.unsavedCommands.push(command);
+  addCommand(local: LocalCommand) {
+    this.unsavedCommands.push(local);
   }
 
   async uploadCommands() {
     const commandData = this.unsavedCommands.map((c) => c.data);
-    const res = await this.kind.upload(commandData, this.client);
+    const commandNames = commandData.map((n) => n.name);
 
-    if (res) {
-      for (const [, apiCommand] of res) {
-        this.matchCommandAndMarkAsSaved(apiCommand);
+    const apis = await this.kind.upload(commandData, this.client);
+
+    if (apis) {
+      const apiNames = [...apis.values()].map((n) => n.name);
+
+      // FIXME: Remove this later.
+      // We don't actually depend on this yet, but if the order is always
+      // the same as the input, we can eliminate the need for command
+      // names to be globally unique across packages.
+      if (!areArraysStructurallyEqual(commandNames, apiNames)) {
+        throw new Error('Command upload result not ordered.');
+      }
+
+      for (const command of Command.zip(this, apis, this.unsavedCommands)) {
+        Package.SAVED_COMMANDS.set(command.id, command);
       }
     }
 
     this.unsavedCommands = [];
-  }
-
-  private matchCommandAndMarkAsSaved(apiCommand: ApplicationCommand) {
-    const command = this.unsavedCommands.find((command) => {
-      return command.name === apiCommand.name;
-    });
-
-    if (!command) {
-      logger.error(`Failed to find match for API command ${apiCommand.name}.`);
-      return;
-    }
-
-    Package.SAVED_COMMANDS.set(apiCommand.id, [command, this]);
   }
 }

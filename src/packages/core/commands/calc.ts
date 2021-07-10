@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { evaluate } from 'porygon/math';
 import { codeBlock } from 'support/format';
 
@@ -6,7 +6,7 @@ interface Opts {
   equation: string;
 }
 
-const calc: Command.Fn<Opts> = async ({ opts, embed }) => {
+const calc: CommandFn<Opts> = async ({ opts, embed }) => {
   embed.addField('Equation', codeBlock(opts.equation));
 
   try {
@@ -29,7 +29,7 @@ const calc: Command.Fn<Opts> = async ({ opts, embed }) => {
   await embed.reply();
 };
 
-export default new Command(calc, {
+export default new LocalCommand(calc, {
   description: 'Does your math homework.',
   options: [
     {

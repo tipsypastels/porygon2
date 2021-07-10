@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { FriendCodeManager } from '../friend_code_manager';
 
 type GetOpts = { member: GuildMember };
@@ -9,7 +9,7 @@ type SetOpts = {
   'go': string | null;
 };
 
-const get: Command.Fn<GetOpts> = async ({ embed, opts }) => {
+const get: CommandFn<GetOpts> = async ({ embed, opts }) => {
   const manager = new FriendCodeManager(opts.member);
   await manager.load();
 
@@ -22,19 +22,19 @@ const get: Command.Fn<GetOpts> = async ({ embed, opts }) => {
     .reply();
 };
 
-const set: Command.Fn<SetOpts> = async ({ opts, embed, member }) => {
-  const manager = new FriendCodeManager(member);
+const set: CommandFn<SetOpts> = async ({ opts, embed, author }) => {
+  const manager = new FriendCodeManager(author);
   await manager.save(opts);
 
   await embed
     .okColor()
     .setTitle('Friend Codes updated!')
-    .setAuthorFromMember(member)
+    .setAuthorFromMember(author)
     .merge(manager)
     .reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { get, set },
   {
     name: 'fc',

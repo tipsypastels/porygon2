@@ -1,8 +1,8 @@
 import { Pet } from '.prisma/client';
 import { Guild, GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
-import { InteractionWarning, InteractionDanger } from 'interaction/errors';
+import { InteractionDanger, InteractionWarning } from 'interaction/errors';
 import { database } from 'porygon/database';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { code } from 'support/format';
 
@@ -12,9 +12,9 @@ type RemOpts = { id: number };
 
 const CAN_MOD_PETS = setting('pkg.core.pets.mod_perm');
 
-const add: Command.Fn<AddOpts> = async ({ opts, embed, guild, member }) => {
+const add: CommandFn<AddOpts> = async ({ opts, embed, guild, author }) => {
   const { url } = opts;
-  const data = { url, guildId: guild.id, userId: member.id };
+  const data = { url, guildId: guild.id, userId: author.id };
   const entry = await database.pet.create({ data });
 
   await embed
@@ -28,7 +28,7 @@ const add: Command.Fn<AddOpts> = async ({ opts, embed, guild, member }) => {
     .reply();
 };
 
-const remove: Command.Fn<RemOpts> = async ({ opts, embed, guild, member }) => {
+const remove: CommandFn<RemOpts> = async ({ opts, embed, guild, author }) => {
   const { id } = opts;
   const entry = await database.pet.findFirst({
     where: { id, guildId: guild.id },
@@ -38,8 +38,8 @@ const remove: Command.Fn<RemOpts> = async ({ opts, embed, guild, member }) => {
     throw new InteractionWarning(`No such pet with ID: ${id}.`);
   }
 
-  const isCreator = member.id === entry.userId;
-  const isMod = member.permissions.has(CAN_MOD_PETS.value as 'KICK_MEMBERS');
+  const isCreator = author.id === entry.userId;
+  const isMod = author.permissions.has(CAN_MOD_PETS.value as 'KICK_MEMBERS');
 
   if (!(isCreator || isMod)) {
     throw new InteractionDanger(
@@ -52,7 +52,7 @@ const remove: Command.Fn<RemOpts> = async ({ opts, embed, guild, member }) => {
   await embed.okColor().setTitle('Pet removed!').reply();
 };
 
-const random: Command.Fn<RandOpts> = async ({ opts, embed, guild }) => {
+const random: CommandFn<RandOpts> = async ({ opts, embed, guild }) => {
   const { by } = opts;
   const entry = await randomEntry(guild, by);
 
@@ -72,7 +72,7 @@ const random: Command.Fn<RandOpts> = async ({ opts, embed, guild }) => {
     .reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   {
     add,
     remove,

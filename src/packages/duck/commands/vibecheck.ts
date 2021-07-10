@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { random } from 'support/array';
 import { bold } from 'support/format';
@@ -8,7 +8,7 @@ interface Opts {
   member?: GuildMember;
 }
 
-const vibecheck: Command.Fn<Opts> = async ({ embed, opts, member: author }) => {
+const vibecheck: CommandFn<Opts> = async ({ embed, opts, author }) => {
   const member = opts.member ?? author;
   const name = member.displayName;
 
@@ -23,7 +23,7 @@ const vibecheck: Command.Fn<Opts> = async ({ embed, opts, member: author }) => {
     .reply();
 };
 
-export default new Command(vibecheck, {
+export default new LocalCommand(vibecheck, {
   description: "Checks your vibes (or someone else's)",
   options: [
     {

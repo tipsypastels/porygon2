@@ -1,28 +1,26 @@
-import { OWNER } from 'secrets.json';
-import { Command } from 'porygon/interaction';
-import { InteractionDanger } from 'interaction/errors';
+import { globallyLocateChannel } from 'porygon/global_channel_ref';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
+import { assertOwner } from 'porygon/owner';
 import {
   missedPartialDeletions,
   missedPartialLeaves,
   uptime,
 } from 'porygon/stats';
 import { isDev } from 'support/dev';
-import { globallyLocateChannel } from 'porygon/global_channel_ref';
-import { GuildMember } from 'discord.js';
 
 interface SayOpts {
   code: string;
   message: string;
 }
 
-const say: Command.Fn<SayOpts> = async ({
+const say: CommandFn<SayOpts> = async ({
   interaction,
   opts,
   client,
   guild,
-  member,
+  author,
 }) => {
-  assertOwner(member);
+  assertOwner(author);
 
   const { code, message } = opts;
   const channel = globallyLocateChannel({ code, client, currentGuild: guild });
@@ -33,8 +31,8 @@ const say: Command.Fn<SayOpts> = async ({
   ]);
 };
 
-const stats: Command.Fn = async ({ embed, client, member }) => {
-  assertOwner(member);
+const stats: CommandFn = async ({ embed, client, author }) => {
+  assertOwner(author);
 
   await embed
     .infoColor()
@@ -46,7 +44,7 @@ const stats: Command.Fn = async ({ embed, client, member }) => {
     .reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { say, stats },
   {
     name: 'op',
@@ -80,9 +78,3 @@ export default new Command.Multipart(
     ],
   },
 );
-
-function assertOwner(member: GuildMember) {
-  if (member.id !== OWNER) {
-    throw new InteractionDanger('No.');
-  }
-}

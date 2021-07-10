@@ -1,7 +1,7 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { uptime } from 'porygon/stats';
 
-const ping: Command.Fn = async ({ embed }) => {
+const ping: CommandFn = async ({ embed }) => {
   await embed
     .infoColor()
     .poryThumb('speech')
@@ -11,4 +11,4 @@ const ping: Command.Fn = async ({ embed }) => {
     .reply();
 };
 
-export default new Command(ping, { description: 'Says hi from Porygon.' });
+export default new LocalCommand(ping, { description: 'Says hi from Porygon.' });

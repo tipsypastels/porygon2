@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import {
   getHeadpatGif,
   getHeadpatLeaderboard,
@@ -9,11 +9,7 @@ import {
 type MemberOpts = { member: GuildMember };
 type LeaderboardOpts = { leaderboard: never };
 
-const for_: Command.Fn<MemberOpts> = async ({
-  opts,
-  embed,
-  member: author,
-}) => {
+const for_: CommandFn<MemberOpts> = async ({ opts, embed, author }) => {
   const { member } = opts;
 
   if (member.id !== author.id) {
@@ -29,7 +25,7 @@ const for_: Command.Fn<MemberOpts> = async ({
     .reply();
 };
 
-const leaderboard: Command.Fn<LeaderboardOpts> = async ({ embed, guild }) => {
+const leaderboard: CommandFn<LeaderboardOpts> = async ({ embed, guild }) => {
   const leaderboard = getHeadpatLeaderboard(guild);
 
   for await (const { member, headpats } of leaderboard) {
@@ -39,7 +35,7 @@ const leaderboard: Command.Fn<LeaderboardOpts> = async ({ embed, guild }) => {
   embed.infoColor().setTitle('Headpats Received').reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { for: for_, leaderboard },
   {
     name: 'headpat',

@@ -1,5 +1,5 @@
 import { stat } from 'fs/promises';
-import { Command } from 'porygon/interaction';
+import { LocalCommand } from 'porygon/interaction';
 import { basename } from 'path';
 import { Porygon } from 'porygon/client';
 import { Importer } from 'porygon/importer';
@@ -63,8 +63,8 @@ export class PackageImporter extends Importer<PackageKind, void> {
   }
 }
 
-class CommandImporter extends Importer<Command> {
-  protected hasDefaultExport(mod: unknown): mod is { default: Command } {
-    return super.hasDefaultExport(mod) && mod.default instanceof Command;
+class CommandImporter extends Importer<LocalCommand> {
+  protected hasDefaultExport(mod: unknown): mod is { default: LocalCommand } {
+    return super.hasDefaultExport(mod) && mod.default instanceof LocalCommand;
   }
 }

@@ -1,4 +1,4 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { random } from 'support/array';
 
@@ -8,7 +8,7 @@ interface Opts {
 
 const LINES = setting('pkg.duck.8ball.lines');
 
-const eightBall: Command.Fn<Opts> = async ({ embed, opts }) => {
+const eightBall: CommandFn<Opts> = async ({ embed, opts }) => {
   const line = random(LINES.value);
 
   await embed
@@ -20,7 +20,7 @@ const eightBall: Command.Fn<Opts> = async ({ embed, opts }) => {
     .reply();
 };
 
-export default new Command(eightBall, {
+export default new LocalCommand(eightBall, {
   name: '8ball',
   description: 'Asks a question of the wise oracle Porygon.',
   options: [

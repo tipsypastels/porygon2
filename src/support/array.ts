@@ -15,6 +15,27 @@ export function samples<T>(count: number, array: T[], rand = Math.random): T[] {
 }
 
 /**
+ * Returns whether the values of `a` and `b` are all equal.
+ */
+export function areArraysStructurallyEqual<T>(a: T[], b: T[]) {
+  if (a === b) {
+    return true;
+  }
+
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
  * Splits `array` into an array of arrays, each of size `size`.
  * The final sub-array may be smaller if the sizes don't match up.
  */

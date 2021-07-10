@@ -1,6 +1,6 @@
-import { Command } from 'porygon/interaction';
 import { Markov } from '../markov';
 import { codeBlock } from 'support/format';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 
 const PORY_AI = new Markov({
   name: 'pory',
@@ -11,10 +11,10 @@ interface Opts {
   prompt?: string;
 }
 
-const pory: Command.Fn<Opts> = async ({
+const pory: CommandFn<Opts> = async ({
   opts,
   embed,
-  member,
+  author,
   guild,
   client,
 }) => {
@@ -25,7 +25,7 @@ const pory: Command.Fn<Opts> = async ({
   embed.infoColor().setTitle('Porygon Talk Show');
 
   if (prompt) {
-    embed.addField(member.displayName, codeBlock(prompt));
+    embed.addField(author.displayName, codeBlock(prompt));
   }
 
   await embed.addField(bot.displayName, codeBlock(response)).reply();
@@ -36,7 +36,7 @@ const pory: Command.Fn<Opts> = async ({
   }
 };
 
-export default new Command(pory, {
+export default new LocalCommand(pory, {
   description:
     'Speaks to Porygon. Providing an optional message will allow it to be mixed in to future sentences.',
   options: [

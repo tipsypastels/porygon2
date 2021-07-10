@@ -1,12 +1,12 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 // import * as api from 'pokemon';
 
-const pokemon: Command.Fn = async () => {
+const pokemon: CommandFn = async () => {
   // const result = await api.pokemon('Bulbasaur');
   // await embed.merge(result).reply();
 };
 
-export default new Command(pokemon, {
+export default new LocalCommand(pokemon, {
   description: 'Looks up Pokémon information.',
 });
 

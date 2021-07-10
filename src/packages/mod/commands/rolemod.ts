@@ -1,25 +1,25 @@
 import { ApplicationCommandOption, Role } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { isDev } from 'support/dev';
 import {
-  RoleModOpts,
-  updateRoleMod,
   createRoleMod,
   fetchRoleMod,
+  RoleModOpts,
+  updateRoleMod,
 } from '../role_mod';
 
 type GetOpts = { role: Role };
 type SetOpts = { role: Role } & Partial<RoleModOpts>;
 type CreateOpts = Partial<RoleModOpts>;
 
-const get: Command.Fn<GetOpts> = async ({ embed, opts }) => {
+const get: CommandFn<GetOpts> = async ({ embed, opts }) => {
   const { role } = opts;
   const result = await fetchRoleMod(role);
 
   await embed.infoColor().setTitle(role.name).merge(result).reply();
 };
 
-const set: Command.Fn<SetOpts> = async ({ embed, opts }) => {
+const set: CommandFn<SetOpts> = async ({ embed, opts }) => {
   const { role, ...roleOpts } = opts;
   const result = await updateRoleMod(role, roleOpts);
 
@@ -30,12 +30,12 @@ const set: Command.Fn<SetOpts> = async ({ embed, opts }) => {
     .reply();
 };
 
-const create: Command.Fn<CreateOpts> = async ({ embed, opts, guild }) => {
+const create: CommandFn<CreateOpts> = async ({ embed, opts, guild }) => {
   const result = await createRoleMod(guild, opts);
   await embed.okColor().merge(result).reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { get, set, create },
   {
     name: 'rolemod',

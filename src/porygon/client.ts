@@ -32,7 +32,7 @@ export class Porygon extends DiscordClient {
         return onDMCommand(this, interaction);
       }
 
-      Package.runCommand(this, interaction);
+      Package.runCommand(interaction);
     });
   }
 

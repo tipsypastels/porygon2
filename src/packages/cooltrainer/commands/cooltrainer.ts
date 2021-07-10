@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { isDev } from 'support/dev';
 import {
   CtCycleRunner,
@@ -10,7 +10,7 @@ import {
 
 type ShowOpts = { member: GuildMember };
 
-const scoreboard: Command.Fn = async ({ embed, guild }) => {
+const scoreboard: CommandFn = async ({ embed, guild }) => {
   const scoreboard = new CtScoreboard(guild);
 
   embed.infoColor().setTitle('COOLTRAINER Scoreboard');
@@ -22,17 +22,17 @@ const scoreboard: Command.Fn = async ({ embed, guild }) => {
   await embed.reply();
 };
 
-const tick: Command.Fn = async ({ embed, guild }) => {
+const tick: CommandFn = async ({ embed, guild }) => {
   CtTickRunner.run(guild);
   await embed.okColor().setTitle('Initiated a cooltrainer tick.').reply();
 };
 
-const cycle: Command.Fn = async ({ embed, guild }) => {
+const cycle: CommandFn = async ({ embed, guild }) => {
   CtCycleRunner.run(guild);
   await embed.okColor().setTitle('Initiated a cooltrainer cycle.').reply();
 };
 
-const show: Command.Fn<ShowOpts> = async ({ opts, embed }) => {
+const show: CommandFn<ShowOpts> = async ({ opts, embed }) => {
   const { member } = opts;
   const summary = await CtScoreManager.fetchSummary(member);
 
@@ -44,7 +44,7 @@ const show: Command.Fn<ShowOpts> = async ({ opts, embed }) => {
     .reply();
 };
 
-export default new Command.Multipart(
+export default new LocalMultipartCommand(
   { show, tick, scoreboard, cycle },
   {
     name: 'cooltrainer',

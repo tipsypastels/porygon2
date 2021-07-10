@@ -1,32 +1,35 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
-import { OWNER } from 'secrets.json';
-import { isDev } from 'support/dev';
-import { codeBlock } from 'support/format';
 import { database as databaseImport } from 'porygon/database';
-import { InteractionError } from 'interaction/errors';
-import * as SettingsImport from 'porygon/settings';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { logger as loggerImport } from 'porygon/logger';
+import { assertOwner } from 'porygon/owner';
+import * as SettingsImport from 'porygon/settings';
+import { codeBlock } from 'support/format';
+import { Package as PackageImport } from 'porygon/package';
 
 interface Opts {
   code: string;
   quiet?: boolean;
 }
 
-const eval_: Command.Fn<Opts> = async (args) => {
-  const { interaction, member, guild, embed, client, opts, pkg } = args;
+const eval_: CommandFn<Opts> = async (args) => {
+  assertOwner(args.author);
+
+  const { interaction, author, guild, embed, client, opts, command } = args;
+  const { pkg } = command;
   const database = databaseImport;
   const Settings = SettingsImport;
+  const Package = PackageImport;
   const logger = loggerImport;
 
-  if (!isOwner(member)) {
-    throw new InteractionError({
-      title: 'No.',
-      yieldEmbed: (e) => e.poryThumb('angry'),
-    });
-  }
+  // function commandId(name: string) {
+  //   return Package.searchCommand(name)?.id;
+  // }
+
+  // function enable() {}
+
+  // function disable() {}
 
   const result = eval(opts.code);
 
@@ -38,13 +41,14 @@ const eval_: Command.Fn<Opts> = async (args) => {
   await embed
     .okColor()
     .setTitle('Evaluated Code')
-    .setDescription(codeBlock(result, { lang: 'js', inspect: true }))
+    .addField('Input', js(opts.code, { inspect: false }))
+    .addField('Output', js(result, { inspect: true }))
     .reply();
 };
 
-export default new Command(eval_, {
+export default new LocalCommand(eval_, {
   name: 'eval',
-  defaultPermission: isDev,
+  // defaultPermission: isDev,
   description: "If you don't know what this does, you shouldn't be using it.",
   options: [
     {
@@ -62,4 +66,6 @@ export default new Command(eval_, {
   ],
 });
 
-const isOwner = (member: GuildMember) => member.id === OWNER;
+function js(code: string, { inspect }: { inspect: boolean }) {
+  return codeBlock(code, { lang: 'js', inspect });
+}

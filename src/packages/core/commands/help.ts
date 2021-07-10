@@ -1,11 +1,11 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
+import { findOwner } from 'porygon/owner';
 import { setting } from 'porygon/settings';
-import { OWNER } from 'secrets.json';
 
 const helpDesc = setting('pory.help_desc');
 
-const help: Command.Fn = async ({ client, embed }) => {
-  const owner = await client.users.cache.get(OWNER);
+const help: CommandFn = async ({ client, embed }) => {
+  const owner = findOwner(client);
   const ownerAvatar = owner?.avatarURL() ?? undefined;
 
   await embed
@@ -17,6 +17,6 @@ const help: Command.Fn = async ({ client, embed }) => {
     .reply();
 };
 
-export default new Command(help, {
+export default new LocalCommand(help, {
   description: 'Shows basic help information.',
 });

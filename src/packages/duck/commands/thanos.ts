@@ -1,15 +1,15 @@
-import { Command } from 'porygon/interaction';
 import { Embed } from 'porygon/embed';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import seedRandom from 'seedrandom';
 import { random } from 'support/array';
 
-const thanos: Command.Fn = async ({ embed, member }) => {
-  const rng = seedRandom(member.id);
+const thanos: CommandFn = async ({ embed, author }) => {
+  const rng = seedRandom(author.id);
   const result = random(RESULTS, rng);
   await embed.poryThumb('thanos').merge(result).reply();
 };
 
-export default new Command(thanos, {
+export default new LocalCommand(thanos, {
   description: 'Rolls the dice on your fate.',
 });
 

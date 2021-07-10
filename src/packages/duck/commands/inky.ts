@@ -1,8 +1,8 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { random } from 'support/array';
 
-const inky: Command.Fn = async ({ embed }) => {
+const inky: CommandFn = async ({ embed }) => {
   await embed
     .infoColor()
     .setDescription(random(MESSAGES.value))
@@ -12,4 +12,4 @@ const inky: Command.Fn = async ({ embed }) => {
 
 const MESSAGES = setting('pkg.duck.inky.messages');
 
-export default new Command(inky, { description: '🥺' });
+export default new LocalCommand(inky, { description: '🥺' });

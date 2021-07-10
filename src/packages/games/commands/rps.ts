@@ -1,21 +1,16 @@
 import { GuildMember } from 'discord.js';
-import { Command } from 'porygon/interaction';
+import { CommandFn } from 'porygon/interaction';
 import { RPS } from '../rps';
 
 interface Opts {
   against: GuildMember;
 }
 
-const rps: Command.Fn<Opts> = async ({
-  opts,
-  member,
-  channel,
-  interaction,
-}) => {
+const rps: CommandFn<Opts> = async ({ opts, author, channel, interaction }) => {
   const game = new RPS({
     channel,
     interaction,
-    player1: member,
+    player1: author,
     player2: opts.against,
   });
 

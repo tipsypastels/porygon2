@@ -1,12 +1,12 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { DiceRoll, DiceRollOpts } from '../dice_roll';
 
-const dice: Command.Fn<DiceRollOpts> = async ({ opts, embed }) => {
+const dice: CommandFn<DiceRollOpts> = async ({ opts, embed }) => {
   const roll = new DiceRoll(opts);
   await embed.okColor().setTitle('Dice Roll').merge(roll).reply();
 };
 
-export default new Command(dice, {
+export default new LocalCommand(dice, {
   description: 'Rolls the dice.',
   options: [
     {

@@ -1,9 +1,11 @@
-import { Command } from 'porygon/interaction';
+import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { Hangman } from '../hangman';
 
-const hangman: Command.Fn = async ({ channel, interaction }) => {
+const hangman: CommandFn = async ({ channel, interaction }) => {
   const game = new Hangman({ channel, interaction });
   await game.start();
 };
 
-export default new Command(hangman, { description: 'Starts a hangman game.' });
+export default new LocalCommand(hangman, {
+  description: 'Starts a hangman game.',
+});
