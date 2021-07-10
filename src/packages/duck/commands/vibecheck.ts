@@ -19,7 +19,7 @@ const vibecheck: CommandFn<Opts> = async ({ embed, opts, author }) => {
     .infoColor()
     .setAuthor('✨ 𝓋𝒾𝒷𝑒 𝒸𝒽𝑒𝒸𝓀 ✨')
     .setTitle(`${name}'s vibe`)
-    .setDescription(`${name} is ${neg} but makes up for it by being ${pos}.`)
+    .setDescription(`${name} is ${neg} but makes up for it by ${pos}.`)
     .reply();
 };
 
