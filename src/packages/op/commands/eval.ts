@@ -23,14 +23,6 @@ const eval_: CommandFn<Opts> = async (args) => {
   const Package = PackageImport;
   const logger = loggerImport;
 
-  // function commandId(name: string) {
-  //   return Package.searchCommand(name)?.id;
-  // }
-
-  // function enable() {}
-
-  // function disable() {}
-
   const result = eval(opts.code);
 
   if (opts.quiet) {

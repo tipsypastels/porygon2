@@ -1,7 +1,5 @@
 import {
   ApplicationCommand as Api,
-  ApplicationCommandPermissionData as Permission,
-  ApplicationCommandPermissions as Permissions,
   Collection,
   CommandInteraction,
 } from 'discord.js';
@@ -9,16 +7,6 @@ import { logger } from 'porygon/logger';
 import { Package } from 'porygon/package';
 import { resolveId } from 'support/like';
 import { LocalCommand as Local } from './local';
-
-/**
- * The arguments needed to construct a `Command`. Not to be confused with
- * `CommandFnArgs`, the arguments passed to a command function.
- */
-export interface CommandArgs {
-  local: Local;
-  api: Api;
-  pkg: Package;
-}
 
 /** The format discord.js gives you upload results in. */
 type Apis = Collection<string, Api>;
@@ -40,20 +28,11 @@ export class Command {
         continue;
       }
 
-      yield new this({ local, api, pkg });
+      yield new this(pkg, api, local);
     }
   }
 
-  private local: Local;
-  private api: Api;
-
-  readonly pkg: Package;
-
-  constructor(args: CommandArgs) {
-    this.local = args.local;
-    this.api = args.api;
-    this.pkg = args.pkg;
-  }
+  constructor(readonly pkg: Package, private api: Api, private local: Local) {}
 
   get id() {
     return this.api.id;
