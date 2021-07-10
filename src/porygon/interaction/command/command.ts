@@ -32,7 +32,11 @@ export class Command {
     }
   }
 
-  constructor(readonly pkg: Package, private api: Api, private local: Local) {}
+  private constructor(
+    readonly pkg: Package,
+    private api: Api,
+    private local: Local,
+  ) {}
 
   get id() {
     return this.api.id;
