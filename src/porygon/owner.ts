@@ -1,15 +1,12 @@
 import { OWNER } from 'secrets.json';
+import { IdLike, resolveId } from 'support/like';
 import { Porygon } from './client';
 
-interface User {
-  id: string;
+export function isOwner(user: IdLike) {
+  return resolveId(user) === OWNER;
 }
 
-export function isOwner(user: User) {
-  return user.id === OWNER;
-}
-
-export function assertOwner(user: User) {
+export function assertOwner(user: IdLike) {
   if (isOwner(user)) {
     return;
   }

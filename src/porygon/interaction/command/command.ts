@@ -1,10 +1,13 @@
 import {
   ApplicationCommand as Api,
+  ApplicationCommandPermissionData as Permission,
+  ApplicationCommandPermissions as Permissions,
   Collection,
   CommandInteraction,
 } from 'discord.js';
 import { logger } from 'porygon/logger';
 import { Package } from 'porygon/package';
+import { resolveId } from 'support/like';
 import { LocalCommand as Local } from './local';
 
 /**
@@ -71,4 +74,11 @@ export class Command {
   call(interaction: CommandInteraction) {
     this.local.call(this, interaction);
   }
+
+  setPermission(type: 'USER' | 'ROLE', user: IdLike, permission: boolean) {
+    const id = resolveId(user);
+    return this.api.setPermissions([{ type, id, permission }]);
+  }
 }
+
+type IdLike = string | { id: string };
