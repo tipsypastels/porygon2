@@ -17,11 +17,11 @@ export class PackageImporter extends Importer<PackageKind, void> {
     super({ dir: `${__dirname}/../../packages`, each: eachDirectory });
   }
 
-  protected beforeImport(file: string) {
+  protected override beforeImport(file: string) {
     logger.setup(`Setting up package ${basename(file)}...`);
   }
 
-  protected async transform(prodKind: PackageKind, pkgDir: string) {
+  protected override async transform(prodKind: PackageKind, pkgDir: string) {
     const kind = isDev ? PackageKind.DEV_SINGLETON : prodKind;
     const pkg = Package.init(kind, this.client);
 
@@ -64,7 +64,7 @@ export class PackageImporter extends Importer<PackageKind, void> {
 }
 
 class CommandImporter extends Importer<LocalCommand> {
-  protected hasDefaultExport(mod: unknown): mod is { default: LocalCommand } {
+  protected override hasDefaultExport(mod: unknown): mod is { default: LocalCommand } {
     return super.hasDefaultExport(mod) && mod.default instanceof LocalCommand;
   }
 }

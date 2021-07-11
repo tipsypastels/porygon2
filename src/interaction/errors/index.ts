@@ -38,7 +38,7 @@ export abstract class InteractionBaseError {
 }
 
 export class InteractionWarning extends InteractionBaseError {
-  intoEmbed(embed: Embed) {
+  override intoEmbed(embed: Embed) {
     return embed
       .poryThumb('warning')
       .warningColor()
@@ -47,7 +47,7 @@ export class InteractionWarning extends InteractionBaseError {
 }
 
 export class InteractionDanger extends InteractionBaseError {
-  intoEmbed(embed: Embed) {
+  override intoEmbed(embed: Embed) {
     return embed
       .poryThumb('danger')
       .dangerColor()
@@ -56,7 +56,7 @@ export class InteractionDanger extends InteractionBaseError {
 }
 
 export class InteractionError extends InteractionBaseError {
-  intoEmbed(embed: Embed) {
+  override intoEmbed(embed: Embed) {
     return embed
       .poryThumb('danger')
       .dangerColor()
