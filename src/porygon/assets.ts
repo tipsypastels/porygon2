@@ -17,6 +17,7 @@ export const PORY_ASSETS = Asset.group('pory', {
   'speech': 'speech.png',
   'thanos': 'thanos.png',
   'warning': 'warning.png',
+  'vibe': 'vibe.png',
 });
 
 export const HANGMAN_ASSETS = Asset.numberedGroup('hangman', extension('png'));

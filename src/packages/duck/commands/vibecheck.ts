@@ -20,6 +20,7 @@ const vibecheck: CommandFn<Opts> = async ({ embed, opts, author }) => {
     .setAuthor('✨ 𝓋𝒾𝒷𝑒 𝒸𝒽𝑒𝒸𝓀 ✨')
     .setTitle(`${name}'s vibe`)
     .setDescription(`${name} is ${neg} but makes up for it by ${pos}.`)
+    .poryThumb('vibe')
     .reply();
 };
 
