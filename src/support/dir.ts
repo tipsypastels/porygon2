@@ -24,21 +24,47 @@ export function* eachDirectory(dir: string): Generator<string> {
 }
 
 /**
+ * Yields each file named `file` in each sub-directory.
+ * Ignores other files in the directory.
+ */
+export function* eachDirectoryWithFile(dir: string, file: string): Generator<string> {
+  for (const currentDir of eachDirectory(dir)) {
+    const full = join(currentDir, file);
+
+    if (isFile(full)) {
+      yield full;
+    }
+  }
+}
+
+/**
  * Returns whether the path is a directory.
  */
 export function isDirectory(path: string) {
-  return statSync(path).isDirectory();
+  try {
+    return statSync(path).isDirectory();
+  } catch {
+    return false;
+  }
 }
 
-interface EachInternalOpts {
+/**
+ * Returns whether the path is a file.
+ */
+export function isFile(path: string) {
+  try {
+    return statSync(path).isFile();
+  } catch {
+    return false;
+  }
+}
+
+interface Opts {
   onFile: 'yield' | 'ignore';
   onDir: 'yield' | 'yield*' | 'ignore';
 }
 
-function* eachInternal(
-  dir: string,
-  { onFile, onDir }: EachInternalOpts,
-): Generator<string> {
+function* eachInternal(dir: string, { onFile, onDir }: Opts): Generator<string> {
   for (const file of readdirSync(dir)) {
     const path = join(dir, file);
 

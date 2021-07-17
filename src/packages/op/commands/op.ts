@@ -1,11 +1,7 @@
 import { globallyLocateChannel } from 'porygon/global_channel_ref';
 import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { assertOwner } from 'porygon/owner';
-import {
-  missedPartialDeletions,
-  missedPartialLeaves,
-  uptime,
-} from 'porygon/stats';
+import { missedPartialDeletions, missedPartialLeaves, uptime } from 'porygon/stats';
 import { isDev } from 'support/dev';
 
 interface SayOpts {
@@ -17,16 +13,22 @@ const say: CommandFn<SayOpts> = async ({
   interaction,
   opts,
   client,
+  channel,
   guild,
   author,
 }) => {
   assertOwner(author);
 
   const { code, message } = opts;
-  const channel = globallyLocateChannel({ code, client, currentGuild: guild });
+  const destChannel = globallyLocateChannel({
+    code,
+    client,
+    currentChannel: channel,
+    currentGuild: guild,
+  });
 
   await Promise.all([
-    channel.send(message),
+    destChannel.send(message),
     interaction.reply('✅', { ephemeral: true }),
   ]);
 };

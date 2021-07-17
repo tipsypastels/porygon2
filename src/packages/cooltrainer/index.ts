@@ -1,4 +1,23 @@
-import { PackageKind } from 'porygon/package';
-import { setting } from 'porygon/settings';
+import { Message } from 'discord.js';
+import { CtScoreManager } from './score';
+import { CtSettings } from './settings';
 
-export default PackageKind.Guild.init(setting('guilds.pokecom').value);
+export * from './score';
+export * from './scoreboard';
+export * from './tick';
+export * from './cycle';
+
+export function handleCtMessage(message: Message) {
+  if (message.author.bot) return;
+
+  const { member } = message;
+  const points = pointsPerMessage(message);
+  if (!member || !points) return;
+
+  CtScoreManager.increment(member, points);
+}
+
+function pointsPerMessage(message: Message) {
+  const id = message.channel as never;
+  return CtSettings.ppmExceptions.value[id] ?? 1;
+}

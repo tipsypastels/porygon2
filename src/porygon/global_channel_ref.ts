@@ -8,6 +8,7 @@ const GUILD_NAMES = setting('guilds');
 interface Opts {
   code: string;
   client: Porygon;
+  currentChannel: TextChannel;
   currentGuild: Guild;
 }
 
@@ -16,6 +17,10 @@ interface Opts {
  * Because the `CHANNEL` command option will only let you
  * pick from the current server, we instead use a special
  * string syntax. Examples of what is valid:
+ *
+ * Period - refers to current channel
+ *
+ *    .
  *
  * Bare channel ID - refers to current guild
  *
@@ -31,7 +36,16 @@ interface Opts {
  *
  * And any combination thereof.
  */
-export function globallyLocateChannel({ code, client, currentGuild }: Opts) {
+export function globallyLocateChannel({
+  code,
+  client,
+  currentChannel,
+  currentGuild,
+}: Opts) {
+  if (code === '.') {
+    return currentChannel;
+  }
+
   const segments = code.split(':');
 
   if (segments.length === 1) {

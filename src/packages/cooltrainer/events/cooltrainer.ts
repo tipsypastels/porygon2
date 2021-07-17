@@ -1,12 +1,8 @@
 import { EventHandler, PackageKind } from 'porygon/package';
 import { schedule } from 'porygon/schedule';
-import { CtCycleRunner, handleCtMessage } from '../core';
+import { CtCycleRunner, handleCtMessage } from '..';
 
-const ctHandler: EventHandler<PackageKind.Guild> = ({
-  events,
-  kind,
-  client,
-}) => {
+const ctHandler: EventHandler<PackageKind.Guild> = ({ events, kind, client }) => {
   const guild = kind.guild(client);
 
   if (guild) {

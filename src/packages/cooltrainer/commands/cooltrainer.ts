@@ -1,12 +1,7 @@
 import { GuildMember } from 'discord.js';
 import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { isDev } from 'support/dev';
-import {
-  CtCycleRunner,
-  CtScoreboard,
-  CtScoreManager,
-  CtTickRunner,
-} from '../core';
+import { CtCycleRunner, CtScoreboard, CtScoreManager, CtTickRunner } from '..';
 
 type ShowOpts = { member: GuildMember };
 

@@ -1,30 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { basename } from 'path';
-import { eachFile } from 'support/dir';
 import { logger } from './logger';
 
 const SKIP_FILE_SENTINEL = '__SKIP_FILE__';
 
-type Each = (dir: string) => Generator<string>;
 type ImportCb<R> = (result: R, file: string) => void;
 
-export interface ImporterOpts {
-  dir: string;
-  each?: Each;
-}
-
 export class Importer<T, R = T> {
-  protected dir: string;
-  protected each: Each;
-
-  constructor(opts: ImporterOpts) {
-    this.dir = opts.dir;
-    this.each = opts.each ?? eachFile;
-  }
+  constructor(protected files: Generator<string>) {}
 
   async import(cb?: ImportCb<R>) {
-    const files = Array.from(this.each(this.dir));
+    const files = Array.from(this.files);
     const promises = files.map(async (file) => {
       if (this.shouldSkipFile(file)) {
         return;
