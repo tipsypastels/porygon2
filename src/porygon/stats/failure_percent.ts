@@ -6,6 +6,10 @@ export class FailurePercentStat {
     return this._total;
   }
 
+  get passes() {
+    return this._total - this.fails;
+  }
+
   get fails() {
     return this._fails;
   }
@@ -15,12 +19,16 @@ export class FailurePercentStat {
     return Math.round((this.fails / this.total) * 100);
   }
 
-  succeed() {
+  pass() {
     this._total += 1;
   }
 
   fail() {
     this._total += 1;
     this._fails += 1;
+  }
+
+  add(value: boolean) {
+    value ? this.pass() : this.fail();
   }
 }

@@ -1,8 +1,8 @@
 import { FriendCodes } from '.prisma/client';
 import { GuildMember } from 'discord.js';
-import { InteractionWarning } from 'interaction/errors';
 import { database } from 'porygon/database';
 import { Embed } from 'porygon/embed';
+import { embeddedError } from 'porygon/embed/errors';
 import { codeBlock } from 'support/format';
 
 // NOTE "3ds" isn't a valid column, so we use "ds" internally, hence
@@ -29,10 +29,11 @@ export class FriendCodeManager {
 
   async save(rawData: RawData | undefined) {
     if (!rawData || Object.keys(rawData).length === 0) {
-      throw new InteractionWarning(
-        'You used /fc set with no parameters.',
-        'Please provide at least one of `3ds`, `switch`, or `go` to set.',
-      );
+      throw embeddedError.warn((e) => {
+        e.setTitle('You used /fc set with no parameters.').setDescription(
+          'Please provide at least one of `3ds`, `switch`, or `go` to set.',
+        );
+      });
     }
 
     const data = this.normalize(rawData);
@@ -73,10 +74,11 @@ export class FriendCodeManager {
     code = this.normalizeCode(code);
 
     if (code.match(FriendCodeManager.SYNTAX) === null) {
-      throw new InteractionWarning(
-        `${code} is not a valid friend code.`,
-        'Valid friend codes look like `####-####-####`.',
-      );
+      throw embeddedError.warn((e) => {
+        e.setTitle(`${code} is not a valid friend code.`).setDescription(
+          'Valid friend codes look like `####-####-####`.',
+        );
+      });
     }
 
     return code;

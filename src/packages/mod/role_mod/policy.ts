@@ -1,5 +1,5 @@
 import { Role } from 'discord.js';
-import { InteractionDanger } from 'interaction/errors';
+import { embeddedError } from 'porygon/embed/errors';
 import { Package } from 'porygon/package';
 import { setting } from 'porygon/settings';
 import { isRequestable } from './query';
@@ -19,18 +19,21 @@ export async function assertRequestable(role: Role, pkg: Package) {
 
 function respondToSarcasticAttemptToGetStaffRole(role: Role) {
   if (role.name.match(STAFF_ROLES)) {
-    throw new InteractionDanger({
-      title: 'Nice try.',
-      message: `Requesting ${role.name}? Porygon has never seen that one before.`,
-      yieldEmbed: (e) => e.poryThumb('angry'),
+    throw embeddedError((e) => {
+      e.poryThumb('angry')
+        .setTitle('Nice try.')
+        .setDescription(
+          `Requesting ${role.name}? Porygon has never seen that one before.`,
+        );
     });
   }
 }
 
 function respondToIllegalRequest(role: Role, pkg: Package) {
-  throw new InteractionDanger({
-    title: `${role.name} isn't a requestable role.`,
-    message: illegalErrorDesc(pkg),
+  throw embeddedError((e) => {
+    e.setTitle(`${role.name} isn't a requestable role.`).setDescription(
+      illegalErrorDesc(pkg),
+    );
   });
 }
 

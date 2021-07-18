@@ -4,7 +4,7 @@ import { Diff } from 'porygon/diff';
 import { Embed } from 'porygon/embed';
 import { RoleModOpts } from './types';
 import { fetchRoleOpts } from './shared';
-import { InteractionWarning } from 'interaction/errors';
+import { embeddedError } from 'porygon/embed/errors';
 
 export async function updateRoleMod(role: Role, opts: Partial<RoleModOpts>) {
   const currentOpts = await fetchRoleOpts(role);
@@ -34,16 +34,18 @@ export async function updateRoleMod(role: Role, opts: Partial<RoleModOpts>) {
 
 function assertChanged(diff: Diff<RoleModOpts>) {
   if (diff.unchanged) {
-    throw new InteractionWarning(
-      'You used /rolemod set with no parameters.',
-      'Nothing to set!',
-    );
+    throw embeddedError((e) => {
+      e.setTitle('You used /rolemod set with no parameters.').setDescription(
+        'Nothing to set!',
+      );
+    });
   }
 
   if (diff.allChangesWereNoOps) {
-    throw new InteractionWarning(
-      'All the values you provided were the same as the existing values.',
-      'Are you trying to confuse me?',
-    );
+    throw embeddedError((e) => {
+      e.setTitle(
+        'All the values you provided were the same as the existing values.',
+      ).setDescription('Are you trying to confuse me?');
+    });
   }
 }

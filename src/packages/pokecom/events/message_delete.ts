@@ -19,7 +19,7 @@ function run(message: Message | PartialMessage) {
     missedPartialDeletions.fail();
   }
 
-  missedPartialDeletions.succeed();
+  missedPartialDeletions.pass();
 
   const embed = new Embed();
 

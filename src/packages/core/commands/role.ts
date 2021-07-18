@@ -1,6 +1,6 @@
 import { Role } from 'discord.js';
-import { InteractionWarning } from 'interaction/errors';
 import { assertRequestable } from 'packages/mod/role_mod/policy';
+import { embeddedError } from 'porygon/embed/errors';
 import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 
 type Opts = { role: Role };
@@ -9,7 +9,7 @@ const add: CommandFn<Opts> = async ({ opts, embed, command, author }) => {
   const { role } = opts;
 
   if (author.roles.cache.has(role.id)) {
-    throw new InteractionWarning(`You already have "${role.name}"!`);
+    throw embeddedError((e) => e.setTitle(`You already have "${role.name}"!`));
   }
 
   await assertRequestable(role, command.pkg);
@@ -21,7 +21,7 @@ const remove: CommandFn<Opts> = async ({ opts, embed, command, author }) => {
   const { role } = opts;
 
   if (!author.roles.cache.has(role.id)) {
-    throw new InteractionWarning(`You don't have the role "${role.name}".`);
+    throw embeddedError((e) => e.setTitle(`You don't have the role "${role.name}".`));
   }
 
   await assertRequestable(role, command.pkg);

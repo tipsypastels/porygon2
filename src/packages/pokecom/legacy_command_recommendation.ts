@@ -39,7 +39,8 @@ const LEGACY_COMMANDS: Record<string, LegacyCommand> = {
 
   // UTILITIES
   calc: { kind: 'unchanged' },
-  dice: { kind: 'unchanged' },
+  dice: { kind: 'renamed', to: 'roll' },
+  roll: { kind: 'unchanged' },
   flip: { kind: 'unchanged' },
   guild: { kind: 'removed' },
   poll: { kind: 'unchanged' }, // TODO: this isn't actually in yet, waiting for varargs

@@ -1,7 +1,7 @@
 import { Pet } from '.prisma/client';
 import { Guild, GuildMember } from 'discord.js';
-import { InteractionDanger, InteractionWarning } from 'interaction/errors';
 import { database } from 'porygon/database';
+import { embeddedError } from 'porygon/embed/errors';
 import { CommandFn, LocalMultipartCommand } from 'porygon/interaction';
 import { setting } from 'porygon/settings';
 import { code } from 'support/format';
@@ -35,17 +35,18 @@ const remove: CommandFn<RemOpts> = async ({ opts, embed, guild, author }) => {
   });
 
   if (!entry) {
-    throw new InteractionWarning(`No such pet with ID: ${id}.`);
+    throw embeddedError.warn((e) => e.setTitle(`No such pet with ID: ${id}.`));
   }
 
   const isCreator = author.id === entry.userId;
   const isMod = author.permissions.has(CAN_MOD_PETS.value as 'KICK_MEMBERS');
 
   if (!(isCreator || isMod)) {
-    throw new InteractionDanger(
-      "You can't remove that pet!",
-      "You may only remove pets that you've uploaded.",
-    );
+    throw embeddedError.danger((e) => {
+      e.setTitle("You can't remove that pet!").setDescription(
+        "You may only remove pets that you've uploaded.",
+      );
+    });
   }
 
   await database.pet.delete({ where: { id } });
@@ -57,8 +58,8 @@ const random: CommandFn<RandOpts> = async ({ opts, embed, guild }) => {
   const entry = await randomEntry(guild, by);
 
   if (!entry) {
-    throw new InteractionWarning(
-      `${by?.displayName ?? 'This server'} has not uploaded any pets.`,
+    throw embeddedError.warn((e) =>
+      e.setTitle(`${by?.displayName ?? 'This server'} has not uploaded any pets.`),
     );
   }
 

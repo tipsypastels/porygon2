@@ -22,8 +22,11 @@ interface SetAuthorFromOpts {
 }
 
 export class Embed extends MessageEmbed {
-  merge(into: Embeddable) {
-    typeof into === 'object' ? into.intoEmbed(this) : into(this);
+  merge(into: Embeddable | undefined) {
+    if (into) {
+      typeof into === 'object' ? into.intoEmbed(this) : into(this);
+    }
+
     return this;
   }
 

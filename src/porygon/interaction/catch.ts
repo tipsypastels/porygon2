@@ -1,5 +1,5 @@
-import { InteractionBaseError } from 'interaction/errors';
 import { Embed } from 'porygon/embed';
+import { isEmbeddedError } from 'porygon/embed/errors';
 import { codeBlock } from 'support/format';
 
 const enum After {
@@ -17,7 +17,7 @@ export function catchInteractionError(error: any, embed: Embed.Replyable) {
 }
 
 function injectErrorResponse(error: any, embed: Embed): After {
-  if (error instanceof InteractionBaseError) {
+  if (isEmbeddedError(error)) {
     error.intoEmbed(embed);
     return After.Ignore;
   }

@@ -47,7 +47,7 @@ async function onRemove(member: GuildMember | PartialGuildMember) {
     return;
   }
 
-  missedPartialLeaves.succeed();
+  missedPartialLeaves.pass();
 
   const kick = await latestAuditLog(member.guild, 'MEMBER_KICK');
   kick ? onKicked(member, kick) : onLeave(member);
@@ -73,9 +73,7 @@ function onKicked(member: GuildMember, kick: GuildAuditLogsEntry) {
   embed
     .dangerColor()
     .setAuthorFromUser(member, { withDiscriminator: true })
-    .setTitle(
-      `${member.user.username} was kicked by ${kick.executor?.username}`,
-    )
+    .setTitle(`${member.user.username} was kicked by ${kick.executor?.username}`)
     .addField('Reason', kick.reason ?? NO_REASON)
     .if(member.joinedAt, (date) => embed.addField('Joined At', format(date)));
 
