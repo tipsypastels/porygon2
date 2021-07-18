@@ -39,10 +39,7 @@ type HasCount = { count: number };
  * be all that's needed.
  */
 export function createLang<L extends Lang>(lang: L): LangFn<L> {
-  return function (...args) {
-    const path = args[0];
-    const params = args[1];
-
+  return function (...[path, params]) {
     const phrase = get(lang, path) as Phrase;
     let phraseString = resolvePhraseString(phrase, () => (params as HasCount).count);
 
