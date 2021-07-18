@@ -1,20 +1,20 @@
 import { Empty } from 'support/type';
 import { Path, PathValue } from 'support/type/path';
 
-type Multiple = {
+type PluralMap = {
   [key: number]: string;
   _: string;
 };
 
 /** @internal */
-export type Phrase = string | Multiple;
+export type Phrase = string | PluralMap;
 
 export interface Lang {
   [key: string]: Lang | Phrase;
 }
 
 type Stringable = string | { toString(): string };
-type WithCount<S, T> = S extends Multiple ? T & { count: number } : T;
+type WithCount<S, T> = S extends PluralMap ? T & { count: number } : T;
 type ToObject<T extends string> = { [K in T]: Stringable };
 
 type ExtractString<S> = S extends `${string}{${infer Param}}${infer Rest}`
@@ -22,7 +22,7 @@ type ExtractString<S> = S extends `${string}{${infer Param}}${infer Rest}`
   : never;
 
 type ExtractObject<S> = ExtractString<S[keyof S]>;
-type Extract<S> = S extends Multiple ? ExtractObject<S> : ExtractString<S>;
+type Extract<S> = S extends PluralMap ? ExtractObject<S> : ExtractString<S>;
 
 type Params<S> = WithCount<S, ToObject<Extract<S>>>;
 
