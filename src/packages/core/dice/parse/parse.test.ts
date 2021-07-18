@@ -1,11 +1,4 @@
-import {
-  parseDiceRoll as parse,
-  unparseDiceRoll as unparse,
-  DEFAULT_DICE_ROLL,
-  DiceThresholdOp,
-} from '..';
-
-const { Eq } = DiceThresholdOp;
+import { parseDiceRoll as parse, DEFAULT_DICE_ROLL } from '..';
 
 describe(parse, () => {
   it('returns the default case for an empty string', () => {
@@ -60,31 +53,5 @@ describe(parse, () => {
 
   it('supports ops alone', () => {
     expect(parse('=5')).toEqual({ count: 1, faces: 6, threshold: { op: '=', value: 5 } });
-  });
-});
-
-describe(unparse, () => {
-  it('stringifies count+faces (the required properties)', () => {
-    expect(unparse({ count: 1, faces: 6 })).toEqual('1d6');
-  });
-
-  it('stringifies positive offset', () => {
-    expect(unparse({ count: 1, faces: 6, offset: 4 })).toEqual('1d6 + 4');
-  });
-
-  it('stringifies negative offset', () => {
-    expect(unparse({ count: 1, faces: 6, offset: -4 })).toEqual('1d6 - 4');
-  });
-
-  it('stringifies threshold', () => {
-    expect(unparse({ count: 1, faces: 6, threshold: { op: Eq, value: 5 } })).toEqual(
-      '1d6 = 5',
-    );
-  });
-
-  it('stringifies threshold + offset', () => {
-    expect(
-      unparse({ count: 1, faces: 6, offset: 4, threshold: { op: Eq, value: 5 } }),
-    ).toEqual('1d6 + 4 = 5');
   });
 });

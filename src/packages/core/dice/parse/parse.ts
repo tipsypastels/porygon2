@@ -1,10 +1,11 @@
 import { clamp } from 'support/number';
-import { DEFAULT_DICE_ROLL, DiceRoll, DiceThresholdOp } from './dice';
-import { matchDiceNotation, stripDiceNotationSpaces } from './parse/notation';
-import { diceParseError } from './parse/parse_error';
+import { stripSpaces } from 'support/string';
+import { DEFAULT_DICE_ROLL, DiceRoll, DiceThresholdOp } from '../dice';
+import { matchDiceNotation } from './notation';
+import { diceParseError } from './parse_error';
 
 export function parseDiceRoll(roll: string): DiceRoll {
-  roll = stripDiceNotationSpaces(roll);
+  roll = stripSpaces(roll);
 
   if (roll.length === 0) {
     return DEFAULT_DICE_ROLL;
@@ -36,5 +37,3 @@ export function parseDiceRoll(roll: string): DiceRoll {
 
   return result as DiceRoll;
 }
-
-export { unparseDiceRoll } from './parse/unparse';

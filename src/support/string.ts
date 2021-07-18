@@ -46,3 +46,8 @@ export function* eachWord(input: string) {
     yield tokens[i];
   }
 }
+
+/** Removes all spaces from `input`. */
+export function stripSpaces(input: string) {
+  return input.replace(/ /g, '');
+}

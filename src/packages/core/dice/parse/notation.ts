@@ -16,7 +16,3 @@ function combine(...args: RegExp[]) {
 export function matchDiceNotation(roll: string) {
   return FULL.exec(roll);
 }
-
-export function stripDiceNotationSpaces(roll: string) {
-  return roll.replace(/ /g, '');
-}
