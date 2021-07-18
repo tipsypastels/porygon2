@@ -39,23 +39,6 @@ type HasCount = { count: number };
  * be all that's needed.
  */
 export function createLang<L extends Lang>(lang: L): LangFn<L> {
-  function resolvePhraseString(phrase: Phrase, getCount: () => number) {
-    if (typeof phrase === 'string') {
-      return phrase;
-    }
-
-    // lazy because strings don't have a .count,
-    // so we'd rather not uncritically pass it in
-    // (even if it technically wouldn't blow up in pure js)
-    const count = getCount();
-
-    if (count in phrase) {
-      return phrase[count];
-    }
-
-    return phrase._;
-  }
-
   return function (...args) {
     const path = args[0];
     const params = args[1];
@@ -71,4 +54,21 @@ export function createLang<L extends Lang>(lang: L): LangFn<L> {
 
     return phraseString;
   };
+}
+
+function resolvePhraseString(phrase: Phrase, getCount: () => number) {
+  if (typeof phrase === 'string') {
+    return phrase;
+  }
+
+  // lazy because strings don't have a .count,
+  // so we'd rather not uncritically pass it in
+  // (even if it technically wouldn't blow up in pure js)
+  const count = getCount();
+
+  if (count in phrase) {
+    return phrase[count];
+  }
+
+  return phrase._;
 }

@@ -24,7 +24,6 @@ type ExtractString<S> = S extends `${string}{${infer Param}}${infer Rest}`
 type ExtractObject<S> = ExtractString<S[keyof S]>;
 type Extract<S> = S extends Multiple ? ExtractObject<S> : ExtractString<S>;
 
-/** @internal */
 type Params<S> = WithCount<S, ToObject<Extract<S>>>;
 
 /** @internal */
