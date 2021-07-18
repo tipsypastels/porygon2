@@ -1,32 +1,18 @@
 import { CommandInteraction, Guild, User } from 'discord.js';
 import { Porygon } from 'porygon/client';
 import { Embed } from 'porygon/embed';
-import { MISPLACED_GLOBAL_CONSOLATION_DUCKS } from 'porygon/assets';
+import { createLang } from 'porygon/lang';
 
-export async function onDMCommand(
-  client: Porygon,
-  interaction: CommandInteraction,
-) {
+export async function onDMCommand(client: Porygon, interaction: CommandInteraction) {
   const embed = new Embed.Replyable(interaction);
   const guilds = await getSharedGuilds(client, interaction.user);
-
-  if (guilds.length) {
-    const term = guilds.length === 1 ? 'server' : 'servers';
-    const list = guilds.map((g) => `• **${g.name}**`).join('\n');
-
-    embed.setDescription(
-      `You and I share the following ${term}. You can find me there :)\n\n${list}`,
-    );
-  } else {
-    embed
-      .setDescription('Anyways, have some rubber ducks.')
-      .setImage(MISPLACED_GLOBAL_CONSOLATION_DUCKS.url);
-  }
+  const list = guilds.map((g) => `**${g.name}**`).join('\n');
 
   embed
     .warningColor()
     .poryThumb('speech')
-    .setTitle("Sorry, I don't support DM commands right now.")
+    .setTitle(lang('title'))
+    .setDescription(lang('guilds', { list, count: guilds.length }))
     .reply();
 }
 
@@ -43,5 +29,15 @@ async function getSharedGuilds(client: Porygon, user: User) {
   });
 
   await Promise.all(promises);
-  return shared;
+  // return shared;
+  return [] as Guild[];
 }
+
+const lang = createLang(<const>{
+  title: "Sorry, I don't support DM commands right now.",
+  guilds: {
+    0: 'But I hope you have a lovely day!',
+    1: 'You can find me on {list} :)',
+    _: 'You and I share the following servers. You can find me there :)\n\n{list}',
+  },
+});

@@ -22,8 +22,3 @@ export const PORY_ASSETS = Asset.group('pory', {
 
 export const HANGMAN_ASSETS = Asset.numberedGroup('hangman', extension('png'));
 export const HEADPAT_ASSETS = Asset.numberedGroup('headpats', extension('gif'));
-
-export const MISPLACED_GLOBAL_CONSOLATION_DUCKS = Asset.open(
-  '',
-  'misplaced_global_consolation_ducks.jpg',
-);

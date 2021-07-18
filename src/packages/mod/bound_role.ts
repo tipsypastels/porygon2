@@ -1,5 +1,6 @@
 import { GuildMember, Role } from 'discord.js';
 import { database } from 'porygon/database';
+import { createLang } from 'porygon/lang';
 import { logger } from 'porygon/logger';
 import { AsyncCache } from 'support/cache';
 
@@ -67,13 +68,15 @@ export async function regainBoundRoles(member: GuildMember) {
 }
 
 function logMissingBoundRoles(missing: string[]) {
-  const plural = missing.length === 1 ? ['roles', 'are'] : ['role', 'is'];
-  logger.warn(
-    `Missing bound ${plural[0]} ${missing.join(', ')} ${
-      plural[1]
-    } being deleted...`,
-  );
+  logger.warn(missingLang('missing', { list: missing.join(','), count: missing.length }));
 
   TABLE.deleteMany({ where: { roleId: { in: missing } } });
   missing.forEach((r) => CACHE.uncache(r));
 }
+
+const missingLang = createLang(<const>{
+  missing: {
+    1: 'Missing bound role {list} is being deleted.',
+    _: 'Missing bound roles {list} are being deleted.',
+  },
+});
