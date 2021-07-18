@@ -1,31 +1,36 @@
-import { random } from 'support/array';
-import { Asset } from '.';
+import { Collection } from 'discord.js';
+import { range } from 'support/array';
+import { Asset } from './asset';
 
-export type AssetGroupKey<G> = G extends AssetGroup<infer K> ? K : never;
+export type AssetGroupKey<G> = G extends AssetGroup<infer F> ? F[0] : never;
 
-export class AssetGroup<K extends PropertyKey> {
-  readonly keys: K[] = [];
-  private assets: Record<K, Asset>;
+type File = readonly [name: any, ext: string];
 
-  constructor(dir: string, files: Record<K, string>) {
-    const assets: Partial<Record<K, Asset>> = {};
-    let key: K;
+export class AssetGroup<F extends File> {
+  private assets = new Collection<F[0], Asset>();
 
-    for (key in files) {
-      this.keys.push(key);
-
-      assets[key] = Asset.open(dir, files[key]);
-    }
-
-    this.assets = assets as Record<K, Asset>;
+  static range<E extends string>(end: number, ext: E) {
+    return range(0, end).map((i) => <const>[i, ext]);
   }
 
-  get(key: K) {
-    return this.assets[key];
+  constructor(dir: string, files: readonly F[]) {
+    for (const [name, ext] of files) {
+      const asset = Asset.open(dir, name, ext);
+      this.assets.set(name, asset);
+    }
+  }
+
+  *[Symbol.iterator]() {
+    for (const [, asset] of this.assets) {
+      yield asset;
+    }
+  }
+
+  get(key: F[0]) {
+    return this.assets.get(key)!;
   }
 
   random() {
-    const key = random(this.keys);
-    return this.assets[key];
+    return this.assets.random();
   }
 }

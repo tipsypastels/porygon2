@@ -450,6 +450,12 @@
       "when i was a young duck",
       "no thots head empty",
       "mining duckcoin"
-    ]
+    ],
+    "assets": {
+      "upload_dump": {
+        "dev": { "guild": "746219046374080532", "channel": "866433149764370503" },
+        "prod": { "guild": "322199235825238017", "channel": "866445374378344468" }
+      }
+    }
   }
 }

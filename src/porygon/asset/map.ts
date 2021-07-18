@@ -1,7 +1,7 @@
-import { chunk } from 'support/array';
-import type { Asset } from './index';
+import { Collection } from 'discord.js';
+import type { Asset } from './asset';
 
-const MAP = new Map<string, Asset>();
+const MAP = new Collection<string, Asset>();
 
 export function assetGet(path: string) {
   return MAP.get(path);
@@ -9,6 +9,12 @@ export function assetGet(path: string) {
 
 export function assetCache(asset: Asset) {
   return MAP.set(asset.path, asset);
+}
+
+export function* eachAsset() {
+  for (const [, asset] of MAP) {
+    yield asset;
+  }
 }
 
 export function mapAssets<R>(map: (asset: Asset) => R) {
@@ -20,9 +26,3 @@ export function mapAssets<R>(map: (asset: Asset) => R) {
 
   return out;
 }
-
-export function chunkAssets() {
-  return chunk(CHUNK_SIZE, [...MAP.values()]);
-}
-
-const CHUNK_SIZE = 10;

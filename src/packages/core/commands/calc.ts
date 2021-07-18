@@ -18,12 +18,9 @@ const calc: CommandFn<Opts> = async ({ opts, embed }) => {
       .addField('Result', codeBlock(result));
   } catch (error) {
     embed
-      .poryThumb('math')
       .warningColor()
       .addField('Error', codeBlock(error.message))
-      .setTitle(
-        '_Porygon adjusts her glasses and takes another look at that equation._',
-      );
+      .setTitle('_Porygon adjusts her glasses and takes another look at that equation._');
   }
 
   await embed.reply();

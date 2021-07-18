@@ -4,12 +4,7 @@ import { setting } from 'porygon/settings';
 import { random, range, toSentence } from 'support/array';
 
 const nudge: CommandFn = async ({ guild, embed }) => {
-  await embed
-    .okColor()
-    .poryThumb('death')
-    .setTitle(disaster())
-    .setDescription(deaths(guild))
-    .reply();
+  await embed.okColor().setTitle(disaster()).setDescription(deaths(guild)).reply();
 };
 
 export default new LocalCommand(nudge, {

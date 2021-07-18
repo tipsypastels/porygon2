@@ -5,6 +5,7 @@ import { CommandFn, LocalCommand } from 'porygon/interaction';
 import { logger as loggerImport } from 'porygon/logger';
 import { assertOwner } from 'porygon/owner';
 import * as SettingsImport from 'porygon/settings';
+import * as AssetsImport from 'porygon/assets';
 import { codeBlock } from 'support/format';
 import { Package as PackageImport } from 'porygon/package';
 
@@ -21,6 +22,7 @@ const eval_: CommandFn<Opts> = async (args) => {
   const database = databaseImport;
   const Settings = SettingsImport;
   const Package = PackageImport;
+  const Assets = AssetsImport;
   const logger = loggerImport;
 
   const result = eval(opts.code);

@@ -1,24 +1,22 @@
-import { Asset, extension } from './asset/index';
+import { AssetGroup } from './asset';
 
-export const COIN_ASSETS = Asset.group('coins', {
-  heads: 'heads.png',
-  tails: 'tails.png',
-});
+export const COIN_ASSETS = new AssetGroup('coins', <const>[
+  ['heads', 'png'],
+  ['tails', 'png'],
+]);
 
-export const PORY_ASSETS = Asset.group('pory', {
-  '8ball': '8ball.png',
-  'angry': 'angry.png',
-  'danger': 'danger.png',
-  'death': 'death.png',
-  'error': 'error.png',
-  'math': 'math.gif',
-  'plead': 'plead.png',
-  'smile': 'smile.png',
-  'speech': 'speech.png',
-  'thanos': 'thanos.png',
-  'warning': 'warning.png',
-  'vibe': 'vibe.png',
-});
+export const PORY_ASSETS = new AssetGroup('pory', <const>[
+  ['8ball', 'png'],
+  ['angry', 'png'],
+  ['danger', 'png'],
+  ['error', 'png'],
+  ['plead', 'png'],
+  ['smile', 'png'],
+  ['speech', 'png'],
+  ['thanos', 'png'],
+  ['vibe', 'png'],
+  ['warning', 'png'],
+]);
 
-export const HANGMAN_ASSETS = Asset.numberedGroup('hangman', extension('png'));
-export const HEADPAT_ASSETS = Asset.numberedGroup('headpats', extension('gif'));
+export const HANGMAN_ASSETS = new AssetGroup('hangman', AssetGroup.range(10, 'png'));
+export const HEADPAT_ASSETS = new AssetGroup('headpats', AssetGroup.range(33, 'gif'));

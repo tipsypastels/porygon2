@@ -58,7 +58,7 @@ export class Porygon extends DiscordClient {
   }
 
   private async setupAssets() {
-    await setupAssets();
+    await setupAssets(this);
   }
 }
 

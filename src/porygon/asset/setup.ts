@@ -1,9 +1,10 @@
-import fromEntries from 'object.fromentries';
+import { TextChannel } from 'discord.js';
 import { stat, writeFile } from 'fs/promises';
-import { upload } from './imgur';
+import fromEntries from 'object.fromentries';
+import { Porygon } from 'porygon/client';
 import { logger } from 'porygon/logger';
-import { chunkAssets, mapAssets } from './map';
-import { Seconds } from 'support/time';
+import { setting } from 'porygon/settings';
+import { eachAsset, mapAssets } from './map';
 
 type UploadCache = {
   lastRun: number;
@@ -11,6 +12,7 @@ type UploadCache = {
 };
 
 const CACHE_FILE = 'assets/upload_cache.json';
+const UPLOAD_DEST = setting('pory.assets.upload_dump');
 
 let done = false;
 
@@ -18,52 +20,47 @@ export function assetSetupIsDone() {
   return done;
 }
 
-export async function setupAssets() {
+export async function setupAssets(client: Porygon) {
   // ensure all assets are loaded
   await import('../assets');
 
-  const chunks = chunkAssets();
-  const cache = await fetchUploadCache();
+  const [cache, channel] = await Promise.all([
+    fetchUploadCache(),
+    fetchUploadChannel(client),
+  ]);
+
   const lastRun = cache?.lastRun ?? 0;
 
   let shouldCreateNextUploadCache = !cache;
 
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    const isNotLastChunk = i < chunks.length - 1;
+  for (const asset of eachAsset()) {
+    const { mtime } = await stat(asset.path);
 
-    let didUploadAnyThisChunk = false;
-
-    const promises = chunk.map(async (asset) => {
-      const { mtime } = await stat(asset.path);
-
-      if (cache?.urls[asset.path] && mtime.getTime() <= lastRun) {
-        asset.url = cache.urls[asset.path];
-        return;
-      }
-
-      logger.setup(`Uploading asset ${asset.path}...`);
-
-      asset.url = await upload(asset);
-
-      shouldCreateNextUploadCache = true;
-      didUploadAnyThisChunk = true;
-    });
-
-    await Promise.all(promises);
-
-    if (didUploadAnyThisChunk && isNotLastChunk) {
-      await pause();
+    if (cache?.urls[asset.path] && mtime.getTime() <= lastRun) {
+      asset.url = cache.urls[asset.path];
+      continue;
     }
-  }
 
-  logger.info('Done uploading.');
+    logger.setup(`Uploading asset ${asset.path}...`);
+
+    const message = await channel.send({ files: [asset.path] });
+    const attachment = message.attachments.first()!;
+
+    asset.url = attachment.url;
+
+    shouldCreateNextUploadCache = true;
+  }
 
   if (shouldCreateNextUploadCache) {
     await createNextUploadCache();
   }
 
   done = true;
+}
+
+export function fetchUploadChannel(client: Porygon) {
+  const { guild, channel } = UPLOAD_DEST.value;
+  return client.guilds.cache.get(guild)!.channels.cache.get(channel) as TextChannel;
 }
 
 function fetchUploadCache(): Promise<UploadCache | null> {
@@ -84,12 +81,4 @@ async function createNextUploadCache() {
   const json = JSON.stringify(cache, null, 2);
 
   await writeFile(CACHE_FILE, json);
-}
-
-function pause() {
-  logger.warn('Pausing upload for a few seconds to avoid 429...');
-
-  return new Promise<void>((resolve) => {
-    setTimeout(() => resolve(), Seconds(10));
-  });
 }
