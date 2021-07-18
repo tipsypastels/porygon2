@@ -65,10 +65,5 @@ function resolvePhraseString(phrase: Phrase, getCount: () => number) {
   // so we'd rather not uncritically pass it in
   // (even if it technically wouldn't blow up in pure js)
   const count = getCount();
-
-  if (count in phrase) {
-    return phrase[count];
-  }
-
-  return phrase._;
+  return phrase[count in phrase ? count : '_'];
 }
