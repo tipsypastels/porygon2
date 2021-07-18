@@ -27,7 +27,7 @@ export function tallyDiceRoll(roll: DiceRoll) {
   }
 
   function rollValue() {
-    return randomInt(1, roll.faces + 1);
+    return randomInt(1, roll.faces + 1) + (roll.offset ?? 0);
   }
 
   function intoEmbedValues(embed: Embed) {
