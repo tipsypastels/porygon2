@@ -1,5 +1,6 @@
 import { readdirSync, statSync } from 'fs';
 import { join, relative } from 'path';
+import { isDev } from './dev';
 
 /**
  * Yields each file in a directory to an iterator.
@@ -57,6 +58,16 @@ export function isFile(path: string) {
   } catch {
     return false;
   }
+}
+
+/**
+ * When using `eachDirectoryWithFile`, when importing JS files you'll want to
+ * change the extension based on whether we're running in development mode.
+ *
+ * Appends `.ts` to `path` when in development, or `.js` otherwise.
+ */
+export function jsFile(path: string) {
+  return path + (isDev ? '.ts' : '.js');
 }
 
 interface Opts {

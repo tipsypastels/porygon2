@@ -5,7 +5,7 @@ import { Porygon } from 'porygon/client';
 import { Importer } from 'porygon/importer';
 import { logger } from 'porygon/logger';
 import { isDev } from 'support/dev';
-import { eachDirectoryWithFile, eachFile } from 'support/dir';
+import { eachDirectoryWithFile, eachFile, jsFile } from 'support/dir';
 import { EventHandler, runEventHandler } from './events';
 import { PackageKind } from './kind';
 import { Package } from './package';
@@ -14,7 +14,7 @@ type SubImportCb = (dir: string) => Promise<void>;
 
 export class PackageImporter extends Importer<PackageKind, void> {
   constructor(private client: Porygon) {
-    super(eachDirectoryWithFile(`${__dirname}/../../packages`, '$package.ts'));
+    super(eachDirectoryWithFile(`${__dirname}/../../packages`, jsFile('$package')));
   }
 
   protected override beforeImport($file: string) {
@@ -26,7 +26,10 @@ export class PackageImporter extends Importer<PackageKind, void> {
     const kind = isDev ? PackageKind.DEV_SINGLETON : prodKind;
     const pkg = Package.init(kind, this.client);
 
-    await Promise.all([this.importCommands(pkg, pkgDir), this.importEvents(kind, pkgDir)]);
+    await Promise.all([
+      this.importCommands(pkg, pkgDir),
+      this.importEvents(kind, pkgDir),
+    ]);
   }
 
   private importCommands(pkg: Package, pkgDir: string) {
