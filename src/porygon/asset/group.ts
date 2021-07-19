@@ -2,18 +2,18 @@ import { Collection } from 'discord.js';
 import { range } from 'support/array';
 import { Asset } from './asset';
 
-export type AssetGroupKey<G> = G extends AssetGroup<infer F> ? F[0] : never;
+export type AssetGroupKey<G> = G extends AssetGroup<infer K> ? K : never;
 
-type File = readonly [name: any, ext: string];
+type File<K> = readonly [name: K, ext: string];
 
-export class AssetGroup<F extends File> {
-  private assets = new Collection<F[0], Asset>();
+export class AssetGroup<K extends string | number> {
+  private assets = new Collection<K, Asset>();
 
-  static range<E extends string>(end: number, ext: E) {
+  static range(end: number, ext: string) {
     return range(0, end).map((i) => <const>[i, ext]);
   }
 
-  constructor(dir: string, files: readonly F[]) {
+  constructor(dir: string, files: readonly File<K>[]) {
     for (const [name, ext] of files) {
       const asset = new Asset(dir, name, ext);
       this.assets.set(name, asset);
@@ -26,7 +26,7 @@ export class AssetGroup<F extends File> {
     }
   }
 
-  get(key: F[0]) {
+  get(key: K) {
     return this.assets.get(key)!;
   }
 
