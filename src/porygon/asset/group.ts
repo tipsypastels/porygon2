@@ -1,12 +1,12 @@
 import { Collection } from 'discord.js';
 import { range } from 'support/array';
-import { Asset } from './asset';
+import { Asset, AssetName } from './asset';
 
 export type AssetGroupKey<G> = G extends AssetGroup<infer K> ? K : never;
 
 type File<K> = readonly [name: K, ext: string];
 
-export class AssetGroup<K extends string | number> {
+export class AssetGroup<K extends AssetName> {
   private assets = new Collection<K, Asset>();
 
   static range(end: number, ext: string) {

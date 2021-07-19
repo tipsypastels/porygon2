@@ -2,12 +2,12 @@ import { createLang } from 'porygon/lang';
 import { assetCache } from './map';
 import { assetSetupIsDone } from './setup';
 
-type Name = string | number;
+export type AssetName = string | number;
 
 export class Asset {
   private _url = '';
 
-  constructor(readonly dir: string, readonly name: Name, readonly ext: string) {
+  constructor(readonly dir: string, readonly name: AssetName, readonly ext: string) {
     if (assetSetupIsDone()) {
       throw new Error(lang('dynamic_create'));
     }
