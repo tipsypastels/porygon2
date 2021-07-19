@@ -3,10 +3,6 @@ import type { Asset } from './asset';
 
 const MAP = new Collection<string, Asset>();
 
-export function assetGet(path: string) {
-  return MAP.get(path);
-}
-
 export function assetCache(asset: Asset) {
   return MAP.set(asset.path, asset);
 }

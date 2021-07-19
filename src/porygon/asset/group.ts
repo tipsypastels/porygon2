@@ -15,7 +15,7 @@ export class AssetGroup<F extends File> {
 
   constructor(dir: string, files: readonly F[]) {
     for (const [name, ext] of files) {
-      const asset = Asset.open(dir, name, ext);
+      const asset = new Asset(dir, name, ext);
       this.assets.set(name, asset);
     }
   }
