@@ -1,7 +1,7 @@
 import { panic } from 'core/logger';
 import { Client } from 'discord.js';
 
-export type GuildNickname = 'pc' | 'pc_staff' | 'duck' | 'dev';
+export type GuildNickname = 'pc' | 'pc_staff' | 'duck' | 'staging';
 
 export interface GuildConfig {
   id: string;
@@ -11,7 +11,7 @@ const CONFIG: Record<GuildNickname, GuildConfig> = {
   pc: { id: '157983957902819328' },
   pc_staff: { id: '193103073210662914' },
   duck: { id: '322199235825238017' },
-  dev: { id: '910079990123601931' },
+  staging: { id: '910079990123601931' },
 };
 
 export function get_guild_id(nick: GuildNickname) {
@@ -23,5 +23,5 @@ export function get_guild_id(nick: GuildNickname) {
 // set in advance.
 export function get_guild(nick: GuildNickname, client: Client) {
   const guild = client.guilds.cache.get(get_guild_id(nick));
-  return guild ?? panic(`Unknown guild nickname "${nick}".`);
+  return guild ?? panic(`Unknown guild for nickname "${nick}".`);
 }

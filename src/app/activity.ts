@@ -1,12 +1,9 @@
 import { GLOBAL } from 'core/controller';
-import { add_init, ClientWithoutEvents } from 'core/initializer';
+import { add_init, add_task, Task } from 'core/initializer';
 import { logger } from 'core/logger';
 import { random } from 'support/array';
 
-add_init(GLOBAL, set);
-add_task(GLOBAL, set, { name: 'set_activity' });
-
-function set({ client }: { client: ClientWithoutEvents }) {
+const set_activity: Task = ({ client }) => {
   const { user } = client;
 
   if (!user) {
@@ -14,11 +11,10 @@ function set({ client }: { client: ClientWithoutEvents }) {
   }
 
   user.setActivity(random(MESSAGES));
-}
+};
 
-const set_task = new Task(set, {
-  name: 'set_activity',
-});
+add_init(GLOBAL, set_activity);
+add_task(GLOBAL, set_activity, { name: 'set_activity', run_at: '*/15 * * * *' });
 
 const MESSAGES = [
   'cyberduck supreme',

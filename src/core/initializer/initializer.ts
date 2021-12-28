@@ -1,8 +1,9 @@
 import { Controller, proper_controller_for_env } from 'core/controller';
 import { logger, panic } from 'core/logger';
 import { ControllerRegistrar } from 'core/registrar';
-import { Client } from 'discord.js';
+import { Client, Guild } from 'discord.js';
 import { Cache } from 'support/cache';
+import { Maybe } from 'support/type';
 import { EventProxy } from './proxy';
 
 /**
@@ -16,7 +17,9 @@ export interface Initializer {
 /** See `Initializer`. */
 export interface InitializerOpts {
   client: ClientWithoutEvents;
+  controller: Controller;
   events: EventProxy;
+  guild: Maybe<Guild>;
 }
 
 /**
@@ -44,9 +47,12 @@ export class InitializerRegistrar extends ControllerRegistrar {
   }
 
   async synchronize(client: Client) {
+    const { controller, tag } = this;
     const opts: InitializerOpts = {
       client,
-      events: new EventProxy(client, this.controller, this.tag),
+      controller,
+      events: new EventProxy(client, controller, tag),
+      guild: controller.try_into_guild(client),
     };
 
     this.pending.forEach((f) => this.run(f, opts));

@@ -13,7 +13,7 @@ class AssetRegistrar<K extends string> extends Registrar {
   private assets = new Collection<K, Asset>();
 
   constructor(private dir: string, files: Files<K>) {
-    super(`assets-${dir}`);
+    super(`assets_${dir}`);
 
     for (const file of files) {
       const asset = new Asset(dir, file);

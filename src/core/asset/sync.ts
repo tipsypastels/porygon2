@@ -1,15 +1,15 @@
 import { get_guild } from 'core/guild';
 import { logger, panic } from 'core/logger';
 import { Client, Collection, TextChannel } from 'discord.js';
-import { dev } from 'support/env';
+import { staging } from 'support/env';
 import { noop } from 'support/fn';
 import { Maybe } from 'support/type';
 import { Asset } from './asset';
 import { stat, writeFile as write } from 'fs/promises';
 import { from_entries } from 'support/iterator';
 
-const DUMP_GUILD = dev('dev', 'duck');
-const DUMP_CHANNEL = dev('924933272935489537', '866445374378344468');
+const DUMP_GUILD = staging('staging', 'duck');
+const DUMP_CHANNEL = staging('924933272935489537', '866445374378344468');
 
 interface Cache {
   last_run: number;

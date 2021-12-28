@@ -1,7 +1,7 @@
 {
   "scripts": {
     "test": "jest",
-    "watch": "NODE_ENV=development NODE_PATH=./src/ nodemon",
+    "watch": "NODE_ENV=development PORY_STAGING=1 PORY_DEBUG=1 NODE_PATH=./src/ nodemon",
     "migrate": "prisma db push"
   },
   "dependencies": {

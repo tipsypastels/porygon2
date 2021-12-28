@@ -1,5 +1,5 @@
 import { BaseCommandInteraction, Client, ClientOptions, Interaction } from 'discord.js';
-import { IS_DEV } from 'support/env';
+import { IS_DEBUG, IS_DEV, IS_STAGING } from 'support/env';
 import { each_file } from 'support/dir';
 import { CommandRegistrar } from './command';
 import { logger, panic } from './logger';
@@ -27,12 +27,29 @@ const intents: ClientOptions['intents'] = [
 ];
 
 export function make_client() {
+  log_startup();
+
   const client = new Client({ intents, partials });
 
   client.once('ready', on_ready);
   client.on('interactionCreate', on_interaction);
 
   return client;
+}
+
+async function on_ready(client: Client) {
+  await setup(client);
+
+  uptime.start_timing();
+  logger.info('%Ready!%');
+}
+
+function log_startup() {
+  const vars = { IS_STAGING, IS_DEBUG, IS_DEV };
+  const yn = (b: boolean) => (b ? 'yes' : 'no');
+  const get = (key: keyof typeof vars) => `%${key}% = %${yn(vars[key])}%`;
+
+  logger.info(`Using config ${get('IS_DEV')}, ${get('IS_STAGING')}, ${get('IS_DEBUG')}.`);
 }
 
 function setup(client: Client) {
@@ -42,14 +59,14 @@ function setup(client: Client) {
 function connect_db() {
   return $db
     .$connect()
-    .then(() => logger.debug('Database connected!'))
+    .then(() => logger.debug('%Database connected!%'))
     .catch((e: Error) => panic(`Database disconnected! ${e.message}`));
 }
 
 async function app_setup(client: Client) {
   await import_app();
   await Registrar.synchronize(client);
-  await clear_global_commands_in_dev(client);
+  await clear_global_commands_in_staging(client);
 }
 
 function import_app() {
@@ -57,18 +74,11 @@ function import_app() {
   return each_file('app', (file) => import(`../app/${file}`));
 }
 
-function clear_global_commands_in_dev(client: Client) {
-  if (IS_DEV) {
+function clear_global_commands_in_staging(client: Client) {
+  if (IS_STAGING) {
     logger.debug('Setup phase: %globalfix%.');
     return client.application?.commands.set([]);
   }
-}
-
-async function on_ready(client: Client) {
-  await setup(client);
-
-  uptime.start_timing();
-  logger.info('%Ready!%');
 }
 
 function on_interaction(intr: Interaction) {

@@ -9,8 +9,9 @@ import { logger, panic } from './logger';
  * There is a registrar subclass for each type of resource, as they all have different
  * jobs to do, and not that much structural similarity between them.
  *
- * The master class is fairly simple - all it does is log its creation, and maintain
- * an array of all instances.
+ * The master class is fairly simple - all it does is log its creation, maintain
+ * an array of all instances, and provide a `synchronize` static method that runs
+ * setup for all of them.
  */
 export abstract class Registrar {
   private static INSTANCES: Registrar[] = [];
@@ -46,10 +47,14 @@ export abstract class Registrar {
  * require a controller, but others such as assets do not.
  *
  * Memoization is done by the individual subclasses for the purpose of type safety
- * and convenience.
+ * and convenience. Sadly Typescript doesn't have anything like `static abstract`,
+ * but it's an implicit contract of `ControllerRegistrar` subclasses that they will
+ * maintain a `CACHE` static variable of instances keyed by controllers, and wrap
+ * their private constructors with a static `init` method that fetches or creates
+ * instances.
  */
 export abstract class ControllerRegistrar extends Registrar {
   protected constructor(type_tag: string, protected controller: Controller) {
-    super(`${type_tag}-${controller.tag}`);
+    super(`${type_tag}_${controller.tag}`);
   }
 }
