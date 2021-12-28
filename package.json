@@ -1,0 +1,31 @@
+{
+  "scripts": {
+    "test": "jest",
+    "watch": "NODE_ENV=development NODE_PATH=./src/ nodemon",
+    "migrate": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "3.7.0",
+    "colors": "^1.4.0",
+    "console-table-printer": "^2.10.0",
+    "date-fns": "^2.27.0",
+    "discord.js": "^13.4.0",
+    "jest": "^27.4.5",
+    "mathjs": "^10.0.1",
+    "node-cron": "^3.0.0",
+    "stacktrace-parser": "^0.1.10",
+    "ts-jest": "^27.1.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@types/node-cron": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.4.1",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1",
+    "prisma": "^3.7.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  }
+}

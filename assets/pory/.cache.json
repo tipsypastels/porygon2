@@ -1,0 +1,15 @@
+{
+  "last_run": 1640597096180,
+  "urls": {
+    "./assets/pory/8ball.png": "https://cdn.discordapp.com/attachments/924933272935489537/924956001462009877/8ball.png",
+    "./assets/pory/angry.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955167923789885/angry.png",
+    "./assets/pory/danger.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955192733106196/danger.png",
+    "./assets/pory/error.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955213280993310/error.png",
+    "./assets/pory/plead.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955221497622528/plead.png",
+    "./assets/pory/smile.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955239583461467/smile.png",
+    "./assets/pory/speech.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955260303343616/speech.png",
+    "./assets/pory/thanos.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955265290371072/thanos.png",
+    "./assets/pory/vibe.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955286987505764/vibe.png",
+    "./assets/pory/warning.png": "https://cdn.discordapp.com/attachments/924933272935489537/924955298148544582/warning.png"
+  }
+}
