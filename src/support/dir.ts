@@ -1,5 +1,5 @@
+import { readdir, stat } from 'fs/promises';
 import { join } from 'path';
-import { stat, readdir } from 'fs/promises';
 import { IS_DEV } from './env';
 
 export const CODE_DIR = IS_DEV ? 'src' : 'dist';

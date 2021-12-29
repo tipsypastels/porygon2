@@ -1,4 +1,4 @@
-import { Maybe } from './type';
+import { Maybe } from './null';
 
 /**
  * Creates an iterator over two seperate iterators, yields items from them

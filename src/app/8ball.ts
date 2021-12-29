@@ -3,7 +3,7 @@ import { DUCK } from 'core/controller';
 import { random } from 'support/array';
 import { ellipsis } from 'support/string';
 
-const truncate = ellipsis(300);
+const truncate = (x: string) => ellipsis(300, x);
 
 const eight_ball: ChatCommand = async ({ embed, opts }) => {
   const question = truncate(opts.str('question'));

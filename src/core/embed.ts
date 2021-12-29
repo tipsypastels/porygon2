@@ -1,7 +1,27 @@
 import { ColorResolvable, MessageEmbedOptions as Inner } from 'discord.js';
+import { Ary } from 'support/array';
+import { Maybe } from 'support/null';
+import { assert } from './assert';
 import { AssetsKey } from './asset/registrar';
 import { PORY_ASSETS } from './assets';
 import { PoryColor, PORY_COLORS } from './color';
+
+/**
+ * An `IntoEmbed` is a function that can be applied to an `Embed`, taking the
+ * embed as a parameter and making arbitary changes to it. `Embed#merge` will
+ * merge an `IntoEmbed` into itself.
+ *
+ * `IntoEmbed`s are used in Porygon for things like expected usage errors, rather
+ * than having to pass the embed deep into implementation functions. See `UsageError`
+ * for the setup of this.
+ */
+
+export interface IntoEmbed<Params extends Ary = []> {
+  (e: Embed, ...params: Params): void;
+}
+
+type Value<K extends keyof Inner> = NonNullable<Inner[K]>;
+type Mapper<K extends keyof Inner> = (value: Value<K>) => Value<K>;
 
 /**
  * An embed lets you control the layout of a bot response.
@@ -14,26 +34,42 @@ import { PoryColor, PORY_COLORS } from './color';
  */
 export class Embed {
   private inner: Inner = {};
-  private _touched = false;
+  private _touched = 0;
 
   into_inner() {
     return this.inner;
   }
 
   get touched() {
-    return this._touched;
+    return !!this._touched;
   }
 
-  private set<K extends keyof Inner>(key: K, value: NonNullable<Inner[K]>) {
-    this.inner[key] = value;
-    this._touched = true;
+  been_touched_since(date: Date) {
+    return this._touched >= date.getTime();
+  }
+
+  merge<P extends Ary = []>(into: IntoEmbed<P>, ...params: P) {
+    into(this, ...params);
     return this;
+  }
+
+  private set<K extends keyof Inner>(key: K, value: Value<K>) {
+    this.inner[key] = value;
+    this._touched = Date.now();
+    return this;
+  }
+
+  private map<K extends keyof Inner>(key: K, mapper: Mapper<K>) {
+    const value = this.inner[key];
+
+    assert(value, `Can't map unset field ${key}`);
+    return this.set<K>(key, mapper(value!)); // TODO: why is the ! needed?
   }
 
   private add_field(name: string, value: string, inline: boolean) {
     this.inner.fields ??= [];
     this.inner.fields.push({ name, value, inline });
-    this._touched = true;
+    this._touched = Date.now();
 
     return this;
   }
@@ -42,8 +78,16 @@ export class Embed {
     return this.set('title', title);
   }
 
+  map_title(mapper: Mapper<'title'>) {
+    return this.map('title', mapper);
+  }
+
   about(about: string) {
     return this.set('description', about);
+  }
+
+  map_about(mapper: Mapper<'description'>) {
+    return this.map('description', mapper);
   }
 
   color(color: PoryColor) {
@@ -62,12 +106,16 @@ export class Embed {
     return this.set('image', { url });
   }
 
-  author(name: string, icon_url?: string, url?: string) {
-    return this.set('author', { name, icon_url, url });
+  author(name: string, icon_url?: Maybe<string>, url?: Maybe<string>) {
+    return this.set('author', {
+      name,
+      icon_url: icon_url ?? undefined,
+      url: url ?? undefined,
+    });
   }
 
-  foot(text: string, icon_url?: string) {
-    return this.set('footer', { text, icon_url });
+  foot(text: string, icon_url?: Maybe<string>) {
+    return this.set('footer', { text, icon_url: icon_url ?? undefined });
   }
 
   field(name: string, value: string) {

@@ -27,7 +27,7 @@ export class CommandRegistrar extends ControllerRegistrar {
   }
 
   protected constructor(controller: Controller) {
-    super('command', controller);
+    super('commands', controller);
   }
 
   async synchronize(client: Client) {

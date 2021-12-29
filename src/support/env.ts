@@ -34,3 +34,30 @@ export const staging = <T>(dev: T, prod: T) => (IS_STAGING ? dev : prod);
  * Returns the first value if in debug, and the second otherwise.
  */
 export const debug = <T>(debug: T, prod: T) => (IS_DEBUG ? debug : prod);
+
+/**
+ * The bot token. Not to be leaked!
+ */
+export const TOKEN = lazy_env_var('TOKEN');
+
+/**
+ * The PG-format URL to the bot database.
+ */
+export const DATABASE_URL = lazy_env_var('DATABASE_URL');
+
+/**
+ * The user ID of the bot owner.
+ */
+export const OWNER = lazy_env_var('OWNER');
+
+// This is lazy because prisma sets the environment variables at an arbitrary early
+// time during startup, but usually *not* before this function is reached.
+function lazy_env_var(name: string) {
+  return () => {
+    const value = process.env[name];
+    // can't panic here since env vars are referenced in `main`
+    // and that causes a circular import
+    if (!value) throw new Error(`Required environment variable ${name} is missing!`);
+    return value;
+  };
+}

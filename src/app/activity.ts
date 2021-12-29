@@ -14,7 +14,7 @@ const set_activity: Task = ({ client }) => {
 };
 
 add_init(GLOBAL, set_activity);
-add_task(GLOBAL, set_activity, { name: 'set_activity', run_at: '*/15 * * * *' });
+add_task(GLOBAL, set_activity, { run_at: '*/15 * * * *' });
 
 const MESSAGES = [
   'cyberduck supreme',

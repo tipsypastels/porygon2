@@ -3,8 +3,9 @@ import { logger, panic } from 'core/logger';
 import { ControllerRegistrar } from 'core/registrar';
 import { Client, Guild } from 'discord.js';
 import { Cache } from 'support/cache';
-import { Maybe } from 'support/type';
+import { Maybe } from 'support/null';
 import { EventProxy } from './proxy';
+import { error_is_skip } from './skip';
 
 /**
  * An initializer is a function that runs on startup. Most exist to
@@ -43,7 +44,7 @@ export class InitializerRegistrar extends ControllerRegistrar {
   }
 
   protected constructor(controller: Controller) {
-    super('init', controller);
+    super('inits', controller);
   }
 
   async synchronize(client: Client) {
@@ -66,16 +67,20 @@ export class InitializerRegistrar extends ControllerRegistrar {
 
   private ensure_unique(init: Initializer) {
     if (this.pending.has(init)) {
-      panic(`Initializer %${init.name}% was added twice to %${this.tag}%.`);
+      panic(`Initializer %${init.name}% was added twice to %${this.tag}%`);
     }
   }
 
   private run(f: Initializer, opts: InitializerOpts) {
     try {
       f(opts);
-      logger.debug(`Ran initializer %${f.name}% under %${this.tag}%.`);
+      logger.debug(`Ran initializer %${f.name}%`);
     } catch (e) {
-      panic(`Initializer %${f.name}% under %${this.tag}% failed: ${e}`);
+      if (error_is_skip(e)) {
+        logger.warn(`Initializer %${f.name}% skipped: %${e.message}%`);
+      } else {
+        panic(`Initializer %${f.name}% under %${this.tag}% failed`, e);
+      }
     }
   }
 }

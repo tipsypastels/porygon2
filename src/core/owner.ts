@@ -1,12 +1,12 @@
 import { Client } from 'discord.js';
-import { OWNER } from 'secrets.json';
+import { OWNER } from 'support/env';
 
 interface User {
   id: string;
 }
 
 export function is_owner(user: User) {
-  return user.id === OWNER;
+  return user.id === OWNER();
 }
 
 export function assert_owner(user: User) {
@@ -14,5 +14,5 @@ export function assert_owner(user: User) {
 }
 
 export function find_owner(client: Client) {
-  return client.users.cache.get(OWNER);
+  return client.users.cache.get(OWNER());
 }

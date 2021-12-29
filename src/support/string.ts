@@ -1,6 +1,39 @@
 import { inspect } from 'util';
-import { curry } from './fn';
-import { is_string } from './type';
+
+/* -------------------------------------------------------------------------- */
+/*                                    Types                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A string or any type that may be converted into one.
+ * Technically this is almost any Javascript object, but Typescript doesn't see
+ * it that way.
+ */
+export type Stringable = string | { toString(): string };
+
+/* -------------------------------------------------------------------------- */
+/*                               Type Predicates                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Returns whether a mysterious value is a string.
+ */
+export function is_string(x: unknown): x is string {
+  return typeof x === 'string';
+}
+
+/**
+ * Returns whether a mysterious value is a string or may be convered into one.
+ */
+export function is_stringable(x: unknown): x is Stringable {
+  return is_string(x) || (x != null && 'toString' in <any>x);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Utilities                                 */
+/* -------------------------------------------------------------------------- */
+
+/* ----------------------------- Capitalization ----------------------------- */
 
 /**
  * Uppercases a string.
@@ -38,6 +71,8 @@ export function plural_word(count: number, word: string) {
   return count === 1 ? word : word + 's';
 }
 
+/* -------------------------------- Markdown -------------------------------- */
+
 interface CodeBlockOpts {
   lang?: string;
   debug?: boolean;
@@ -60,28 +95,37 @@ export const bold = (string: string) => `**${string}**`;
  */
 export const italics = (string: string) => `_${string}_`;
 
+/* ------------------------------ Manipulation ------------------------------ */
+
 const ELLIPSIS = '…';
 
 /**
  * Slices string to `len`, including an ellipsis if the string exceeds that length.
  * This should be used for most user input in command responses.
  */
-export const ellipsis = curry((len: number, string: string) => {
+export function ellipsis(len: number, string: string) {
   return string.length > len ? `${string.slice(0, len)}${ELLIPSIS}` : string;
-});
+}
 
 const to_source = (match: string | RegExp) => (is_string(match) ? match : match.source);
 
 /**
+ * Deletes all text matching the `pattern`.
+ */
+export function delete_all(pattern: string | RegExp, string: string) {
+  return string.replaceAll(pattern, '');
+}
+
+/**
  * Deletes text matching `prefix` at the start of the string, and returns a new version.
  */
-export const delete_prefix = curry((prefix: string | RegExp, string: string) => {
+export function delete_prefix(prefix: string | RegExp, string: string) {
   return string.replace(new RegExp(`^${to_source(prefix)}`), '');
-});
+}
 
 /**
  * Deletes text matching `suffix` at the end of the string, and returns a new version.
  */
-export const delete_suffix = curry((suffix: string | RegExp, string: string) => {
+export function delete_suffix(suffix: string | RegExp, string: string) {
   return string.replace(new RegExp(`${to_source(suffix)}$`), '');
-});
+}

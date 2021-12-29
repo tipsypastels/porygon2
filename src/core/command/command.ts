@@ -6,11 +6,14 @@ import {
   Client,
   Guild,
   GuildMember,
+  Message,
 } from 'discord.js';
 import { identity, noop, tap } from 'support/fn';
-import { is_string, None } from 'support/type';
+import { None } from 'support/null';
+import { is_string } from 'support/string';
 import { Cell } from '.';
 import { Reply } from './reply';
+import { Row } from './row';
 
 /**
  * The basic arguments to be passed to all commands.
@@ -23,6 +26,7 @@ export interface Args {
   cell: Cell;
   embed: Embed;
   reply: Reply;
+  row: Row;
 }
 
 /**
@@ -103,11 +107,28 @@ export function create_executor<A extends Args, D extends Data, I extends Intr>(
     const resumable_middleware = opts.middleware?.map(start);
     const error = await run_command(command, args);
 
-    await args.reply.auto_send();
+    if (!error) {
+      start_message_runtime(args, intr);
+    }
+
     resumable_middleware?.map((m) => m.next(error));
   };
 }
 
 function run_command<A extends Args>(command: Command<A, any, any>, args: A) {
   return command(args).then(noop).catch(identity);
+}
+
+async function start_message_runtime(args: Args, intr: Intr) {
+  await args.reply.auto_send();
+
+  if (args.row.touched) {
+    const message = await intr.fetchReply();
+
+    if (!(message instanceof Message)) {
+      return logger.warn(`Couldn't get a message instance, got %${message}%`);
+    }
+
+    args.row.start_runtime(message, args.embed);
+  }
 }

@@ -3,7 +3,7 @@ import { GLOBAL } from 'core/controller';
 import { evaluate } from 'core/math';
 import { code_block, ellipsis } from 'support/string';
 
-const truncate = ellipsis(100);
+const truncate = (x: string) => ellipsis(100, x);
 
 const calc: ChatCommand = async ({ embed, reply, opts }) => {
   reply.set_ephemeral();

@@ -3,7 +3,7 @@ import { logger, panic } from 'core/logger';
 import { Client, Collection, TextChannel } from 'discord.js';
 import { staging } from 'support/env';
 import { noop } from 'support/fn';
-import { Maybe } from 'support/type';
+import { Maybe } from 'support/null';
 import { Asset } from './asset';
 import { stat, writeFile as write } from 'fs/promises';
 import { from_entries } from 'support/iterator';

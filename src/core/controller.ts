@@ -3,7 +3,7 @@ import { Data } from './command';
 import { ApplicationCommand, Client, Collection, Guild } from 'discord.js';
 import { panic } from './logger';
 import { IS_STAGING } from 'support/env';
-import { Maybe, NONE } from 'support/type';
+import { Maybe, NONE } from 'support/null';
 
 type UploadOutcome = Promise<Collection<string, ApplicationCommand>>;
 
@@ -51,7 +51,7 @@ export const DUCK = make_guild_controller('duck');
 function make_guild_controller(nick: GuildNickname): Controller {
   const guild_id = get_guild_id(nick);
   return {
-    tag: `guild_${nick}`,
+    tag: `guild(${nick})`,
 
     matches_guild(id) {
       return id === guild_id;

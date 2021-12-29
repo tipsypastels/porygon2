@@ -1,6 +1,4 @@
-import { NONE } from '../type';
-
-export { curry } from './curry';
+import { NONE } from '../null';
 
 /**
  * The identity function. Returns the passed in value.

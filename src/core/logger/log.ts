@@ -1,6 +1,6 @@
 import colors, { Color } from 'colors';
 import { IS_DEBUG } from 'support/env';
-import { is_stringable } from 'support/type';
+import { is_string } from 'support/string';
 import { print_formatted_frames } from './trace';
 
 // TODO: would be nice to use currying here
@@ -39,7 +39,7 @@ export function __log_error(error: unknown, level: string, color: Color, text: s
 
 /** @internal */
 export function __format(keyword_color: Color, text: string) {
-  return text.replace(KEYWORD, (_, t) => keyword_color(t));
+  return add_period(text).replace(KEYWORD, (_, t) => keyword_color(t));
 }
 
 /** @internal */
@@ -64,9 +64,13 @@ function time() {
 
 function to_error_message(err: unknown) {
   if (err instanceof Error) return err.message;
-  if (is_stringable(err)) return err.toString();
+  if (is_string(err)) return err;
 }
 
 function to_error_stack(err: unknown) {
   if (err instanceof Error) return err.stack;
+}
+
+function add_period(text: string) {
+  return text.match(/[.?!:…]%?$/) ? text : `${text}.`;
 }

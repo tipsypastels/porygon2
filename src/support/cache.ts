@@ -1,4 +1,5 @@
-import { Ary, UNSET, Unset } from './type';
+import { Ary } from './array';
+import { Unset, UNSET } from './unset';
 
 /**
  * Wraps a function that is only called once. On subsequent calls, the

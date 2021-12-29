@@ -23,4 +23,10 @@ export function error_is_skip(e: unknown): e is Skip {
 
 class Skip {
   constructor(readonly message: string) {}
+
+  // this should never be called, but is here for debugging helpfulness
+  // if a skip is somehow thrown outside of the tasks/inits which special case it
+  toString() {
+    return `<task skip ${this.message}>`;
+  }
 }

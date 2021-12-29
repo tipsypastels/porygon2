@@ -11,6 +11,7 @@ import { create_status_report_middleware, slow_timing } from '../../middleware';
 import { Embed } from 'core/embed';
 import { Reply } from '../../reply';
 import { Options } from './options';
+import { Row } from 'core/command/row';
 
 interface Args extends BaseArgs {
   channel: CommandChannel;
@@ -56,8 +57,9 @@ export const execute_chat_command = create_executor<Args, Data, Intr>({
       return `invalid_author(${author})`;
     }
 
+    const row = new Row();
     const embed = new Embed();
-    const reply = new Reply(intr, embed);
+    const reply = new Reply(intr, embed, row);
     const opts = new Options(intr.options);
 
     return {
@@ -70,6 +72,7 @@ export const execute_chat_command = create_executor<Args, Data, Intr>({
       embed,
       reply,
       opts,
+      row,
     };
   },
 });

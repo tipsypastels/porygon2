@@ -1,6 +1,7 @@
 import { create_executor } from 'core/command';
 import { create_status_report_middleware, slow_timing } from 'core/command/middleware';
 import { Reply } from 'core/command/reply';
+import { Row } from 'core/command/row';
 import { Embed } from 'core/embed';
 import { ContextMenuInteraction as Intr, GuildMember } from 'discord.js';
 import { delete_suffix } from 'support/string';
@@ -12,15 +13,13 @@ interface Opts<A extends BaseArgs, I extends Intr> {
   command_subject?(args: A): string;
 }
 
-const without_period = delete_suffix('.');
-
 export function create_context_menu_executor<A extends BaseArgs, I extends Intr>(
   opts: Opts<A, I>,
 ) {
   const report_status = create_status_report_middleware<A>({
     command_subject: opts.command_subject,
     command_name({ cell }) {
-      return `"${without_period(cell.name)}"`;
+      return `"${delete_suffix('.', cell.name)}"`;
     },
   });
 
@@ -38,8 +37,9 @@ export function create_context_menu_executor<A extends BaseArgs, I extends Intr>
         return `invalid_author(${author})`;
       }
 
+      const row = new Row();
       const embed = new Embed();
-      const reply = new Reply(intr, embed);
+      const reply = new Reply(intr, embed, row);
 
       const base: BaseArgs = {
         client,
@@ -49,6 +49,7 @@ export function create_context_menu_executor<A extends BaseArgs, I extends Intr>
         cell,
         embed,
         reply,
+        row,
       };
 
       return opts.finalize_args(intr, base);

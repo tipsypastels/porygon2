@@ -1,7 +1,50 @@
-/** Returns the first item of an array. */
+/* -------------------------------------------------------------------------- */
+/*                                    Types                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The most general array type.
+ */
+export type Ary = readonly any[];
+
+/**
+ * The most general mutable array type.
+ */
+export type MutAry = any[];
+
+/**
+ * The type of the first item in an array.
+ */
+export type Head<T extends Ary> = T[0];
+
+/**
+ * The type of all elements in an array after the first.
+ */
+export type Tail<T extends Ary> = T extends [unknown, ...infer R] ? R : never;
+
+/* -------------------------------------------------------------------------- */
+/*                             Type Predicates                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Returns whether or not a mysterious value is an `Array`.
+ */
+export function is_array(x: unknown): x is Ary {
+  return Array.isArray(x);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Utilities                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Returns the first item of an array.
+ */
 export const first = <T>(array: T[]) => array[0];
 
-/** Returns the last item of an array. */
+/**
+ * Returns the last item of an array.
+ */
 export const last = <T>(array: T[]) => array[array.length - 1];
 
 /**

@@ -1,6 +1,6 @@
 import { panic } from 'core/logger';
 import { Registrar } from 'core/registrar';
-import { is_array } from 'support/type';
+import { is_array } from 'support/array';
 
 const DEFAULT_EXT = 'png';
 type File = string | [name: string, ext: string];

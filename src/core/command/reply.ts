@@ -1,36 +1,80 @@
 import { Embed } from 'core/embed';
 import { logger } from 'core/logger';
-import { BaseCommandInteraction as Intr } from 'discord.js';
+import { BaseCommandInteraction as Intr, InteractionReplyOptions } from 'discord.js';
+import { Row } from './row';
 
+/**
+ * A replier
+ */
 export class Reply {
-  private ephemeral = false;
+  private _content?: string;
+  private _ephemeral = false;
+  private _ephemeral_on_crash = true;
 
-  constructor(private intr: Intr, private embed: Embed) {}
+  constructor(private intr: Intr, private embed: Embed, private row?: Row) {}
+
+  get touched() {
+    return this.embed.touched || this.row?.touched || this._content;
+  }
+
+  get ephemeral() {
+    return this._ephemeral;
+  }
 
   set_ephemeral(ephemeral = true) {
-    this.ephemeral = ephemeral;
+    this._ephemeral = ephemeral;
     return this;
   }
 
+  get ephemeral_on_crash() {
+    return this._ephemeral_on_crash;
+  }
+
+  set_ephemeral_on_crash(ephemeral: boolean) {
+    this._ephemeral_on_crash = ephemeral;
+    return this;
+  }
+
+  set_content(content: string) {
+    this._content = content;
+  }
+
   send() {
-    return this.if_embed_touched(() =>
-      this.intr.reply({
-        embeds: [this.embed.into_inner()],
-        ephemeral: this.ephemeral,
-      }),
-    );
+    if (this.check_touched()) {
+      return this.intr.reply(this.build_response_data());
+    }
   }
 
   auto_send() {
     if (!this.intr.replied) return this.send();
   }
 
-  private if_embed_touched<T>(fn: () => T) {
-    if (!this.embed.touched) {
-      logger.warn('Tried to send an untouched embed!');
-      return;
+  private check_touched() {
+    if (this.touched) {
+      return true;
     }
 
-    return fn();
+    logger.warn('Tried to send an untouched reply!');
+    return false;
+  }
+
+  private build_response_data() {
+    const out: InteractionReplyOptions = {};
+
+    out.ephemeral = this._ephemeral;
+
+    if (this.embed.touched) {
+      out.embeds = [this.embed.into_inner()];
+    }
+
+    if (this.row?.touched) {
+      out.components = [this.row.into_inner()];
+    }
+
+    if (this._content) {
+      out.content = this._content;
+    }
+
+    return out;
   }
 }

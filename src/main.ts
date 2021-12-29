@@ -1,6 +1,5 @@
-import { TOKEN } from './secrets.json';
 import { make_client } from 'core/client';
-import { IS_DEBUG } from 'support/env';
+import { IS_DEBUG, TOKEN } from 'support/env';
 import colors from 'colors';
 
 if (!IS_DEBUG) {
@@ -19,4 +18,4 @@ if (!IS_DEBUG) {
   }
 }
 
-make_client().login(TOKEN);
+make_client().login(TOKEN());

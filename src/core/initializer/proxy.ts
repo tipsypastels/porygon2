@@ -1,7 +1,7 @@
 import { Controller } from 'core/controller';
 import { logger } from 'core/logger';
 import { Client, ClientEvents as Events, Guild } from 'discord.js';
-import { Maybe } from 'support/type';
+import { Maybe } from 'support/null';
 
 type Event = keyof Events;
 type Callback<K extends Event> = (...args: Events[K]) => void;

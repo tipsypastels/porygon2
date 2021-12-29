@@ -22,20 +22,15 @@ export interface Task {
 type TaskOpts = Omit<InitializerOpts, 'events'>;
 
 interface TaskData {
-  name: string;
   run_at: string; // TODO
   quiet?: boolean;
 }
 
 class TaskCell {
-  constructor(
-    private task: Task,
-    private data: TaskData,
-    private registrar_tag: string,
-  ) {}
+  constructor(private task: Task, private data: TaskData) {}
 
   get tag() {
-    return `${this.registrar_tag}_${this.data.name}`;
+    return this.task.name;
   }
 
   private get time() {
@@ -52,16 +47,16 @@ class TaskCell {
     const opts: TaskOpts = { client, controller, guild };
 
     try {
-      logger.info(`Running task %${this.tag}%.`);
+      logger.info(`Running task %${this.tag}%`);
 
       await this.task(opts);
 
-      logger.info(`Task finished: %${this.tag}%.`);
+      logger.info(`Task %${this.tag}% finished`);
     } catch (e) {
       if (error_is_skip(e)) {
-        logger.warn(`Task skipped: %${this.tag}%: %${e.message}%`);
+        logger.warn(`Task %${this.tag}% skipped: %${e.message}%`);
       } else {
-        logger.error(`Task failed: %${this.tag}%`, e);
+        logger.error(`Task %${this.tag}% failed`, e);
       }
     }
   }
@@ -94,7 +89,7 @@ export class TaskRegistrar extends ControllerRegistrar {
   }
 
   add_task(task: Task, data: TaskData) {
-    const cell = new TaskCell(task, data, this.tag);
+    const cell = new TaskCell(task, data);
 
     this.ensure_unique(cell);
     this.pending.set(cell.tag, cell);
