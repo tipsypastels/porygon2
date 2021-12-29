@@ -1,5 +1,4 @@
 import { Client } from 'discord.js';
-import { to_sentence } from 'support/array';
 import { Controller } from './controller';
 import { logger, panic } from './logger';
 

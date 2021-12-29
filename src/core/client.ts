@@ -6,6 +6,7 @@ import { logger, panic } from './logger';
 import { Registrar } from './registrar';
 import { TimeDifference } from './stat/time';
 import { $db } from './db';
+import { inspect } from 'util';
 
 export const uptime = new TimeDifference();
 
@@ -82,7 +83,7 @@ function clear_global_commands_in_staging(client: Client) {
 }
 
 function on_interaction(intr: Interaction) {
-  if (intr instanceof BaseCommandInteraction) {
+  if (intr.isCommand() || intr.isContextMenu() || intr.isAutocomplete()) {
     const command = CommandRegistrar.get(intr.commandId);
 
     if (!command) {

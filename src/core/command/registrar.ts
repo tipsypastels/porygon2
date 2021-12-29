@@ -5,7 +5,16 @@ import { Client, Collection } from 'discord.js';
 import { Cache } from 'support/cache';
 import { eager, zip } from 'support/iterator';
 import { plural } from 'support/string';
-import { Cell, Command, AnyCommand, Data, Args, Intr } from '.';
+import {
+  Cell,
+  Command,
+  AnyCommand,
+  Data,
+  Args,
+  Intr,
+  ChatCommand,
+  Autocomplete,
+} from '.';
 
 /**
  * A registrar for commands. See the documentation on `Registrar`.
@@ -16,6 +25,7 @@ export class CommandRegistrar extends ControllerRegistrar {
 
   private commands = new Collection<string, Cell>();
   private pending = new Collection<AnyCommand, Data>();
+  private autocompletes = new Collection<AnyCommand, Map<string, Autocomplete>>();
 
   static init(prod_controller: Controller) {
     const controller = proper_controller_for_env(prod_controller);
@@ -41,14 +51,22 @@ export class CommandRegistrar extends ControllerRegistrar {
     const api_data = await this.controller.upload_commands(pending_data, client);
 
     for (const [[command, data], [, api]] of zip(this.pending, api_data)) {
-      const cell = new Cell(command, data, api);
+      const autocompletes = this.autocompletes.get(command);
+      const cell = new Cell({
+        command,
+        data,
+        api,
+        autocompletes,
+      });
 
       this.commands.set(api.id, cell);
       CommandRegistrar.COMMANDS.set(api.id, cell);
     }
 
     logger.debug(`%${this.tag}% uploaded %${plural(pending_count, 'command')}%.`);
+
     this.pending.clear();
+    this.autocompletes.clear();
   }
 
   add_command(command: AnyCommand, data: Data) {
@@ -61,6 +79,17 @@ export class CommandRegistrar extends ControllerRegistrar {
       panic(`Command %${data.name}% was added twice to %${this.tag}%.`);
     }
   }
+
+  add_autocomplete(command: ChatCommand, autocomplete: Autocomplete) {
+    const map = this.autocompletes.get(command) ?? new Map();
+
+    if (map.has(autocomplete.name)) {
+      panic(`Autocomplete %${autocomplete.name}% was added twice to %${this.tag}%.`);
+    }
+
+    map.set(autocomplete.name, autocomplete);
+    this.autocompletes.set(command, map);
+  }
 }
 
 export function add_command<A extends Args, D extends Data, I extends Intr>(
@@ -70,4 +99,13 @@ export function add_command<A extends Args, D extends Data, I extends Intr>(
 ) {
   const registrar = CommandRegistrar.init(controller);
   registrar.add_command(command, data);
+}
+
+export function add_autocomplete(
+  controller: Controller,
+  command: ChatCommand,
+  autocomplete: Autocomplete,
+) {
+  const registrar = CommandRegistrar.init(controller);
+  registrar.add_autocomplete(command, autocomplete);
 }
