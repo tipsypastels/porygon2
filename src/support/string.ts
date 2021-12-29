@@ -107,7 +107,11 @@ export function ellipsis(len: number, string: string) {
   return string.length > len ? `${string.slice(0, len)}${ELLIPSIS}` : string;
 }
 
-const to_source = (match: string | RegExp) => (is_string(match) ? match : match.source);
+const to_source = (match: string | RegExp) =>
+  is_string(match) ? escape_regex(match) : match.source;
+
+const escape_regex = (match: string) =>
+  match.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
 
 /**
  * Deletes all text matching the `pattern`.

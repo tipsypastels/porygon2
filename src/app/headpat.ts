@@ -17,7 +17,7 @@ const headpat: UserCommand = async ({ embed, subject, is_self }) => {
 };
 
 add_command(DUCK, headpat, {
-  name: 'Offer a headpat.',
+  name: 'Offer a Headpat',
   type: 'USER',
 });
 
