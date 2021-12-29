@@ -33,6 +33,10 @@ export function is_stringable(x: unknown): x is Stringable {
 /*                                  Utilities                                 */
 /* -------------------------------------------------------------------------- */
 
+/* ---------------------------------- Tags ---------------------------------- */
+
+export { stripIndent as strip_indent } from 'common-tags';
+
 /* ----------------------------- Capitalization ----------------------------- */
 
 /**
@@ -84,6 +88,11 @@ interface CodeBlockOpts {
 export function code_block(string: string, { lang, debug }: CodeBlockOpts = {}) {
   return `\`\`\`${lang}\n${debug ? inspect(string) : string}\`\`\``;
 }
+
+/**
+ * Wraps the message in an inline code span.
+ */
+export const inline_code = (string: string) => `\`${string}\``;
 
 /**
  * Formats the message as markdown-bold.

@@ -20,12 +20,19 @@ export class Lazy<T, P extends Ary = []> {
   }
 }
 
+type Factory<K, V, P extends Ary> = (key: K, ...p: P) => V;
+type Updater<K, V, P extends Ary> = (v: V, k: K, ...p: P) => V;
+
 /**
  * Wraps a collection with a function that lazily generates new values as requested.
  */
 export class Cache<K, V extends {}, P extends Ary = []> {
   private map = new Map<K, V>();
-  constructor(private factory: (key: K, ...extra_params: P) => V) {}
+  constructor(private factory: Factory<K, V, P>) {}
+
+  get loaded_size() {
+    return this.map.size;
+  }
 
   get(key: K, ...extra_params: P): V {
     const current_value = this.map.get(key);
@@ -37,5 +44,12 @@ export class Cache<K, V extends {}, P extends Ary = []> {
     const new_value = this.factory(key, ...extra_params);
     this.map.set(key, new_value);
     return new_value;
+  }
+
+  update(key: K, fn: Updater<K, V, P>, ...extra_params: P) {
+    const start_value = this.get(key, ...extra_params);
+    const next_value = fn(start_value, key, ...extra_params);
+
+    this.map.set(key, next_value);
   }
 }
