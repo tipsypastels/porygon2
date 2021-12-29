@@ -34,5 +34,5 @@ const youalsocompleteme: Autocomplete = () => {
   return ['goodbye', 'wahts up'];
 };
 
-add_autocomplete(GLOBAL, autocomplete, youcompleteme);
-add_autocomplete(GLOBAL, autocomplete, youalsocompleteme);
+add_autocomplete(autocomplete, youcompleteme);
+add_autocomplete(autocomplete, youalsocompleteme);

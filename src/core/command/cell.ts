@@ -6,7 +6,6 @@ import {
 } from 'discord.js';
 import {
   AnyCommand,
-  Autocomplete,
   ChatCommand,
   Data,
   execute_autocomplete,
@@ -14,12 +13,12 @@ import {
   execute_user_command,
   UserCommand,
 } from '.';
+import { fetch_autocomplete } from './types/autocomplete/map';
 
 interface CellOpts {
   command: AnyCommand;
   data: Data;
   api: ApplicationCommand;
-  autocompletes?: Map<string, Autocomplete>;
 }
 
 /**
@@ -31,13 +30,11 @@ export class Cell {
   private command: AnyCommand;
   readonly data: Data;
   private api: ApplicationCommand;
-  private autocompletes?: Map<string, Autocomplete>;
 
   constructor(opts: CellOpts) {
     this.command = opts.command;
     this.data = opts.data;
     this.api = opts.api;
-    this.autocompletes = opts.autocompletes;
   }
 
   get id() {
@@ -63,7 +60,7 @@ export class Cell {
 
     if (intr.isAutocomplete()) {
       const { name } = intr.options.getFocused(true);
-      const autocomplete = this.autocompletes?.get(name);
+      const autocomplete = fetch_autocomplete(this.command, name);
 
       if (!autocomplete) {
         return logger.warn(`Unknown autocomplete for %${this.name}% option %${name}$`);

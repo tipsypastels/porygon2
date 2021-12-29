@@ -8,6 +8,8 @@
 import { AutocompleteInteraction as Intr } from 'discord.js';
 import { is_string } from 'support/string';
 
+export { add_autocomplete } from './map';
+
 type Suggestion = string | { name: string; value: string };
 
 export interface AutocompleteArgs {
