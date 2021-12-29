@@ -1,5 +1,5 @@
 import { uptime } from 'core/client';
-import { add_command, ChatCommand } from 'core/command';
+import { add_sub_commands, ChatCommand } from 'core/command';
 import { GLOBAL } from 'core/controller';
 import { TaskRegistrar } from 'core/initializer/task';
 import { assert_owner } from 'core/owner';
@@ -19,8 +19,17 @@ const stats: ChatCommand = async ({ embed, author, client, reply }) => {
     .field('Tasks', TaskRegistrar.to_status_string());
 };
 
-add_command(GLOBAL, stats, {
-  name: 'stats',
-  description: 'Shows status information.',
+const commands = { stats };
+
+add_sub_commands(GLOBAL, commands, {
+  name: 'op',
+  description: 'Operator-only utilities.',
   defaultPermission: IS_STAGING,
+  options: [
+    {
+      name: 'stats',
+      description: 'Shows useful stats.',
+      type: 'SUB_COMMAND',
+    },
+  ],
 });

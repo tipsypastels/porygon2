@@ -9,7 +9,7 @@ import {
   Message,
 } from 'discord.js';
 import { identity, noop, tap } from 'support/fn';
-import { None } from 'support/null';
+import { Maybe, None } from 'support/null';
 import { is_string } from 'support/string';
 import { Cell } from '.';
 import { Reply } from './reply';
@@ -27,6 +27,15 @@ export interface Args {
   embed: Embed;
   reply: Reply;
   row: Row;
+}
+
+/**
+ * An extension to `Args` - those commands whose arguments have support
+ * for checking subcommands. This is just `ChatCommand` at the moment, but
+ * is left generic for future extension.
+ */
+export interface ArgsWithSubcommand extends Args {
+  opts: { sub_command: Maybe<string> };
 }
 
 /**

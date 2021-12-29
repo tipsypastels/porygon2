@@ -1,3 +1,4 @@
+import { assert } from 'core/assert';
 import { Controller, proper_controller_for_env } from 'core/controller';
 import { logger, panic } from 'core/logger';
 import { ControllerRegistrar } from 'core/registrar';
@@ -5,7 +6,7 @@ import { Client, Collection } from 'discord.js';
 import { Cache } from 'support/cache';
 import { eager, zip } from 'support/iterator';
 import { plural } from 'support/string';
-import { Cell, Command, AnyCommand, Data, Args, Intr } from '.';
+import { Cell, Command, AnyCommand, Data, Args, Intr, ArgsWithSubcommand } from '.';
 
 /**
  * A registrar for commands. See the documentation on `Registrar`.
@@ -71,4 +72,22 @@ export function add_command<A extends Args, D extends Data, I extends Intr>(
 ) {
   const registrar = CommandRegistrar.init(controller);
   registrar.add_command(command, data);
+}
+
+export function add_sub_commands<
+  A extends ArgsWithSubcommand,
+  D extends Data,
+  I extends Intr,
+>(controller: Controller, commands: Record<string, Command<A, D, I>>, data: D) {
+  const command: Command<A, D, I> = (args) => {
+    const sub = args.opts.sub_command;
+
+    assert(sub, `Didn't get a subcommand for command ${data.name}!`);
+    assert(sub in commands, `Unknown subcommand ${sub} for ${data.name}!`);
+
+    const selected = commands[sub];
+    return selected(args);
+  };
+
+  add_command(controller, command, data);
 }

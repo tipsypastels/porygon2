@@ -16,6 +16,14 @@ type Inner = CommandInteraction['options'];
 export class Options {
   constructor(private inner: Inner) {}
 
+  get sub_command() {
+    return this.inner.getSubcommand(false);
+  }
+
+  get sub_command_group() {
+    return this.inner.getSubcommandGroup(false);
+  }
+
   str(name: string) {
     return this.inner.getString(name, true);
   }

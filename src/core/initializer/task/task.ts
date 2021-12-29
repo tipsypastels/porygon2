@@ -25,7 +25,7 @@ export interface Task {
 type TaskOpts = Omit<InitializerOpts, 'events'>;
 
 interface TaskData {
-  run_at: string; // TODO
+  run_at: string;
   quiet?: boolean;
 }
 
