@@ -29,8 +29,6 @@ import { sleep } from 'support/async';
 import { TimeDifference } from 'core/stat/time';
 import { inline_code } from 'support/string';
 
-console.log(__dirname);
-
 /* -------------------------------------------------------------------------- */
 /*                                    Hooks                                   */
 /* -------------------------------------------------------------------------- */
