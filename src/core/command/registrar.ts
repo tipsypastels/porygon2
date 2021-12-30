@@ -48,7 +48,7 @@ export class CommandRegistrar extends ControllerRegistrar {
       CommandRegistrar.COMMANDS.set(api.id, cell);
     }
 
-    logger.debug(`%${this.tag}% uploaded %${plural(pending_count, 'command')}%.`);
+    logger.debug(`%${this.name}% uploaded %${plural(pending_count, 'command')}%.`);
 
     this.pending.clear();
   }
@@ -60,7 +60,7 @@ export class CommandRegistrar extends ControllerRegistrar {
 
   private ensure_unique(command: AnyCommand, data: Data) {
     if (this.pending.has(command)) {
-      panic(`Command %${data.name}% was added twice to %${this.tag}%.`);
+      panic(`Command %${data.name}% was added twice to %${this.name}%.`);
     }
   }
 }

@@ -80,15 +80,17 @@ export function add_user_hook<E extends Event, D extends string, C = never>(
     });
   };
 
-  add_init(controller, init);
+  add_init(controller, init, {
+    name: `${hook.name}_${controller.name}`,
+  });
 }
 
 // just asserting that guild is non-null won't be enough in staging because
 // of the controller swap dance, but we still want that safety because otherwise
 // it would panic only in production. by calling this function *right* away before
 // the initializer even runs, we can check the *actual* controller
-function staging_assert_guild({ tag }: Controller) {
-  panic_assert(tag !== 'global', 'User hooks may not be attatched to %GLOBAL%');
+function staging_assert_guild({ name }: Controller) {
+  panic_assert(name !== 'global', 'User hooks may not be attatched to %GLOBAL%');
 }
 
 function output_result(to: Output, embed: HookEmbed<string>, guild: Guild) {

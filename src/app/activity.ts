@@ -13,8 +13,15 @@ const set_activity: Task = ({ client }) => {
   user.setActivity(random(MESSAGES));
 };
 
-add_init(GLOBAL, set_activity);
-add_task(GLOBAL, set_activity, { run_at: '*/30 * * * *', quiet: true });
+add_init(GLOBAL, set_activity, {
+  name: 'set_activity_init ',
+});
+
+add_task(GLOBAL, set_activity, {
+  name: 'set_activity_task',
+  run_at: '*/30 * * * *',
+  quiet: true,
+});
 
 const MESSAGES = [
   'cyberduck supreme',

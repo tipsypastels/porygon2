@@ -15,6 +15,13 @@ export interface Initializer {
   (opts: InitializerOpts): void;
 }
 
+/**
+ * Data passed to an initializer when adding it.
+ */
+export interface InitializerData {
+  name: string;
+}
+
 /** See `Initializer`. */
 export interface InitializerOpts {
   client: ClientWithoutEvents;
@@ -36,7 +43,7 @@ export type ClientWithoutEvents = Omit<Client, 'on' | 'once'>;
  */
 export class InitializerRegistrar extends ControllerRegistrar {
   private static CACHE = new Cache((controller: Controller) => new this(controller));
-  private pending = new Set<Initializer>();
+  private pending = new Map<Initializer, InitializerData>();
 
   static init(prod_controller: Controller) {
     const controller = proper_controller_for_env(prod_controller);
@@ -48,44 +55,48 @@ export class InitializerRegistrar extends ControllerRegistrar {
   }
 
   async synchronize(client: Client) {
-    const { controller, tag } = this;
+    const { controller, name } = this;
     const opts: InitializerOpts = {
       client,
       controller,
-      events: new EventProxy(client, controller, tag),
+      events: new EventProxy(client, controller, name),
       guild: controller.try_into_guild(client),
     };
 
-    this.pending.forEach((f) => this.run(f, opts));
+    this.pending.forEach((data, f) => this.run(f, data, opts));
     this.pending.clear();
   }
 
-  add_init(init: Initializer) {
-    this.ensure_unique(init);
-    this.pending.add(init);
+  add_init(init: Initializer, data: InitializerData) {
+    this.ensure_unique(init, data);
+    this.pending.set(init, data);
   }
 
-  private ensure_unique(init: Initializer) {
+  private ensure_unique(init: Initializer, data: InitializerData) {
     if (this.pending.has(init)) {
-      panic(`Initializer %${init.name}% was added twice to %${this.tag}%`);
+      panic(`Initializer %${data.name}% was added twice to %${this.name}%`);
     }
   }
 
-  private run(f: Initializer, opts: InitializerOpts) {
+  private run(f: Initializer, data: InitializerData, opts: InitializerOpts) {
     try {
       f(opts);
-      logger.debug(`Ran initializer %${f.name}%`);
+      logger.debug(`Ran initializer %${data.name}%`);
     } catch (e) {
       if (error_is_skip(e)) {
-        logger.warn(`Initializer %${f.name}% skipped: %${e.message}%`);
+        logger.warn(`Initializer %${data.name}% skipped: %${e.message}%`);
       } else {
-        panic(`Initializer %${f.name}% under %${this.tag}% failed`, e);
+        panic(`Initializer %${data.name}% under %${this.name}% failed`, e);
       }
     }
   }
 }
 
-export function add_init(controller: Controller, init: Initializer) {
+export function add_init(
+  controller: Controller,
+  init: Initializer,
+  data: InitializerData,
+) {
   const registrar = InitializerRegistrar.init(controller);
-  registrar.add_init(init);
+  registrar.add_init(init, data);
 }

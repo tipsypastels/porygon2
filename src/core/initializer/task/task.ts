@@ -25,6 +25,7 @@ export interface Task {
 type TaskOpts = Omit<InitializerOpts, 'events'>;
 
 interface TaskData {
+  name: string;
   run_at: string;
   quiet?: boolean;
 }
@@ -34,8 +35,8 @@ class TaskCell {
 
   constructor(private task: Task, private data: TaskData) {}
 
-  get tag() {
-    return this.task.name;
+  get name() {
+    return this.data.name;
   }
 
   private get time() {
@@ -43,7 +44,7 @@ class TaskCell {
   }
 
   schedule(client: Client, controller: Controller) {
-    logger.debug(`Task %${this.tag}% scheduled at %${this.time}%.`);
+    logger.debug(`Task %${this.name}% scheduled at %${this.time}%.`);
     cron.schedule(this.time, () => this.run(client, controller));
   }
 
@@ -52,26 +53,26 @@ class TaskCell {
       // tasks cannot run during startup
       // if this happens it's probably just a coincidence of timing from
       // when the sync phase starts and when the task is scheduled
-      return logger.warn(`Task %${this.tag}% tried to run during startup.`);
+      return logger.warn(`Task %${this.name}% tried to run during startup.`);
     }
 
     const guild = controller.try_into_guild(client);
     const opts: TaskOpts = { client, controller, guild };
 
     try {
-      this.log_non_essential(`Task %${this.tag}% started`);
+      this.log_non_essential(`Task %${this.name}% started`);
 
       await this.task(opts);
 
       this.report('success');
-      this.log_non_essential(`Task %${this.tag}% finished`);
+      this.log_non_essential(`Task %${this.name}% finished`);
     } catch (e) {
       if (error_is_skip(e)) {
         this.report('skipped');
-        logger.warn(`Task %${this.tag}% skipped: %${e.message}%`);
+        logger.warn(`Task %${this.name}% skipped: %${e.message}%`);
       } else {
         this.report('failure');
-        logger.error(`Task %${this.tag}% failed`, e);
+        logger.error(`Task %${this.name}% failed`, e);
       }
     }
   }
@@ -86,7 +87,7 @@ class TaskCell {
 
   to_status_string() {
     return strip_indent`
-      ${inline_code(this.tag)}
+      ${inline_code(this.name)}
       **Status:** ${this.status_manager.to_status_string()}
       **Runs in:** ${this.next_running_at}`;
   }
@@ -121,7 +122,7 @@ export class TaskRegistrar extends ControllerRegistrar {
   async synchronize(client: Client) {
     for (const [, task] of this.pending) {
       task.schedule(client, this.controller);
-      TaskRegistrar.ALL.set(task.tag, task);
+      TaskRegistrar.ALL.set(task.name, task);
     }
 
     this.pending.clear();
@@ -131,12 +132,12 @@ export class TaskRegistrar extends ControllerRegistrar {
     const cell = new TaskCell(task, data);
 
     this.ensure_unique(cell);
-    this.pending.set(cell.tag, cell);
+    this.pending.set(cell.name, cell);
   }
 
   private ensure_unique(cell: TaskCell) {
-    if (this.pending.has(cell.tag)) {
-      panic(`Task %${cell.tag}% was added twice!`);
+    if (this.pending.has(cell.name)) {
+      panic(`Task %${cell.name}% was added twice!`);
     }
   }
 }

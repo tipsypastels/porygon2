@@ -35,8 +35,8 @@ export abstract class Registrar {
 
   abstract synchronize(client: Client): Promise<void>;
 
-  protected constructor(readonly tag: string) {
-    logger.debug(`Created registrar %${this.tag}%.`);
+  protected constructor(readonly name: string) {
+    logger.debug(`Created registrar %${this.name}%.`);
     Registrar.INSTANCES.push(this);
   }
 }
@@ -54,7 +54,7 @@ export abstract class Registrar {
  * instances.
  */
 export abstract class ControllerRegistrar extends Registrar {
-  protected constructor(type_tag: string, protected controller: Controller) {
-    super(`${type_tag}_${controller.tag}`);
+  protected constructor(type_name: string, protected controller: Controller) {
+    super(`${type_name}_${controller.name}`);
   }
 }

@@ -10,7 +10,6 @@
  * so we just use a regular global map.
  */
 
-import { panic_assert } from 'core/assert';
 import { AnyCommand } from 'core/command';
 import { panic } from 'core/logger';
 import { Autocomplete } from '.';
@@ -21,18 +20,20 @@ type AutocompleteTable = Map<AnyCommand, Autocompletes>;
 
 const MAP: AutocompleteTable = new Map();
 
-export function add_autocomplete(command: ChatCommand, autocomplete: Autocomplete) {
-  panic_assert(autocomplete.name, 'Autocomplete functions may not be anonymous');
-
+export function add_autocomplete(
+  command: ChatCommand,
+  opt: string,
+  autocomplete: Autocomplete,
+) {
   const list = MAP.get(command) ?? new Map();
 
-  if (list.has(autocomplete.name)) {
+  if (list.has(opt)) {
     // i know command.name may not be accurate since it's just the function name,
     // but it's the best we got here without passing more data
-    panic(`Autocomplete %${autocomplete.name}% was added twice to %${command.name}%.`);
+    panic(`Autocomplete %${opt}% was added twice to %${command.name}%.`);
   }
 
-  list.set(autocomplete.name, autocomplete);
+  list.set(opt, autocomplete);
   MAP.set(command, list);
 }
 

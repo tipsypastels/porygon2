@@ -20,14 +20,14 @@ type UploadOutcome = Promise<Collection<string, ApplicationCommand>>;
  * like determining the target for uploads.
  */
 export interface Controller {
-  tag: string;
+  name: string;
   matches_guild(guild_id: Maybe<string>): boolean;
   try_into_guild(client: Client): Maybe<Guild>;
   upload_commands(data: Data[], client: Client): UploadOutcome;
 }
 
 export const GLOBAL: Controller = {
-  tag: 'global',
+  name: 'global',
 
   matches_guild() {
     return true;
@@ -51,7 +51,7 @@ export const DUCK = make_guild_controller('duck');
 function make_guild_controller(nick: GuildNickname): Controller {
   const guild_id = get_guild_id(nick);
   return {
-    tag: `guild(${nick})`,
+    name: `guild(${nick})`,
 
     matches_guild(id) {
       return id === guild_id;
