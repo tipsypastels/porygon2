@@ -1,4 +1,5 @@
 import { create_executor } from 'core/command';
+import { on_dm_command } from 'core/command/direct_message';
 import { create_status_report_middleware, slow_timing } from 'core/command/middleware';
 import { Reply } from 'core/command/reply';
 import { Row } from 'core/command/row';
@@ -30,6 +31,7 @@ export function create_context_menu_executor<A extends BaseArgs, I extends Intr>
       const { guild, member: author } = intr;
 
       if (!guild) {
+        on_dm_command(`${opts.name} commands`, client, intr);
         return 'tried_dm';
       }
 

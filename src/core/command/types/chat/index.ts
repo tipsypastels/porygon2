@@ -5,7 +5,6 @@ import {
   GuildMember,
 } from 'discord.js';
 import { on_dm_command } from '../../direct_message';
-import { noop } from 'support/fn';
 import { CommandChannel, is_command_channel } from '../../channel';
 import { create_status_report_middleware, slow_timing } from '../../middleware';
 import { Embed } from 'core/embed';
@@ -45,7 +44,7 @@ export const execute_chat_command = create_executor<Args, Data, Intr>({
     const client = cell.client;
 
     if (!guild) {
-      on_dm_command('command', client, intr).catch(noop);
+      on_dm_command('commands', client, intr);
       return 'tried_dm';
     }
 
