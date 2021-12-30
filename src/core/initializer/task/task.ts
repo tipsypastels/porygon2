@@ -5,7 +5,7 @@ import { Client, Collection } from 'discord.js';
 import cron from 'node-cron';
 import { parseExpression as parse_expression } from 'cron-parser';
 import { Cache } from 'support/cache';
-import { inline_code, strip_indent } from 'support/string';
+import { code, strip_indent } from 'support/string';
 import { InitializerOpts } from '../initializer';
 import { error_is_skip } from '../skip';
 import { formatDistance as format } from 'date-fns';
@@ -87,7 +87,7 @@ class TaskCell {
 
   to_status_string() {
     return strip_indent`
-      ${inline_code(this.name)}
+      ${code(this.name)}
       **Status:** ${this.status_manager.to_status_string()}
       **Runs in:** ${this.next_running_at}`;
   }
@@ -168,13 +168,13 @@ class TaskStatusManager {
   }
 
   to_status_string() {
-    const list = inline_code(STATUSES.map((s) => this.status_string(s)).join(' '));
+    const list = code(STATUSES.map((s) => this.status_string(s)).join(' '));
 
     if (!this.last || this.always_got_same_status()) {
       return list;
     }
 
-    const last = ` (last was ${inline_code(this.symbols[this.last])})`;
+    const last = ` (last was ${code(this.symbols[this.last])})`;
     return list + last;
   }
 

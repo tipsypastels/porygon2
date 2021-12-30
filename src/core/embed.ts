@@ -107,6 +107,10 @@ export class Embed {
     return this.set('thumbnail', { url: PORY_ASSETS.get(thumb).url });
   }
 
+  err(err: AssetsKey<typeof PORY_ASSETS> & PoryColor) {
+    return this.color(err).pory(err);
+  }
+
   image(url: string) {
     return this.set('image', { url });
   }

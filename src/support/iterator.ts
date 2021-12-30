@@ -49,6 +49,13 @@ export function* map_key<T, K extends keyof T>(key: K, iter: Iterable<T>) {
 }
 
 /**
+ * Joins an iterable with a delimiter, eagerly evaluating each item.
+ */
+export function join(delim: string, iter: Iterable<any>) {
+  return eager(iter).join(delim);
+}
+
+/**
  * Skips the first `n` items of the provided iterator, yielding the rest.
  */
 export function* skip<T>(n: number, iter: Iterable<T>) {

@@ -4,7 +4,7 @@ import { GLOBAL } from 'core/controller';
 import { TaskRegistrar } from 'core/initializer/task';
 import { assert_owner } from 'core/owner';
 import { IS_STAGING } from 'support/env';
-import { get_pokecom_join_date_source_stats } from './hooks_pokecom';
+import { get_pokecom_join_date_source_stats } from './pokecom_hooks';
 
 const say: ChatCommand = async ({ opts, channel, author, reply }) => {
   assert_owner(author);

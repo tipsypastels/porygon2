@@ -92,7 +92,7 @@ export function code_block(string: string, { lang, debug }: CodeBlockOpts = {}) 
 /**
  * Wraps the message in an inline code span.
  */
-export const inline_code = (string: string) => `\`${string}\``;
+export const code = (string: string) => `\`${string}\``;
 
 /**
  * Formats the message as markdown-bold.

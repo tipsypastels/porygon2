@@ -27,7 +27,7 @@ import { PokecomJoinDate } from '@prisma/client';
 import { panic_assert } from 'core/assert';
 import { sleep } from 'support/async';
 import { TimeDifference } from 'core/stat/time';
-import { inline_code } from 'support/string';
+import { code } from 'support/string';
 
 /* -------------------------------------------------------------------------- */
 /*                                    Hooks                                   */
@@ -101,7 +101,7 @@ add_task(POKECOM, reload_join_dates, {
 export async function get_pokecom_join_date_source_stats() {
   const count = await TABLE.count();
   const display = (s: SourceStat) => `${SOURCE_SYMBOLS[s]} ${JOIN_DATE_STATS.get(s)}`;
-  const sources = inline_code(SOURCE_STATS.map(display).join(' '));
+  const sources = code(SOURCE_STATS.map(display).join(' '));
   return `**Sources:** ${sources}\n**Table size:** ${count}`;
 }
 
