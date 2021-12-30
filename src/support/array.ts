@@ -38,6 +38,13 @@ export function is_array(x: unknown): x is Ary {
 /* -------------------------------------------------------------------------- */
 
 /**
+ * Wraps a value in an array, if it is not already an array.
+ */
+export function as_array<T>(t: T | T[]): T[] {
+  return is_array(t) ? t : [t];
+}
+
+/**
  * Returns the first item of an array.
  */
 export const first = <T>(array: T[]) => array[0];

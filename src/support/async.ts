@@ -14,3 +14,11 @@ export type Resolvable<T> = T | Promise<T>;
  * discarded.
  */
 export type IntoVoid = Resolvable<void>;
+
+/* -------------------------------------------------------------------------- */
+/*                                  Utilities                                 */
+/* -------------------------------------------------------------------------- */
+
+export function sleep(ms: number) {
+  return new Promise<void>((r) => setTimeout(r, ms));
+}
