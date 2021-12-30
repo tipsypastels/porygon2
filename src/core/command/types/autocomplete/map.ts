@@ -10,6 +10,7 @@
  * so we just use a regular global map.
  */
 
+import { panic_assert } from 'core/assert';
 import { AnyCommand } from 'core/command';
 import { panic } from 'core/logger';
 import { Autocomplete } from '.';
@@ -21,6 +22,8 @@ type AutocompleteTable = Map<AnyCommand, Autocompletes>;
 const MAP: AutocompleteTable = new Map();
 
 export function add_autocomplete(command: ChatCommand, autocomplete: Autocomplete) {
+  panic_assert(autocomplete.name, 'Autocomplete functions may not be anonymous');
+
   const list = MAP.get(command) ?? new Map();
 
   if (list.has(autocomplete.name)) {

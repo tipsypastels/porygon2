@@ -45,6 +45,13 @@ export interface ArgsWithSubcommand extends Args {
 export interface Command<A extends Args, D extends Data, I extends Intr> {
   (args: A): Promise<void>;
 
+  // implementation detail
+  // this isn't actually used in redirecting commands to subcommands,
+  // but *is* used so that the original instances of subcommand functions
+  // aren't lost, and they can be used to look up autocompletes and other
+  // keyed-by-command accessors.
+  __sub_commands?: Record<string, Command<A, D, I>>;
+
   // note type variables here to keep them from being lost
   // they're not actually used in the `Command` type, but other
   // functions that interface with commands will need them

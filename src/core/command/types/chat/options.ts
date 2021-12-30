@@ -52,7 +52,7 @@ export class Options {
     return this.inner.getBoolean(name, true);
   }
 
-  try_bool(name: string) {
+  maybe_bool(name: string) {
     return this.inner.getBoolean(name);
   }
 

@@ -89,5 +89,6 @@ export function add_sub_commands<
     return selected(args);
   };
 
+  command.__sub_commands = commands;
   add_command(controller, command, data);
 }

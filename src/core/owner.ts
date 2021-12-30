@@ -1,5 +1,6 @@
 import { Client } from 'discord.js';
 import { OWNER } from 'support/env';
+import { assert } from './assert';
 
 interface User {
   id: string;
@@ -10,7 +11,7 @@ export function is_owner(user: User) {
 }
 
 export function assert_owner(user: User) {
-  if (!is_owner(user)) throw new Error("You aren't the bot owner!");
+  assert(is_owner(user), "You aren't the bot owner!");
 }
 
 export function find_owner(client: Client) {

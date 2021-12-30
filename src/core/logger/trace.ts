@@ -15,9 +15,11 @@ export function print_formatted_frames(stack: string) {
   );
 }
 
+const SKIP_GUTS = /core\/(?:logger|assert)/;
+
 export function* each_formatted_row(stack: string) {
   for (const frame of parser.parse(stack)) {
-    if (frame.file?.includes('core/logger')) {
+    if (frame.file?.match(SKIP_GUTS)) {
       continue; // skip internal machinery
     }
 
