@@ -14,3 +14,8 @@ model Headpat {
   user_id String @id
   score   Int    @default(0)
 }
+
+model PokecomJoinDate {
+  user_id   String   @id
+  joined_at DateTime
+}

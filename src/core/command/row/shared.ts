@@ -5,7 +5,7 @@ import {
   MessageComponentInteraction as BaseIntr,
   MessageComponentType as Type,
 } from 'discord.js';
-import { IntoVoid, Resolvable } from 'support/async';
+import { IntoVoid, Awaitable } from 'support/async';
 import { is_string } from 'support/string';
 
 /**
@@ -28,7 +28,7 @@ export abstract class ActiveComponent<
 > extends Component<Inner> {
   protected abstract get_approximate_name(): string;
   protected abstract fn?(args: Args): IntoVoid;
-  protected abstract into_args(intr: Intr, embed: Embed): Resolvable<TryArgs<Args>>;
+  protected abstract into_args(intr: Intr, embed: Embed): Awaitable<TryArgs<Args>>;
   private _touched = 0;
 
   readonly custom_id = `${Math.random()}`;

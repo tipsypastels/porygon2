@@ -1,4 +1,9 @@
-import { ColorResolvable, MessageEmbedOptions as Inner } from 'discord.js';
+import {
+  ColorResolvable,
+  GuildMember,
+  MessageEmbedOptions as Inner,
+  User,
+} from 'discord.js';
 import { Ary } from 'support/array';
 import { Maybe } from 'support/null';
 import { assert } from './assert';
@@ -112,6 +117,25 @@ export class Embed {
       icon_url: icon_url ?? undefined,
       url: url ?? undefined,
     });
+  }
+
+  // TODO: decide if it's confusing for one to default to disc=true and another
+  // TODO: to default to disc=false. it makes sense because displayName is sort of
+  // TODO: the pretty version, whereas if you're working with a user you're probably
+  // TODO: doing logging and want all the info, but i'll come back to this later and
+  // TODO: decide if the inconsistency was worth it
+
+  author_member(member: GuildMember, { discriminator = false } = {}) {
+    const name = member.displayName;
+    const disc = member.user.discriminator;
+    const full = discriminator ? `${name}${disc}` : name;
+    return this.author(full, member.user.avatarURL());
+  }
+
+  author_user(user: User, { discriminator = true } = {}) {
+    const { username: name, discriminator: disc } = user;
+    const full = discriminator ? `${name}${disc}` : name;
+    return this.author(full, user.avatarURL());
   }
 
   foot(text: string, icon_url?: Maybe<string>) {

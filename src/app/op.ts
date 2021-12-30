@@ -4,6 +4,7 @@ import { GLOBAL } from 'core/controller';
 import { TaskRegistrar } from 'core/initializer/task';
 import { assert_owner } from 'core/owner';
 import { IS_STAGING } from 'support/env';
+import { get_pokecom_join_date_source_stats } from './hooks_pokecom';
 
 const say: ChatCommand = async ({ opts, channel, author, reply }) => {
   assert_owner(author);
@@ -20,6 +21,8 @@ const stats: ChatCommand = async ({ embed, author, client, reply }) => {
   assert_owner(author);
   reply.set_ephemeral();
 
+  const pc_join_dates = await get_pokecom_join_date_source_stats();
+
   embed
     .pory('speech')
     .color('info')
@@ -27,7 +30,8 @@ const stats: ChatCommand = async ({ embed, author, client, reply }) => {
     .field('Servers', `${client.guilds.cache.size}`)
     .field('Uptime', uptime.in_words())
     .field('Heartbeat', `${client.ws.ping}ms`)
-    .field('Tasks', TaskRegistrar.to_status_string());
+    .field('Tasks', TaskRegistrar.to_status_string())
+    .field('PokéCommunity Join Dates', pc_join_dates);
 };
 
 const commands = { say, stats };

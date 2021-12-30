@@ -1,17 +1,20 @@
 import { HookEmbed } from './hook_embed';
 import { ClientEvents as Events, Guild } from 'discord.js';
 import { Possible } from 'support/object';
-import { IntoVoid } from 'support/async';
+import { Awaitable } from 'support/async';
 import { Controller } from 'core/controller';
 import { add_init, ClientWithoutEvents, Initializer } from '..';
 import { panic_assert } from 'core/assert';
-import { noop } from 'support/fn';
+import { into_resolved, noop, Resolvable } from 'support/fn';
 import { logger } from 'core/logger';
 import { as_array } from 'support/array';
 import { IS_STAGING } from 'support/env';
 
+export * from './hooks';
+export * from './backup_join_date';
+
 type Event = keyof Events;
-type Output = string | string[];
+type Output = Resolvable<string | string[], [Tag]>;
 
 /**
  * User hooks are simply a light wrapper around initializers that abstract
@@ -19,9 +22,21 @@ type Output = string | string[];
  * with a pre-made yet customizable appearance.
  */
 export interface UserHook<E extends Event, D extends string, C = never> {
-  (args: Args<E, D, C>): IntoVoid;
+  (args: Args<E, D, C>): Awaitable<Tag>;
   on_event: E;
 }
+
+/**
+ * Tags are a mechanism by which user hooks may dynamically change their
+ * destination. A hook may return a tag, which is really just any string that
+ * somehow describes a dynamic decision made during hook execution, and the
+ * consumer of the hook may provide a function as the `to` layout parameter
+ * that switches based on that tag.
+ *
+ * Tags should never be assumed to be present, and are usually `void`.
+ */
+type Tag = string | void;
+export type { Tag as UserHookTag };
 
 /**
  * Configuration data for a user hook. Individual hooks may have additional requirements.
@@ -75,8 +90,8 @@ export function add_user_hook<E extends Event, D extends string, C = never>(
         ...layout_extras,
       };
 
-      await hook(args);
-      await output_result(to, embed, guild);
+      const tag = await hook(args);
+      await output_result(to, embed, guild, tag);
     });
   };
 
@@ -93,12 +108,12 @@ function staging_assert_guild({ name }: Controller) {
   panic_assert(name !== 'global', 'User hooks may not be attatched to %GLOBAL%');
 }
 
-function output_result(to: Output, embed: HookEmbed<string>, guild: Guild) {
+function output_result(to: Output, embed: HookEmbed<string>, guild: Guild, tag: Tag) {
   if (!embed.touched) {
     return; // the hook probably early returned, that's fine
   }
 
-  const channel_ids = as_array(to);
+  const channel_ids = as_array(into_resolved(to, tag));
   const promises = channel_ids.map(async (id) => {
     const ch = await guild.channels.fetch(id).catch(noop);
 

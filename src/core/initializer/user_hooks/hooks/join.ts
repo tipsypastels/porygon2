@@ -1,15 +1,21 @@
 import { code_block } from 'support/string';
 import { time_ago_in_words } from 'support/time';
-import { UserHook } from '..';
+import { BackupJoinDateResource, UserHook } from '..';
 
 type Event = 'guildMemberAdd';
 type Details = 'age' | 'user_id';
+type JoinHook = UserHook<Event, Details, Config>;
 
-export const log_joins: UserHook<Event, Details> = ({ embed, event: [member] }) => {
-  // TODO: author
+interface Config {
+  join_dates?: BackupJoinDateResource;
+}
+
+export const log_joins: JoinHook = async ({ embed, event: [member], config }) => {
+  await config?.join_dates?.add_backup(member.id, member.joinedAt);
+
   embed
     .by_default((e) => {
-      e.color('info').title('Member Joined');
+      e.color('info').title('Member Joined').author_user(member.user);
     })
     .detail('age', (e) => {
       e.field('Account Age', time_ago_in_words(member.user.createdAt));
