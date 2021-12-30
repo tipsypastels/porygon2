@@ -58,6 +58,8 @@ function kicked(member: ErsatzMember, log: Entry, embed: Embed) {
         .author_user(member.user);
     })
     .merge(shared, member);
+
+  return 'kicked';
 }
 
 function shared(embed: HookEmbed<Details>, { id, joinedAt: joined_at }: ErsatzMember) {

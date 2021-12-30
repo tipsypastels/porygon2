@@ -42,7 +42,7 @@ export async function latest_audit_log<T extends Type>(target: Target, type: T) 
     const log = await get(target, type);
 
     if (log) {
-      logger.debug(`Found audit log %${type}% after %${plural(i, 'cycles')}%`);
+      logger.debug(`Found audit log %${type}% after %${plural(i, 'cycle')}%`);
       return log;
     }
 
