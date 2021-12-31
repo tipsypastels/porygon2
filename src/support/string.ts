@@ -1,4 +1,5 @@
 import { inspect } from 'util';
+import { partial } from './fn';
 
 /* -------------------------------------------------------------------------- */
 /*                                    Types                                   */
@@ -142,3 +143,13 @@ export function delete_prefix(prefix: string | RegExp, string: string) {
 export function delete_suffix(suffix: string | RegExp, string: string) {
   return string.replace(new RegExp(`${to_source(suffix)}$`), '');
 }
+
+/**
+ * Deletes all spaces from `string`.
+ */
+export const delete_spaces = partial(delete_all, / /g);
+
+/**
+ * Deletes all whitespace from `string`.
+ */
+export const delete_whitepsace = partial(delete_all, /\s/g);
