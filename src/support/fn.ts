@@ -58,3 +58,20 @@ export function tap<T>(fn: (t: T) => void, value: T) {
   fn(value);
   return value;
 }
+
+type PartialApplicable<T extends Ary, U extends Ary, R> = (...args: [...T, ...U]) => R;
+
+/**
+ * Partially applies the provided arguments `head` to `f`, returning a new
+ * function that takes the remaining arguments `u`. This is partial application,
+ * similar to currying.
+ *
+ *     const truncate = partial(ellipsis, 5);
+ *     truncate("hello world") // => "hello...";
+ */
+export function partial<T extends Ary, U extends Ary, R>(
+  f: PartialApplicable<T, U, R>,
+  ...head: T
+) {
+  return (...tail: U) => f(...head, ...tail);
+}

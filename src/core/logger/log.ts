@@ -3,7 +3,6 @@ import { IS_DEBUG } from 'support/env';
 import { is_string } from 'support/string';
 import { print_formatted_frames } from './trace';
 
-// TODO: would be nice to use currying here
 const error: LogErrorFn = (m, e) => __log_error(e, 'error', colors.red, m);
 const warn: LogFn = (m) => __log('warn', colors.yellow, m);
 const info: LogFn = (m) => __log('info', colors.blue, m);
