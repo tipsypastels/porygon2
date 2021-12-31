@@ -53,14 +53,10 @@ async function fetch_channel(client: Client) {
   const guild = try_get_guild(DUMP_GUILD, client);
   const channel = await guild?.channels.fetch(DUMP_CHANNEL).catch(noop);
 
-  // TODO: this is bad, clean this up a bit somehow?
   if (!channel) {
-    if (IS_STAGING) {
-      panic('Asset channel could not be located!');
-    } else {
-      logger.error('Asset channel not found! Cache state is unknown and may be missing.');
-      return;
-    }
+    const fn = IS_STAGING ? panic : logger.error;
+    fn('Asset channel could not be located!');
+    return;
   }
 
   panic_assert(channel instanceof TextChannel, 'Expected asset channel to be text');
