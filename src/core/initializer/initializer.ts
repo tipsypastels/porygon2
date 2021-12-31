@@ -54,7 +54,7 @@ export class InitializerRegistrar extends ControllerRegistrar {
     super('inits', controller);
   }
 
-  async synchronize(client: Client) {
+  protected async synchronize_if_connected(client: Client) {
     const { controller, name } = this;
     const opts: InitializerOpts = {
       client,

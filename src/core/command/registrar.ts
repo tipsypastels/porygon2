@@ -31,7 +31,7 @@ export class CommandRegistrar extends ControllerRegistrar {
     super('commands', controller);
   }
 
-  async synchronize(client: Client) {
+  protected async synchronize_if_connected(client: Client) {
     const pending_count = this.pending.size;
 
     if (pending_count === 0) {
@@ -40,6 +40,10 @@ export class CommandRegistrar extends ControllerRegistrar {
 
     const pending_data = eager(this.pending.values());
     const api_data = await this.controller.upload_commands(pending_data, client);
+
+    if (!api_data) {
+      return;
+    }
 
     for (const [[command, data], [, api]] of zip(this.pending, api_data)) {
       const cell = new Cell({ command, data, api });

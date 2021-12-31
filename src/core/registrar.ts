@@ -57,4 +57,12 @@ export abstract class ControllerRegistrar extends Registrar {
   protected constructor(type_name: string, protected controller: Controller) {
     super(`${type_name}_${controller.name}`);
   }
+
+  protected abstract synchronize_if_connected(client: Client): Promise<void>;
+
+  async synchronize(client: Client) {
+    if (this.controller.is_connected(client)) {
+      return await this.synchronize_if_connected(client);
+    }
+  }
 }

@@ -119,7 +119,7 @@ export class TaskRegistrar extends ControllerRegistrar {
     super('tasks', controller);
   }
 
-  async synchronize(client: Client) {
+  protected async synchronize_if_connected(client: Client) {
     for (const [, task] of this.pending) {
       task.schedule(client, this.controller);
       TaskRegistrar.ALL.set(task.name, task);

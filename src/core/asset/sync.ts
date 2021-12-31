@@ -1,4 +1,4 @@
-import { get_guild } from 'core/guild';
+import { try_get_guild } from 'core/guild';
 import { logger, panic } from 'core/logger';
 import { Client, Collection, TextChannel } from 'discord.js';
 import { staging } from 'support/env';
@@ -7,6 +7,7 @@ import { Maybe } from 'support/null';
 import { Asset } from './asset';
 import { stat, writeFile as write } from 'fs/promises';
 import { from_entries } from 'support/iterator';
+import { panic_assert, panic_take } from 'core/assert';
 
 const DUMP_GUILD = staging('staging', 'duck');
 const DUMP_CHANNEL = staging('924933272935489537', '866445374378344468');
@@ -45,12 +46,10 @@ export async function sync_assets(client: Client, dir: string, assets: Assets) {
 }
 
 async function fetch_channel(client: Client) {
-  const guild = get_guild(DUMP_GUILD, client);
+  const guild = panic_take(try_get_guild(DUMP_GUILD, client), 'Invalid asset guild');
   const channel = await guild.channels.fetch(DUMP_CHANNEL).catch(noop);
 
-  if (!(channel instanceof TextChannel)) {
-    panic(`Invalid upload dump channel: ${DUMP_CHANNEL}.`);
-  }
+  panic_assert(channel instanceof TextChannel, 'Invalid upload dump channel');
 
   return channel;
 }

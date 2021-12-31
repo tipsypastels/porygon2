@@ -1,6 +1,10 @@
-import { panic } from 'core/logger';
 import { Client } from 'discord.js';
 
+/**
+ * Preset names for specific guilds. Since Porygon is not a general
+ * purpose bot and is built with individual guilds in mind, we can
+ * have this nice syntax for referring to them rather than IDs.
+ */
 export type GuildNickname = 'pc' | 'pc_staff' | 'duck' | 'staging';
 
 export interface GuildConfig {
@@ -14,14 +18,18 @@ const CONFIG: Record<GuildNickname, GuildConfig> = {
   staging: { id: '910079990123601931' },
 };
 
+/**
+ * Converts a guild "nickname" into its actual guild ID.
+ */
 export function get_guild_id(nick: GuildNickname) {
   return CONFIG[nick].id;
 }
 
-// NOTE: normally we wouldn't panic in a non-setup library function, but
-// this should never happen as all guild nicknames are only for known guilds
-// set in advance.
-export function get_guild(nick: GuildNickname, client: Client) {
-  const guild = client.guilds.cache.get(get_guild_id(nick));
-  return guild ?? panic(`Unknown guild for nickname "${nick}".`);
+/**
+ * Tries to convert a guild nickname into an actual guild object, using the
+ * client's cache. This is fallible, since even in production guilds being
+ * missing is not meant to be a program-ending state (for Porygon Beta, etc)
+ */
+export function try_get_guild(nick: GuildNickname, client: Client) {
+  return client.guilds.cache.get(get_guild_id(nick));
 }
