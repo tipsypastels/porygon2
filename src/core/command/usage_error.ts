@@ -56,3 +56,12 @@ export function create_usage_errors<E extends Errors>(errors: E) {
     return { [TAG]: true, code, ephemeral, into_embed };
   };
 }
+
+/**
+ * Accepts an error that *may* be a usage error, and rethrows it if that's the case.
+ * If not, it passes it to the callback which can also throw, return, or anything else.
+ */
+export function subsume_usage_errors<R>(err: unknown, fn: (e: unknown) => R) {
+  if (is_usage_error(err)) throw err;
+  return fn(err);
+}
