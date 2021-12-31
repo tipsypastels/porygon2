@@ -5,20 +5,30 @@ import { $db } from 'core/db';
 import { Guild, GuildMember } from 'discord.js';
 import { plural } from 'support/string';
 import { Headpat } from '.prisma/client';
+import { Embed } from 'core/embed';
 
-const headpat: UserCommand = async ({ embed, subject, is_self }) => {
-  embed.color('ok').about(`${subject} has been headpat!`).image(gif());
-
-  if (!is_self) {
-    await increment_score(subject);
-    const score = await get_score(subject);
-    embed.foot(`${subject.displayName} has been headpat ${plural(score, 'time')}!`);
-  }
+const headpat_context_menu: UserCommand = async (args) => {
+  return headpat_inner(args);
 };
 
-add_command(DUCK, headpat, {
-  name: 'Offer a Headpat',
-  type: 'USER',
+const headpat_chat_command: ChatCommand = async ({ embed, author, opts }) => {
+  const subject = opts.member('friend');
+  const is_self = author.id === subject.id;
+  return headpat_inner({ embed, subject, is_self });
+};
+
+add_command(DUCK, headpat_context_menu, { name: 'Offer a Headpat', type: 'USER' });
+add_command(DUCK, headpat_chat_command, {
+  name: 'headpat',
+  description: 'Offer a headpat to a friend.',
+  options: [
+    {
+      name: 'friend',
+      description: 'The friend to headpat.',
+      type: 'USER',
+      required: true,
+    },
+  ],
 });
 
 const headpatscores: ChatCommand = async ({ embed, guild }) => {
@@ -33,6 +43,26 @@ add_command(DUCK, headpatscores, {
   name: 'headpatscores',
   description: 'Shows the most headpatted members.',
 });
+
+/* -------------------------------------------------------------------------- */
+/*                                    Inner                                   */
+/* -------------------------------------------------------------------------- */
+
+interface Inner {
+  embed: Embed;
+  subject: GuildMember;
+  is_self: boolean;
+}
+
+async function headpat_inner({ embed, subject, is_self }: Inner) {
+  embed.color('ok').about(`${subject} has been headpat!`).image(gif());
+
+  if (!is_self) {
+    await increment_score(subject);
+    const score = await get_score(subject);
+    embed.foot(`${subject.displayName} has been headpat ${plural(score, 'time')}!`);
+  }
+}
 
 /* -------------------------------------------------------------------------- */
 /*                               Implementation                               */
