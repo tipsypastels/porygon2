@@ -5,8 +5,9 @@ import { Reply } from 'core/command/reply';
 import { Embed } from 'core/embed';
 import { Message, MessageCollector } from 'discord.js';
 import { code_block } from 'support/string';
-import { Seconds } from 'support/time';
 import { State, Ongoing, Ended, create_hangman_state } from './state';
+import { CHANCES, TIMEOUT, random_word } from './config';
+import { create_usage_errors } from 'core/command';
 
 interface Opts {
   reply: Reply;
@@ -34,6 +35,8 @@ interface EndedCell {
 type StateCell = OngoingCell | EndedCell;
 type Renderer<S extends State = State> = (embed: Embed, state: S) => void;
 
+const BUSY_CHANNELS = new Set<string>();
+
 /**
  * A hangman game.
  *
@@ -46,6 +49,8 @@ export class Hangman {
   private cell: StateCell;
 
   constructor(opts: Opts) {
+    assert_available(opts.channel);
+
     this.reply = opts.reply;
     this.channel = opts.channel;
     this.cell = this.create_initial_cell();
@@ -55,9 +60,9 @@ export class Hangman {
     const filter = (message: Message) => state.is_valid_guess(message.content);
     const guess = (message: Message) => this.guess(message.content);
 
-    const state = create_hangman_state('alpaca', 10);
+    const state = create_hangman_state(random_word(), CHANCES);
     const collector = this.channel.createMessageCollector({ filter });
-    const cancellation = setTimeout(() => this.cancel(), Seconds(100));
+    const cancellation = setTimeout(() => this.cancel(), TIMEOUT);
 
     collector.on('collect', guess);
     return { state, collector, cancellation };
@@ -96,6 +101,7 @@ export class Hangman {
 
     this.cell.collector.stop();
     clearTimeout(this.cell.cancellation);
+    BUSY_CHANNELS.delete(this.channel.id);
   }
 
   private render() {
@@ -150,3 +156,19 @@ const render_state: Renderer = (embed, state) => {
     }
   }
 };
+
+function assert_available(channel: CommandChannel) {
+  if (BUSY_CHANNELS.has(channel.id)) {
+    throw usage_error('busy');
+  }
+
+  BUSY_CHANNELS.add(channel.id);
+}
+
+const usage_error = create_usage_errors({
+  busy(e) {
+    e.err('danger')
+      .title('A hangman game is already in progress in this channel.')
+      .about('Please finish it or wait for it to conclude.');
+  },
+});
