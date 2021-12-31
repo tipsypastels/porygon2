@@ -151,8 +151,8 @@ const render_state: Renderer = (embed, state) => {
       return embed
         .color('danger')
         .title('Hangman - timed out!')
-        .about('Games time out after 10 minutes.')
-        .field('The word was', state.word);
+        .field('The word was', state.word)
+        .foot('Games time out after 10 minutes.');
     }
   }
 };
