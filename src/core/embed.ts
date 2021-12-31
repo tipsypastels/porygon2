@@ -53,6 +53,12 @@ export class Embed {
     return this._touched >= date.getTime();
   }
 
+  reset() {
+    this.inner = {};
+    this._touched = 0;
+    return this;
+  }
+
   merge<P extends Ary = []>(into: IntoEmbed<P>, ...params: P) {
     into(this, ...params);
     return this;
@@ -113,6 +119,10 @@ export class Embed {
 
   image(url: string) {
     return this.set('image', { url });
+  }
+
+  thumb(url: string) {
+    return this.set('thumbnail', { url });
   }
 
   author(name: string, icon_url?: Maybe<string>, url?: Maybe<string>) {

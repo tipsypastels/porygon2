@@ -11,7 +11,7 @@ export class Reply {
   private _ephemeral = false;
   private _ephemeral_on_crash = true;
 
-  constructor(private intr: Intr, private embed: Embed, private row?: Row) {}
+  constructor(private intr: Intr, readonly embed: Embed, private row?: Row) {}
 
   get touched() {
     return this.embed.touched || this.row?.touched || this._content;
@@ -39,9 +39,17 @@ export class Reply {
     this._content = content;
   }
 
-  send() {
+  async send() {
     if (this.check_touched()) {
-      return this.intr.reply(this.build_response_data());
+      await this.intr.reply(this.build_response_data());
+    }
+  }
+
+  async send_or_update() {
+    if (this.check_touched()) {
+      const data = this.build_response_data();
+      const method = this.intr.replied ? 'editReply' : 'reply';
+      await this.intr[method](data);
     }
   }
 
