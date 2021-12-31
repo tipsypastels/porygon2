@@ -1,4 +1,5 @@
 import { Client } from 'discord.js';
+import { OnceSet } from 'support/cache';
 import { Controller } from './controller';
 import { logger, panic } from './logger';
 
@@ -54,6 +55,8 @@ export abstract class Registrar {
  * instances.
  */
 export abstract class ControllerRegistrar extends Registrar {
+  private static DID_LOG_DISCONNECTED = new OnceSet<Controller>();
+
   protected constructor(type_name: string, protected controller: Controller) {
     super(`${type_name}_${controller.name}`);
   }
@@ -63,6 +66,12 @@ export abstract class ControllerRegistrar extends Registrar {
   async synchronize(client: Client) {
     if (this.controller.is_connected(client)) {
       return await this.synchronize_if_connected(client);
+    } else if (this.no_registrar_has_already_logged_disconnection()) {
+      logger.warn(`Controller %${this.controller.name}% is disconnected!`);
     }
+  }
+
+  private no_registrar_has_already_logged_disconnection() {
+    return ControllerRegistrar.DID_LOG_DISCONNECTED.try_add(this.controller);
   }
 }

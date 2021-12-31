@@ -5,9 +5,7 @@ import { code_block, ellipsis } from 'support/string';
 
 const truncate = (x: string) => ellipsis(100, x);
 
-const calc: ChatCommand = async ({ embed, reply, opts }) => {
-  reply.set_ephemeral();
-
+const calc: ChatCommand = async ({ embed, opts }) => {
   const equation = opts.str('equation');
   const formatted_equation = code_block(truncate(equation));
 

@@ -1,13 +1,13 @@
 import { try_get_guild } from 'core/guild';
 import { logger, panic } from 'core/logger';
 import { Client, Collection, TextChannel } from 'discord.js';
-import { staging } from 'support/env';
+import { IS_STAGING, staging } from 'support/env';
 import { noop } from 'support/fn';
 import { Maybe } from 'support/null';
 import { Asset } from './asset';
 import { stat, writeFile as write } from 'fs/promises';
 import { from_entries } from 'support/iterator';
-import { panic_assert, panic_take } from 'core/assert';
+import { panic_assert } from 'core/assert';
 
 const DUMP_GUILD = staging('staging', 'duck');
 const DUMP_CHANNEL = staging('924933272935489537', '866445374378344468');
@@ -22,8 +22,12 @@ type Assets = Collection<string, Asset>;
 export async function sync_assets(client: Client, dir: string, assets: Assets) {
   await import('../assets'); // ensure all assets are loaded
 
-  const [cache, channel] = await Promise.all([fetch_cache(dir), fetch_channel(client)]);
   let should_create_next_cache = false;
+  const [cache, channel] = await Promise.all([fetch_cache(dir), fetch_channel(client)]);
+
+  if (!channel) {
+    return;
+  }
 
   for (const [, asset] of assets) {
     if (cache?.urls[asset.path] && (await untouched(asset.path, cache))) {
@@ -46,11 +50,20 @@ export async function sync_assets(client: Client, dir: string, assets: Assets) {
 }
 
 async function fetch_channel(client: Client) {
-  const guild = panic_take(try_get_guild(DUMP_GUILD, client), 'Invalid asset guild');
-  const channel = await guild.channels.fetch(DUMP_CHANNEL).catch(noop);
+  const guild = try_get_guild(DUMP_GUILD, client);
+  const channel = await guild?.channels.fetch(DUMP_CHANNEL).catch(noop);
 
-  panic_assert(channel instanceof TextChannel, 'Invalid upload dump channel');
+  // TODO: this is bad, clean this up a bit somehow?
+  if (!channel) {
+    if (IS_STAGING) {
+      panic('Asset channel could not be located!');
+    } else {
+      logger.error('Asset channel not found! Cache state is unknown and may be missing.');
+      return;
+    }
+  }
 
+  panic_assert(channel instanceof TextChannel, 'Expected asset channel to be text');
   return channel;
 }
 

@@ -53,3 +53,20 @@ export class Cache<K, V extends {}, P extends Ary = []> {
     this.map.set(key, next_value);
   }
 }
+
+/**
+ * A set-like container. Provides a method to add a value and check whether
+ * it was actually added (`true`) or already present (`false`).
+ */
+export class OnceSet<T> {
+  private set = new Set<T>();
+
+  try_add(value: T) {
+    if (this.set.has(value)) {
+      return false;
+    }
+
+    this.set.add(value);
+    return true;
+  }
+}
