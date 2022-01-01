@@ -4,6 +4,7 @@ import * as query from './__generated__/pokemon';
 import { delete_prefix, plural_word, upper } from 'support/string';
 import { is_some, Maybe } from 'support/null';
 import { build_evolution_tree } from './evolution_chain';
+import { fetch_pokemon_sprite } from './sprites';
 
 type Raw = query.pokemon;
 
@@ -23,6 +24,7 @@ interface Data {
   height?: string;
   weight?: string;
   evolutions?: string;
+  sprite_url: string;
 }
 
 export const fetch_pokemon = create_pokemon_entity<Raw, Data>({
@@ -172,11 +174,17 @@ export const fetch_pokemon = create_pokemon_entity<Raw, Data>({
       }
     }
 
+    // Sprite
+    {
+      data.sprite_url = fetch_pokemon_sprite(species.id);
+    }
+
     return <Data>data;
   },
 
   into_embed(e, data) {
     e.author('Pokémon')
+      .thumb(data.sprite_url)
       .title(data.name)
       .try_about(data.generation)
       .inline('Number', `${data.id}`)
