@@ -48,13 +48,13 @@ export class Reply {
   async send_or_update() {
     if (this.check_touched()) {
       const data = this.build_response_data();
-      const method = this.intr.replied ? 'editReply' : 'reply';
+      const method = this.intr.replied || this.intr.deferred ? 'editReply' : 'reply';
       await this.intr[method](data);
     }
   }
 
-  auto_send() {
-    if (!this.intr.replied) return this.send();
+  async auto_send() {
+    if (!this.intr.replied) await this.send();
   }
 
   private check_touched() {

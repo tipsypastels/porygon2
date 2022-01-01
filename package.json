@@ -4,7 +4,8 @@
     "build": "rm -rf dist && tsc",
     "start": "NODE_ENV=production NODE_PATH=./dist node ./dist/main.js",
     "watch": "NODE_ENV=development PORY_STAGING=1 PORY_DEBUG=1 NODE_PATH=./src/ nodemon",
-    "migrate": "prisma db push"
+    "migrate": "prisma db push",
+    "codegen": "apollo client:codegen --target typescript --no-addTypename"
   },
   "dependencies": {
     "@prisma/client": "3.7.0",
@@ -19,6 +20,7 @@
     "jest": "^27.4.5",
     "mathjs": "^10.0.1",
     "node-cron": "^3.0.0",
+    "node-fetch": "2.0.0",
     "stacktrace-parser": "^0.1.10",
     "ts-jest": "^27.1.2"
   },
@@ -28,6 +30,7 @@
     "@types/node-cron": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
+    "apollo": "^2.33.9",
     "eslint": "^8.4.1",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1",

@@ -3,7 +3,8 @@ import { Minutes } from 'support/time';
 
 export const CHANCES = 10;
 export const TIMEOUT = Minutes(10);
-export const WORDS = [
+
+const WORDS = [
   'abruptly',
   'absurd',
   'abyss',

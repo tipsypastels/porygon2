@@ -121,10 +121,13 @@ export function create_executor<A extends Args, D extends Data, I extends Intr>(
     };
 
     const resumable_middleware = opts.middleware?.map(start);
+
     const error = await run_command(command, args);
 
     if (!error) {
-      start_message_runtime(args, intr);
+      start_message_runtime(args, intr).catch((e) => {
+        logger.error('Failed to start message runtime', e);
+      });
     }
 
     resumable_middleware?.map((m) => m.next(error));

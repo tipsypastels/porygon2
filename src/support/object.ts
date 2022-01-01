@@ -10,3 +10,35 @@
 export type Possible<T extends {}> = {
   [K in keyof T as T[K] extends never ? never : K]: T[K];
 };
+
+/**
+ * Represents a value that *may* be used directly, or may exist on
+ * an object with a known property name. An example is `IntoEmbed`,
+ * which can either be a function or an `into_embed` method.
+ *
+ * Use `from_indirect` to resolve such values.
+ */
+export type Indirect<K extends string, V> = V | Record<K, V>;
+
+/* -------------------------------------------------------------------------- */
+/*                               Type Predicates                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Returns whether a mysterious value is an object (NOT including functions and arrays)
+ */
+export function is_object(value: unknown): value is object {
+  return typeof value === 'object' && !Array.isArray(value);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Utilities                                 */
+/* -------------------------------------------------------------------------- */
+
+export function from_indirect<K extends string, V>(indirect: Indirect<K, V>, key: K): V {
+  return is_direct(indirect, key) ? indirect : indirect[key];
+}
+
+function is_direct<K extends string, V>(i: Indirect<K, V>, key: K): i is V {
+  return !(is_object(i) && key in i);
+}

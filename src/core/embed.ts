@@ -6,6 +6,7 @@ import {
 } from 'discord.js';
 import { Ary } from 'support/array';
 import { Maybe } from 'support/null';
+import { from_indirect, Indirect } from 'support/object';
 import { assert } from './assert';
 import { AssetsKey } from './asset/registrar';
 import { PORY_ASSETS } from './assets';
@@ -20,11 +21,9 @@ import { PoryColor, PORY_COLORS } from './color';
  * than having to pass the embed deep into implementation functions. See `UsageError`
  * for the setup of this.
  */
+export type IntoEmbed<P extends Ary = []> = Indirect<'into_embed', Merge<P>>;
 
-export interface IntoEmbed<Params extends Ary = []> {
-  (e: Embed, ...params: Params): void;
-}
-
+type Merge<P extends Ary = []> = (e: Embed, ...p: P) => void;
 type Value<K extends keyof Inner> = NonNullable<Inner[K]>;
 type Mapper<K extends keyof Inner> = (value: Value<K>) => Value<K>;
 
@@ -60,7 +59,7 @@ export class Embed {
   }
 
   merge<P extends Ary = []>(into: IntoEmbed<P>, ...params: P) {
-    into(this, ...params);
+    from_indirect(into, 'into_embed')(this, ...params);
     return this;
   }
 
