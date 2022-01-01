@@ -1,18 +1,31 @@
 import { gql } from './api';
 import { create_pokemon_entity } from './entity';
 import * as query from './__generated__/pokemon';
-import {
-  delete_prefix,
-  delete_suffix,
-  italics,
-  plural_word,
-  strip_indent,
-  upper,
-} from 'support/string';
+import { delete_prefix, plural_word, upper } from 'support/string';
 import { is_some, Maybe } from 'support/null';
 import { build_evolution_tree } from './evolution_chain';
 
-export const fetch_pokemon = create_pokemon_entity({
+type Raw = query.pokemon;
+
+interface Data {
+  id: number;
+  name: string;
+  genus: string;
+  generation?: string;
+  types: {
+    names: string;
+    first: string;
+    label: string;
+  };
+  abilities?: string;
+  egg_groups?: string;
+  gender_rate: string;
+  height?: string;
+  weight?: string;
+  evolutions?: string;
+}
+
+export const fetch_pokemon = create_pokemon_entity<Raw, Data>({
   query: gql`
     query pokemon($name: String!) {
       species: pokemon_v2_pokemonspecies(where: { name: { _eq: $name } }) {
@@ -81,133 +94,103 @@ export const fetch_pokemon = create_pokemon_entity({
     }
   `,
 
-  into_embed(e, data: query.pokemon) {
-    const species = data.species[0];
+  prepare(raw) {
+    const data: Partial<Data> = {};
+
+    const species = raw.species[0];
     const form = species.form.nodes[0];
 
-    // Part 1: Name
+    // Basics
     {
-      const name = species.names[0].name;
-      e.author('Pokemon').title(name);
+      data.id = species.id;
+      data.name = species.names[0].name;
+      data.genus = species.names[0].genus;
     }
 
-    // Part 2: Generation
+    // Generation
     {
       const gen = species.generation;
       if (gen) {
-        // formatted as generation-i in the API
+        // comes formatted as generation-iii
         const name = upper(delete_prefix('generation-', gen.name));
-        e.about(`Discovered in generation ${name}.`);
+        data.generation = `Discovered in generation ${name}.`;
       }
     }
 
-    // Part 3: Number
+    // Types
     {
-      e.inline('Number', `${species.id}`);
+      const names = form.types.map((t) => t.type!.names[0].name);
+      const first = names[0];
+      const label = plural_word(names.length, 'Type');
+      data.types = { names: names.join('\n'), first, label };
     }
 
-    // Part 4: Genus
+    // Abilities
     {
-      const genus = delete_suffix(' Pokémon', species.names[0].genus);
-      e.inline('Species', genus);
+      const names = filter_map(form.abilities, (x) => {
+        const name = x.ability?.names[0].name;
+        return x.is_hidden ? `Hidden: ${name}` : name;
+      });
+
+      if (names.length) data.abilities = names.join('\n');
     }
 
-    // Part 5: Types
+    // Egg Groups
     {
-      const types = form.types.map((t) => name_of(t.type));
-      const first = types[0];
-      const label = plural_word(types.length, 'Type');
-
-      e.inline(label, types.join('\n'));
-
-      if (first) {
-        e.color_from(TYPE_COLORS[first]);
-      } else {
-        e.color('ok');
-      }
+      const names = filter_map(species.egg_groups, (g) => g.group?.names[0].name);
+      if (names.length) data.egg_groups = names.join('\n');
     }
 
-    // Part 6: Abilities
+    // Gender Rate
     {
-      const normal: string[] = [];
-      let hidden: string | undefined;
-
-      for (const ability of form.abilities) {
-        const name = name_of(ability.ability);
-
-        if (!name) {
-          continue;
-        }
-
-        if (ability.is_hidden) {
-          hidden = name;
-        } else {
-          normal.push(name);
-        }
-      }
-
-      const list = strip_indent`
-        Normal: ${normal.length ? normal.join(', ') : '-'}
-        Hidden: ${hidden ?? '-'}
-      `;
-
-      e.inline('Abilities', list);
+      data.gender_rate = GENDER_RATES[species.gender_rate ?? -1];
     }
 
-    // Part 7: Egg Groups
-    {
-      const names = filter_map(species.egg_groups, (g) => name_of(g.group));
-      e.inline('Egg Groups', names.join('\n'));
-    }
-
-    // Part 8: Gender Rate
-    {
-      const rate = species.gender_rate ?? -1;
-      e.inline('Gender Ratio', GENDER_RATES[rate]);
-    }
-
-    // Part 9: Height
+    // Height
     {
       if (form.height) {
-        const meters = form.height / 10;
-        e.inline('Height', `${meters}m`);
+        data.height = `${form.height / 10}m`;
       }
     }
 
-    // Part 10: Weight
+    // Weight
     {
       if (form.weight) {
-        const kg = form.weight / 10;
-        e.inline('Weight', `${kg}kg`);
+        data.weight = `${form.weight / 10}kg`;
       }
     }
 
-    // Part 11: Evolution Chain
+    // Evolutions
     {
       const evos = species.evolution_chain?.evolutions;
       if (evos?.length) {
-        const tree = build_evolution_tree(evos);
-        const text = tree
-          .map((chain) => {
-            // TODO: add a way to map when creating the tree and
-            // skip an inner loop?
-            const names = chain.map((node) => {
-              const name = node.names[0].name;
-              return node.id === species.id ? italics(name) : name;
-            });
-            return names.join(' › ');
-          })
-          .join('\n');
+        const tree = build_evolution_tree(evos).map((x) => {
+          return x.map((m) => m.names[0].name).join(' › ');
+        });
 
-        e.field('Evolutions', text);
+        data.evolutions = tree.join('\n');
       }
     }
+
+    return <Data>data;
+  },
+
+  into_embed(e, data) {
+    e.author('Pokémon')
+      .title(data.name)
+      .try_about(data.generation)
+      .inline('Number', `${data.id}`)
+      .inline('Species', data.genus)
+      .inline(data.types.label, data.types.names)
+      .color_from(TYPE_COLORS[data.types.first])
+      .try_inline('Abilities', data.abilities)
+      .try_inline('Egg Groups', data.egg_groups)
+      .inline('Gender Ratio', data.gender_rate)
+      .try_inline('Height', data.height)
+      .try_inline('Weight', data.weight)
+      .try_field('Evolutions', data.evolutions);
   },
 });
-
-function name_of(obj: Maybe<{ names: Maybe<{ name: string }[]> }>): Maybe<string> {
-  return obj?.names?.[0].name;
-}
 
 // TODO: this should go in array or iterator, but i'm not
 // super into it being lazy, and before moving we should reconsider

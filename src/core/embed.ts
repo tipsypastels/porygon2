@@ -5,7 +5,7 @@ import {
   User,
 } from 'discord.js';
 import { Ary } from 'support/array';
-import { Maybe } from 'support/null';
+import { is_some, Maybe } from 'support/null';
 import { from_indirect, Indirect } from 'support/object';
 import { assert } from './assert';
 import { AssetsKey } from './asset/registrar';
@@ -69,6 +69,11 @@ export class Embed {
     return this;
   }
 
+  private try_set<K extends keyof Inner>(key: K, value: Maybe<Value<K>>) {
+    if (is_some(value)) this.set(key, value);
+    return this;
+  }
+
   private map<K extends keyof Inner>(key: K, mapper: Mapper<K>) {
     const value = this.inner[key];
 
@@ -81,6 +86,11 @@ export class Embed {
     this.inner.fields.push({ name, value, inline });
     this._touched = Date.now();
 
+    return this;
+  }
+
+  private try_add_field(name: string, value: Maybe<string>, inline: boolean) {
+    if (is_some(value)) this.add_field(name, value, inline);
     return this;
   }
 
@@ -98,6 +108,10 @@ export class Embed {
 
   map_about(mapper: Mapper<'description'>) {
     return this.map('description', mapper);
+  }
+
+  try_about(about: Maybe<string>) {
+    return this.try_set('description', about);
   }
 
   color(color: PoryColor) {
@@ -159,7 +173,15 @@ export class Embed {
     return this.add_field(name, value, false);
   }
 
+  try_field(name: string, value: Maybe<string>) {
+    return this.try_add_field(name, value, false);
+  }
+
   inline(name: string, value: string) {
     return this.add_field(name, value, true);
+  }
+
+  try_inline(name: string, value: Maybe<string>) {
+    return this.try_add_field(name, value, true);
   }
 }
