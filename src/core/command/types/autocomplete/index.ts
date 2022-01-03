@@ -17,13 +17,13 @@ export interface AutocompleteArgs {
 }
 
 export interface Autocomplete {
-  (args: AutocompleteArgs): Suggestion[];
+  (args: AutocompleteArgs): Promise<Suggestion[]>;
 }
 
-export function execute_autocomplete(intr: Intr, autocomplete: Autocomplete) {
+export async function execute_autocomplete(intr: Intr, autocomplete: Autocomplete) {
   const input = intr.options.getFocused();
   const args: AutocompleteArgs = { input };
-  const suggestions = autocomplete(args).map(normalize);
+  const suggestions = (await autocomplete(args)).map(normalize);
 
   return intr.respond(suggestions);
 }

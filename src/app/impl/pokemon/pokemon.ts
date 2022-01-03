@@ -1,7 +1,7 @@
 import { gql } from './api';
 import { create_pokemon_entity } from './entity';
 import * as query from './__generated__/pokemon';
-import { delete_prefix, plural_word, upper } from 'support/string';
+import { delete_prefix, delete_suffix, plural_word, upper } from 'support/string';
 import { is_some, Maybe } from 'support/null';
 import { build_evolution_tree } from './evolution_chain';
 import { fetch_pokemon_sprite } from './sprites';
@@ -96,6 +96,10 @@ export const fetch_pokemon = create_pokemon_entity<Raw, Data>({
     }
   `,
 
+  is_empty(raw) {
+    return raw.species.length === 0;
+  },
+
   prepare(raw) {
     const data: Partial<Data> = {};
 
@@ -106,7 +110,7 @@ export const fetch_pokemon = create_pokemon_entity<Raw, Data>({
     {
       data.id = species.id;
       data.name = species.names[0].name;
-      data.genus = species.names[0].genus;
+      data.genus = delete_suffix(' Pokémon', species.names[0].genus);
     }
 
     // Generation
@@ -131,7 +135,7 @@ export const fetch_pokemon = create_pokemon_entity<Raw, Data>({
     {
       const names = filter_map(form.abilities, (x) => {
         const name = x.ability?.names[0].name;
-        return x.is_hidden ? `Hidden: ${name}` : name;
+        return x.is_hidden ? `${name} (H)` : name;
       });
 
       if (names.length) data.abilities = names.join('\n');
