@@ -222,17 +222,17 @@ const usage_error = create_usage_errors({
       .about('Want to try searching again?');
   },
   unknown_form_pub(e, search: string, mon: Pokemon) {
-    e.err('danger').title(`Unknown Form "${search}" for ${mon.name.english}`);
+    e.err('danger').title(`Unknown Form "${search}" for ${mon.name}`);
 
     const forms = Object.values(mon.forms).map(pluck('name'));
 
     if (forms.length === 1) {
-      e.about(`${mon.name.english} only has a basic form and no variants.`);
+      e.about(`${mon.name} only has a basic form and no variants.`);
     } else {
       e.about(
-        `I know about these ${
-          mon.name.english
-        } forms, if that might be of help:\n\n${forms.join('\n')}`,
+        `I know about these ${mon.name} forms, if that might be of help:\n\n${forms.join(
+          '\n',
+        )}`,
       );
     }
   },

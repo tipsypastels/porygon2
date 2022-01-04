@@ -27,11 +27,7 @@ export interface PokemonForm {
 export interface Pokemon {
   id: number;
   slug: string;
-  name: {
-    english: string;
-    roomaji: string;
-    kanji: string;
-  };
+  name: string;
   genus: string;
   color: string;
   default_form: string;
