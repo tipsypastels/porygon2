@@ -46,7 +46,7 @@ const pokemon: ChatCommand = async ({ embed, opts }) => {
     .thumb(fetch_pokemon_sprite(form.slug, sprite))
     .color_from(COLOR_CODES[mon.color])
     .title(form.name)
-    .about(`Discovered in Generation ${mon.gen}.`)
+    .about(`Discovered in Generation ${form.generation}.`)
     .try_inline('Number', pad_pokemon_number(mon.id))
     .try_inline('Species', mon.genus)
     .try_inline('Type', form.types.map(pluck('name')).join('\n'))

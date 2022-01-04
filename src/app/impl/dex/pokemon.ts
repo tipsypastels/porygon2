@@ -17,6 +17,7 @@ export interface PokemonForm {
   slug: string;
   name: string;
   variance: PokemonFormVariance;
+  generation: number;
   height: string;
   weight: string;
   types: Entity[];
@@ -33,7 +34,6 @@ export interface Pokemon {
   };
   genus: string;
   color: string;
-  gen: number;
   default_form: string;
   forms: Record<string, PokemonForm>;
   gender_ratio: Entity;
