@@ -153,3 +153,17 @@ export const delete_spaces = partial(delete_all, / /g);
  * Deletes all whitespace from `string`.
  */
 export const delete_whitepsace = partial(delete_all, /\s/g);
+
+/**
+ * Pads the beginning of a string.
+ */
+export function pad_left(padding: string, until: number, string: string | number) {
+  return `${string}`.padStart(until, padding);
+}
+
+/**
+ * Pads the end of a string.
+ */
+export function pad_right(padding: string, until: number, string: string | number) {
+  return `${string}`.padEnd(until, padding);
+}

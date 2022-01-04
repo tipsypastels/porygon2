@@ -35,10 +35,21 @@ export function is_object(value: unknown): value is object {
 /*                                  Utilities                                 */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * @see Indirect
+ */
 export function from_indirect<K extends string, V>(indirect: Indirect<K, V>, key: K): V {
   return is_direct(indirect, key) ? indirect : indirect[key];
 }
 
 function is_direct<K extends string, V>(i: Indirect<K, V>, key: K): i is V {
   return !(is_object(i) && key in i);
+}
+
+/**
+ * Returns a function that gets a specific key of an object.
+ * Useful for map operations that just look up a fixed key.
+ */
+export function pluck<T, K extends keyof T>(key: K) {
+  return (t: T) => t[key];
 }

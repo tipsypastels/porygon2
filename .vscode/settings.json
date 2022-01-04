@@ -5,7 +5,7 @@
     "**/.git": true,
     "**/node_modules": true,
     "dist": true,
-    "assets/pokemon_sprites": true
+    "src/app/impl/dex/data": true
   },
   "search.exclude": {
     "**/node_modules": true,

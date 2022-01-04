@@ -1,20 +1,53 @@
 import {
-  CommandInteraction,
   CommandInteractionOption as Option,
+  CommandInteractionOptionResolver as Inner,
   GuildMember,
+  Message,
   Role,
 } from 'discord.js';
-import { is_command_channel } from '../../channel';
+import { is_command_channel } from './channel';
 
-type Inner = CommandInteraction['options'];
+interface LocalToInnerGetters {
+  str: 'getString';
+  num: 'getNumber';
+  int: 'getInteger';
+  bool: 'getBoolean';
+  member: 'getMember';
+  channel: 'getChannel';
+  role: 'getRole';
+  mentionable: 'getMentionable';
+  msg: 'getMessage';
+  focus: 'getFocused';
+}
+
+type Getter = keyof LocalToInnerGetters;
+
+export type Options<K extends Getter = never> = Omit<
+  FullOptions<K>,
+  K | `maybe_${K}` | `${K}_input`
+>;
 
 /**
  * Wraps chat command options in a nicer API. Discord.js's system for this *sucks*,
  * for a bunch of reasons. Wordy, nullable by default, can return API types...
  * we're making our own thing.
  */
-export class Options {
-  constructor(private inner: Inner) {}
+export function into_options<K extends Getter>(
+  inner: Omit<Inner, LocalToInnerGetters[K]>,
+): Omit<FullOptions<K>, K> {
+  return new FullOptions(inner);
+}
+
+/**
+ * We don't export this class because it's impossible to generically omit properties
+ * from it based on what's omitted from the inner without manually using `Omit` at
+ * every call site. Instead we export a public type and function.
+ */
+class FullOptions<K extends Getter> {
+  private inner: Inner;
+  constructor(inner: Omit<Inner, LocalToInnerGetters[K]>) {
+    this.inner = <Inner>inner;
+  }
 
   get sub_command() {
     return this.inner.getSubcommand(false);
@@ -110,6 +143,28 @@ export class Options {
     const ment = this.inner.getMentionable(name, required);
     assert(!ment || ment instanceof Role || ment instanceof GuildMember, name);
     return ment;
+  }
+
+  msg(name: string) {
+    return this.resolve_msg(name, true)!;
+  }
+
+  maybe_msg(name: string) {
+    return this.resolve_msg(name);
+  }
+
+  private resolve_msg(name: string, required?: boolean) {
+    const msg = this.inner.getMessage(name, required);
+    assert(!msg || msg instanceof Message, name);
+    return msg;
+  }
+
+  focus() {
+    return this.inner.getFocused(true);
+  }
+
+  focus_input() {
+    return this.inner.getFocused();
   }
 
   // HACK: private api, switch to something supported or open a PR about it?

@@ -2,10 +2,11 @@ import {
   ColorResolvable,
   GuildMember,
   MessageEmbedOptions as Inner,
+  EmbedFieldData as InnerField,
   User,
 } from 'discord.js';
 import { Ary } from 'support/array';
-import { is_some, Maybe } from 'support/null';
+import { Maybe } from 'support/null';
 import { from_indirect, Indirect } from 'support/object';
 import { assert } from './assert';
 import { AssetsKey } from './asset/registrar';
@@ -70,7 +71,7 @@ export class Embed {
   }
 
   private try_set<K extends keyof Inner>(key: K, value: Maybe<Value<K>>) {
-    if (is_some(value)) this.set(key, value);
+    if (value) this.set(key, value);
     return this;
   }
 
@@ -90,7 +91,7 @@ export class Embed {
   }
 
   private try_add_field(name: string, value: Maybe<string>, inline: boolean) {
-    if (is_some(value)) this.add_field(name, value, inline);
+    if (value) this.add_field(name, value, inline);
     return this;
   }
 
@@ -183,5 +184,11 @@ export class Embed {
 
   try_inline(name: string, value: Maybe<string>) {
     return this.try_add_field(name, value, true);
+  }
+
+  map_fields(mapper: (field: InnerField) => InnerField) {
+    if (this.inner.fields) {
+      this.inner.fields = this.inner.fields.map(mapper);
+    }
   }
 }

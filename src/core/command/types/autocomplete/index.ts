@@ -5,6 +5,7 @@
  * and types since the regular command ones are overboard.
  */
 
+import { into_options, Options } from 'core/command/options';
 import { AutocompleteInteraction as Intr } from 'discord.js';
 import { is_string } from 'support/string';
 
@@ -14,6 +15,7 @@ type Suggestion = string | { name: string; value: string };
 
 export interface AutocompleteArgs {
   input: string | number;
+  opts: Options<'msg'>;
 }
 
 export interface Autocomplete {
@@ -21,8 +23,9 @@ export interface Autocomplete {
 }
 
 export async function execute_autocomplete(intr: Intr, autocomplete: Autocomplete) {
-  const input = intr.options.getFocused();
-  const args: AutocompleteArgs = { input };
+  const opts = into_options<'msg'>(intr.options);
+  const input = opts.focus_input();
+  const args: AutocompleteArgs = { input, opts };
   const suggestions = (await autocomplete(args)).map(normalize);
 
   return intr.respond(suggestions);
