@@ -14,7 +14,7 @@ const set_activity: Task = ({ client }) => {
 };
 
 add_init(GLOBAL, set_activity, {
-  name: 'set_activity_init ',
+  name: 'set_activity_init',
 });
 
 add_task(GLOBAL, set_activity, {

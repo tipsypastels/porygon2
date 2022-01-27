@@ -1,12 +1,12 @@
-import colors, { Color } from 'colors';
 import { IS_DEBUG } from 'support/env';
 import { is_string } from 'support/string';
 import { print_formatted_frames } from './trace';
+import { LOG_COLORS as COLORS, Color } from './colors';
 
-const error: LogErrorFn = (m, e) => __log_error(e, 'error', colors.red, m);
-const warn: LogFn = (m) => __log('warn', colors.yellow, m);
-const info: LogFn = (m) => __log('info', colors.blue, m);
-const debug: LogFn = (m) => IS_DEBUG && __log('debug', colors.green, m);
+const error: LogErrorFn = (m, e) => __log_error(e, 'error', COLORS.error, m);
+const warn: LogFn = (m) => __log('warn', COLORS.warn, m);
+const info: LogFn = (m) => __log('info', COLORS.info, m);
+const debug: LogFn = (m) => IS_DEBUG && __log('debug', COLORS.debug, m);
 
 export const logger = { error, warn, info, debug };
 
@@ -58,7 +58,7 @@ function time() {
     hour12: true,
   });
 
-  return colors.gray.dim(stamp);
+  return COLORS.aside(stamp);
 }
 
 function to_error_message(err: unknown) {

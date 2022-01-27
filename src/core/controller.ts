@@ -26,6 +26,12 @@ export interface Controller {
   name: string;
 
   /**
+   * File-name of the controller, for controller-indexed caches
+   * like the /pory command.
+   */
+  file_name: string;
+
+  /**
    * Returns whether Porygon is connected to this controller's guild, if the controller
    * describes a guild, or `true` if the controller is `GLOBAL`. Because `GLOBAL`
    * exists, checking that `try_into_guild` succeeds is not sufficient to decide
@@ -60,6 +66,7 @@ export interface Controller {
 
 export const GLOBAL: Controller = {
   name: 'global',
+  file_name: 'global',
 
   is_connected() {
     return true;
@@ -88,6 +95,7 @@ function make_guild_controller(nick: GuildNickname): Controller {
   const guild_id = get_guild_id(nick);
   return {
     name: `guild(${nick})`,
+    file_name: `guild_${nick}`,
 
     is_connected(client) {
       return !!this.try_into_guild(client);
