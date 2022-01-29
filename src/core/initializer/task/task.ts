@@ -1,4 +1,4 @@
-import { Controller, proper_controller_for_env } from 'core/controller';
+import { Controller } from 'core/controller';
 import { logger, panic } from 'core/logger';
 import { ControllerRegistrar, Registrar } from 'core/registrar';
 import { Client, Collection } from 'discord.js';
@@ -106,8 +106,7 @@ export class TaskRegistrar extends ControllerRegistrar {
   private static ALL = new Collection<string, TaskCell>();
   private pending = new Collection<string, TaskCell>();
 
-  static init(prod_controller: Controller) {
-    const controller = proper_controller_for_env(prod_controller);
+  static init(controller: Controller) {
     return this.CACHE.get(controller);
   }
 

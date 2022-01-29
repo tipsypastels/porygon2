@@ -1,5 +1,5 @@
 import { assert } from 'core/assert';
-import { Controller, proper_controller_for_env } from 'core/controller';
+import { Controller } from 'core/controller';
 import { logger, panic } from 'core/logger';
 import { ControllerRegistrar } from 'core/registrar';
 import { Client, Collection } from 'discord.js';
@@ -18,8 +18,7 @@ export class CommandRegistrar extends ControllerRegistrar {
   private commands = new Collection<string, Cell>();
   private pending = new Collection<AnyCommand, Data>();
 
-  static init(prod_controller: Controller) {
-    const controller = proper_controller_for_env(prod_controller);
+  static init(controller: Controller) {
     return this.CACHE.get(controller);
   }
 
