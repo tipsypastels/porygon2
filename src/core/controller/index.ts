@@ -89,6 +89,10 @@ class Controller {
     return this.brain.try_into_guild(client);
   }
 
+  /**
+   * Uploads a command to the command interface describes by the controller brain.
+   * If `id` is non-null, it will be replaced with the new command.
+   */
   upload_command(id: Maybe<string>, data: Data, client: Client) {
     const iface = this.brain.into_upload_interface(client);
     return id ? iface.edit(id, data) : iface.create(data);

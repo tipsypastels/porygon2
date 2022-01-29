@@ -21,13 +21,20 @@ interface Opts {
   controller: Controller;
   commands: Collection<AnyCommand, Data>;
   client: Client;
+  with_cell?(cell: Cell): void;
 }
 
 function make_key(reg: CommandRegistrar, data: Data) {
   return `${reg.name}-${data.name}`;
 }
 
-export async function upload_commands({ registrar, controller, commands, client }: Opts) {
+export async function upload_commands({
+  registrar,
+  controller,
+  commands,
+  client,
+  with_cell,
+}: Opts) {
   const file = `.commands/${controller.file_name}.json`;
   const cur_cache: Maybe<CacheFile> = await import(`../../../${file}`).catch(noop);
 
@@ -38,7 +45,7 @@ export async function upload_commands({ registrar, controller, commands, client 
   const new_cache: CacheFile = {};
   let changed = false;
 
-  const promises = [...commands].map(async ([command, data]) => {
+  async function make_cell(command: AnyCommand, data: Data) {
     const key = make_key(registrar, data);
     const cached = cur_cache?.[key];
     const hash = sha1(JSON.stringify(data));
@@ -63,6 +70,11 @@ export async function upload_commands({ registrar, controller, commands, client 
     new_cache[key] = new_cached;
 
     return new Cell({ ...cell_data, id: api_command.id, api: api_command });
+  }
+
+  const promises = [...commands].map(async ([command, data]) => {
+    const cell = await make_cell(command, data);
+    with_cell?.(cell);
   });
 
   const cells = await Promise.all(promises);

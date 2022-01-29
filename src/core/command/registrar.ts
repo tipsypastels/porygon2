@@ -14,7 +14,6 @@ export class CommandRegistrar extends ControllerRegistrar {
   private static CACHE = new Cache((controller: Controller) => new this(controller));
   private static COMMANDS = new Collection<string, Cell>();
 
-  private commands = new Collection<string, Cell>();
   private pending = new Collection<AnyCommand, Data>();
 
   static init(controller: Controller) {
@@ -36,17 +35,13 @@ export class CommandRegistrar extends ControllerRegistrar {
       return;
     }
 
-    const cells = await upload_commands({
+    await upload_commands({
       registrar: this,
       controller: this.controller,
       commands: this.pending,
       client,
+      with_cell: (cell) => CommandRegistrar.COMMANDS.set(cell.id, cell),
     });
-
-    for (const cell of cells) {
-      this.commands.set(cell.id, cell);
-      CommandRegistrar.COMMANDS.set(cell.id, cell);
-    }
 
     this.pending.clear();
   }
