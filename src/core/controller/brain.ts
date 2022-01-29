@@ -7,6 +7,11 @@ import { Data } from '../command';
 
 export type UploadOutcome = Maybe<Promise<Collection<string, ApplicationCommand>>>;
 
+export interface UploadInterface {
+  create(data: Data): Promise<ApplicationCommand>;
+  edit(id: string, data: Data): Promise<ApplicationCommand>;
+}
+
 /**
  * The inner behaviour of a `Controller`.
  *
@@ -43,11 +48,11 @@ export interface ControllerBrain {
   try_into_guild(client: Client): Maybe<Guild>;
 
   /**
-   * Uploads commands to the endpoint described by the controller. Used by the
-   * command registrar, obviously. This is fallible for the same reasons `try_into_guild`
-   * is fallible.
+   * Returns an `UploadInterface` that `Controller` can use to upload a command.
+   * Depending on the brain type, this is either the client command manager, or
+   * a guild-specific command manager.
    */
-  upload_commands(data: Data[], client: Client): UploadOutcome;
+  into_upload_interface(client: Client): UploadInterface;
 }
 
 const STAGING: ControllerBrain = {
@@ -63,9 +68,9 @@ const STAGING: ControllerBrain = {
     return try_get_guild('staging', client);
   },
 
-  upload_commands(data, client) {
+  into_upload_interface(client) {
     const guild = panic_take(this.try_into_guild(client), 'Staging ghosted!');
-    return do_upload_guild(data, guild);
+    return guild.commands;
   },
 };
 
@@ -82,8 +87,9 @@ const global: ControllerBrain = staging(STAGING, {
     return NONE;
   },
 
-  upload_commands(data, client) {
-    return do_upload_global(data, client);
+  into_upload_interface(client) {
+    const app = panic_take(client.application, 'Client was offline during setup!');
+    return app.commands;
   },
 });
 
@@ -112,18 +118,9 @@ function make_guild_brain(nick: Exclude<GuildNickname, 'staging'>): ControllerBr
       return try_get_guild(nick, client);
     },
 
-    upload_commands(data, client) {
+    into_upload_interface(client) {
       const guild = panic_take(this.try_into_guild(client), `Guild %${nick}% ghosted!`);
-      return do_upload_guild(data, guild);
+      return guild.commands;
     },
   };
-}
-
-function do_upload_global(data: Data[], client: Client) {
-  const app = panic_take(client.application, 'Client was offline during setup!');
-  return app.commands.set(data);
-}
-
-function do_upload_guild(data: Data[], guild: Guild) {
-  return guild.commands.set(data);
 }

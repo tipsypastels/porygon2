@@ -3,10 +3,12 @@ import {
   ApplicationCommand,
   AutocompleteInteraction,
   BaseCommandInteraction,
+  Client,
   CommandInteraction,
   MessageContextMenuInteraction,
   UserContextMenuInteraction,
 } from 'discord.js';
+import { Maybe } from 'support/null';
 import {
   AnyCommand,
   ChatCommand,
@@ -21,7 +23,9 @@ import { fetch_autocomplete } from './types/autocomplete/map';
 interface CellOpts {
   command: AnyCommand;
   data: Data;
-  api: ApplicationCommand;
+  id: string;
+  api: Maybe<ApplicationCommand>;
+  client: Client;
 }
 
 /**
@@ -30,26 +34,27 @@ interface CellOpts {
  * dynamically.
  */
 export class Cell {
+  // local data
   private command: AnyCommand;
   readonly data: Data;
-  private api: ApplicationCommand;
+
+  // api/cache data. if `api` is present then we did an edit/update or loaded later
+  readonly id: string;
+  private api: Maybe<ApplicationCommand>;
+
+  // i, the client, am also here :')
+  readonly client: Client;
 
   constructor(opts: CellOpts) {
     this.command = opts.command;
     this.data = opts.data;
+    this.id = opts.id;
     this.api = opts.api;
-  }
-
-  get id() {
-    return this.api.id;
+    this.client = opts.client;
   }
 
   get name() {
     return this.data.name;
-  }
-
-  get client() {
-    return this.api.client;
   }
 
   // TODO: this all feels like too much logic for a simple container..

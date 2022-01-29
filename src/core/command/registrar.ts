@@ -1,12 +1,11 @@
 import { assert } from 'core/assert';
 import { Controller } from 'core/controller';
-import { logger, panic } from 'core/logger';
+import { panic } from 'core/logger';
 import { ControllerRegistrar } from 'core/registrar';
 import { Client, Collection } from 'discord.js';
 import { Cache } from 'support/cache';
-import { eager, zip } from 'support/iterator';
-import { plural } from 'support/string';
 import { Cell, Command, AnyCommand, Data, Args, Intr, ArgsWithSubcommand } from '.';
+import { upload_commands } from './upload';
 
 /**
  * A registrar for commands. See the documentation on `Registrar`.
@@ -37,21 +36,17 @@ export class CommandRegistrar extends ControllerRegistrar {
       return;
     }
 
-    const pending_data = eager(this.pending.values());
-    const api_data = await this.controller.upload_commands(pending_data, client);
+    const cells = await upload_commands({
+      registrar: this,
+      controller: this.controller,
+      commands: this.pending,
+      client,
+    });
 
-    if (!api_data) {
-      return;
+    for (const cell of cells) {
+      this.commands.set(cell.id, cell);
+      CommandRegistrar.COMMANDS.set(cell.id, cell);
     }
-
-    for (const [[command, data], [, api]] of zip(this.pending, api_data)) {
-      const cell = new Cell({ command, data, api });
-
-      this.commands.set(api.id, cell);
-      CommandRegistrar.COMMANDS.set(api.id, cell);
-    }
-
-    logger.debug(`%${this.name}% uploaded %${plural(pending_count, 'command')}%.`);
 
     this.pending.clear();
   }
