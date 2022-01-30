@@ -1,9 +1,11 @@
-import { Data } from 'core/command';
 import { GuildNickname } from 'core/guild';
 import { Client } from 'discord.js';
 import { IS_STAGING } from 'support/env';
 import { Maybe } from 'support/null';
 import { BRAINS, ControllerBrain } from './brain';
+import { UploadInterface } from './upload';
+
+export type { UploadInterface };
 
 /**
  * A part of Porygon's setup process. Controllers are unique objects that specify
@@ -90,12 +92,13 @@ class Controller {
   }
 
   /**
-   * Uploads a command to the command interface describes by the controller brain.
-   * If `id` is non-null, it will be replaced with the new command.
+   * Returns an `UploadInterface` that the command registrar can use to upload a command.
+   *
+   * @see UploadInterface
    */
-  upload_command(id: Maybe<string>, data: Data, client: Client) {
-    const iface = this.brain.into_upload_interface(client);
-    return id ? iface.edit(id, data) : iface.create(data);
+  into_upload_iface(client: Client) {
+    const inner = this.brain.into_upload_iface_inner(client);
+    return new UploadInterface(inner, client);
   }
 }
 

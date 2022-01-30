@@ -29,6 +29,7 @@ export function execute_command(intr: Intr) {
     return logger.debug(`Requested unknown command: %${intr.commandName}%.`);
   }
 
+  // avert your eyes for a few lines...
   if (intr.isCommand()) return execute_chat_command(intr, cell);
   if (intr.isUserContextMenu()) return execute_user_command(intr, cell);
   if (intr.isMessageContextMenu()) panic('TODO message context menus');

@@ -1,16 +1,9 @@
 import { panic_take } from 'core/assert';
 import { get_guild_id, GuildNickname, try_get_guild } from 'core/guild';
-import { ApplicationCommand, Client, Collection, Guild } from 'discord.js';
+import { Client, Guild } from 'discord.js';
 import { IS_STAGING, staging } from 'support/env';
 import { Maybe, NONE } from 'support/null';
-import { Data } from '../command';
-
-export type UploadOutcome = Maybe<Promise<Collection<string, ApplicationCommand>>>;
-
-export interface UploadInterface {
-  create(data: Data): Promise<ApplicationCommand>;
-  edit(id: string, data: Data): Promise<ApplicationCommand>;
-}
+import { UploadInterfaceInner } from './upload';
 
 /**
  * The inner behaviour of a `Controller`.
@@ -48,11 +41,12 @@ export interface ControllerBrain {
   try_into_guild(client: Client): Maybe<Guild>;
 
   /**
-   * Returns an `UploadInterface` that `Controller` can use to upload a command.
-   * Depending on the brain type, this is either the client command manager, or
-   * a guild-specific command manager.
+   * Returns an `UploadInterfaceInner`, which is just one of Discord.js's
+   * application command managers - either a global or guild one. The `Controller`
+   * will wrap this into an `UploadInterface`, which is just a tiny layer of
+   * abstraction on top of that.
    */
-  into_upload_interface(client: Client): UploadInterface;
+  into_upload_iface_inner(client: Client): UploadInterfaceInner;
 }
 
 const STAGING: ControllerBrain = {
@@ -68,7 +62,7 @@ const STAGING: ControllerBrain = {
     return try_get_guild('staging', client);
   },
 
-  into_upload_interface(client) {
+  into_upload_iface_inner(client) {
     const guild = panic_take(this.try_into_guild(client), 'Staging ghosted!');
     return guild.commands;
   },
@@ -87,7 +81,7 @@ const global: ControllerBrain = staging(STAGING, {
     return NONE;
   },
 
-  into_upload_interface(client) {
+  into_upload_iface_inner(client) {
     const app = panic_take(client.application, 'Client was offline during setup!');
     return app.commands;
   },
@@ -118,7 +112,7 @@ function make_guild_brain(nick: Exclude<GuildNickname, 'staging'>): ControllerBr
       return try_get_guild(nick, client);
     },
 
-    into_upload_interface(client) {
+    into_upload_iface_inner(client) {
       const guild = panic_take(this.try_into_guild(client), `Guild %${nick}% ghosted!`);
       return guild.commands;
     },

@@ -1,6 +1,6 @@
 import { logger } from 'core/logger';
 import { noop } from 'support/fn';
-import { Maybe, NONE } from 'support/null';
+import { Maybe } from 'support/null';
 import { AnyCommand, Cell, CommandRegistrar, Data } from '.';
 import sha1 from 'sha1';
 import { Controller } from 'core/controller';
@@ -44,10 +44,11 @@ export async function upload_commands({ registrar, controller, commands, client 
     const cached = cur_cache?.[key];
     const hash = sha1(JSON.stringify(data));
 
-    const cell_data = { command, data, client };
+    const upload_iface = controller.into_upload_iface(client);
+    const cell_data = { command, data, upload_iface };
 
     if (cached?.data_hash === hash) {
-      return new Cell({ ...cell_data, id: cached.id, api: NONE });
+      return new Cell({ ...cell_data, api: cached.id });
     }
 
     changed = true;
@@ -58,12 +59,13 @@ export async function upload_commands({ registrar, controller, commands, client 
       logger.info(`New command %${data.name}% in %${registrar.name}%!`);
     }
 
-    const api_command = await controller.upload_command(cached?.id, data, client);
+    const api_command = await upload_iface.upload(data, cached?.id);
+
     const new_cached: CacheItem = { id: api_command.id, data_hash: hash };
 
     new_cache[key] = new_cached;
 
-    return new Cell({ ...cell_data, id: api_command.id, api: api_command });
+    return new Cell({ ...cell_data, api: api_command });
   }
 
   const promises = [...commands].map(async ([command, data]) => {
