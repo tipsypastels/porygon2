@@ -22,7 +22,7 @@ const DEFAULT_ERROR = 'No error message could be provided.';
 export function create_status_report_middleware<A extends Args>(
   opts: StatusReportOpts<A>,
 ): Middleware<A, any, any> {
-  return function* report_status(intr, cell, _command, args) {
+  return function* report_status(intr, cell, args) {
     const error = yield;
     const name = opts.command_name(args);
     const ctx = opts.command_context?.(args);

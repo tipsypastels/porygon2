@@ -1,12 +1,11 @@
-import { BaseCommandInteraction, Client, ClientOptions, Interaction } from 'discord.js';
+import { Client, ClientOptions, Interaction } from 'discord.js';
 import { IS_DEBUG, IS_DEV, IS_STAGING } from 'support/env';
 import { each_file } from 'support/dir';
-import { CommandRegistrar } from './command';
 import { logger, panic } from './logger';
 import { Registrar } from './registrar';
 import { TimeDifference } from './stat/time';
 import { $db } from './db';
-import { inspect } from 'util';
+import { execute_command, is_command } from './command';
 
 export const uptime = new TimeDifference();
 
@@ -83,13 +82,5 @@ function clear_global_commands_in_staging(client: Client) {
 }
 
 function on_interaction(intr: Interaction) {
-  if (intr.isCommand() || intr.isContextMenu() || intr.isAutocomplete()) {
-    const command = CommandRegistrar.get(intr.commandId);
-
-    if (!command) {
-      return logger.debug(`Requested unknown command: %${intr.commandName}%.`);
-    }
-
-    command.call(intr);
-  }
+  if (is_command(intr)) return execute_command(intr);
 }

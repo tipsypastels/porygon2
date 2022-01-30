@@ -4,7 +4,7 @@ import { panic } from 'core/logger';
 import { ControllerRegistrar } from 'core/registrar';
 import { Client, Collection } from 'discord.js';
 import { Cache } from 'support/cache';
-import { Cell, Command, AnyCommand, Data, Args, Intr, ArgsWithSubcommand } from '.';
+import { Command, AnyCommand, Data, Args, Intr, ArgsWithSubcommand } from '.';
 import { upload_commands } from './upload';
 
 /**
@@ -12,16 +12,11 @@ import { upload_commands } from './upload';
  */
 export class CommandRegistrar extends ControllerRegistrar {
   private static CACHE = new Cache((controller: Controller) => new this(controller));
-  private static COMMANDS = new Collection<string, Cell>();
 
   private pending = new Collection<AnyCommand, Data>();
 
   static init(controller: Controller) {
     return this.CACHE.get(controller);
-  }
-
-  static get(id: string) {
-    return this.COMMANDS.get(id);
   }
 
   protected constructor(controller: Controller) {
@@ -40,7 +35,6 @@ export class CommandRegistrar extends ControllerRegistrar {
       controller: this.controller,
       commands: this.pending,
       client,
-      with_cell: (cell) => CommandRegistrar.COMMANDS.set(cell.id, cell),
     });
 
     this.pending.clear();

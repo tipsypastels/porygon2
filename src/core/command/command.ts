@@ -63,21 +63,21 @@ export type { Intr, Data };
 export type AnyCommand = Command<any, any, any>;
 
 /**
- * The three components of a command usage that can be determined a priori, aka
- * before any command-type-specific information kicks in.
+ * The two values known at the start of a command call - the cell containing
+ * the command, and the interaction that kicked off the call.
  */
-export type Triplet<A extends Args, D extends Data, I extends Intr> = [
+export type Call<A extends Args, D extends Data, I extends Intr> = [
   intr: I,
-  cell: Cell,
-  command: Command<A, D, I>,
+  cell: Cell<A, D, I>,
 ];
 
 /**
- * The four components of a command usage. If this exists, argument resolution
- * has succeeded, since it's possible for it to fail.
+ * A `Call<A, D, I>` that has completed the first step of resolving arguments.
+ * This is the final state of command calls before actually calling the
+ * command function.
  */
-export type Quadruplet<A extends Args, D extends Data, I extends Intr> = [
-  ...triplet: Triplet<A, D, I>,
+export type ResolvedCall<A extends Args, D extends Data, I extends Intr> = [
+  ...call: Call<A, D, I>,
   args: A,
 ];
 
@@ -86,7 +86,7 @@ export type Quadruplet<A extends Args, D extends Data, I extends Intr> = [
  * and running any associated middleware.
  */
 export interface Executor<A extends Args, D extends Data, I extends Intr> {
-  (...triplet: Triplet<A, D, I>): Promise<void>;
+  (...call: Call<A, D, I>): Promise<void>;
 }
 
 /**
@@ -95,12 +95,12 @@ export interface Executor<A extends Args, D extends Data, I extends Intr> {
  * returns an `any` for the error produced by the command, or none for success.
  */
 export interface Middleware<A extends Args, D extends Data, I extends Intr> {
-  (...quadruplet: Quadruplet<A, D, I>): Generator<None, void, any>;
+  (...rcall: ResolvedCall<A, D, I>): Generator<None, void, any>;
 }
 
 interface ExecutorOpts<A extends Args, D extends Data, I extends Intr> {
   middleware?: Middleware<A, D, I>[];
-  into_args(...triplet: Triplet<A, D, I>): A | string;
+  into_args(...call: Call<A, D, I>): A | string;
 }
 
 /**
@@ -109,20 +109,20 @@ interface ExecutorOpts<A extends Args, D extends Data, I extends Intr> {
 export function create_executor<A extends Args, D extends Data, I extends Intr>(
   opts: ExecutorOpts<A, D, I>,
 ): Executor<A, D, I> {
-  return async (intr, cell, command) => {
-    const args = opts.into_args(intr, cell, command);
+  return async (intr, cell) => {
+    const args = opts.into_args(intr, cell);
 
     if (is_string(args)) {
       return logger.debug(`Failed to gather args for %${cell.name}%: %${args}%`);
     }
 
     const start = (m: Middleware<A, D, I>) => {
-      return tap((m) => m.next(), m(intr, cell, command, args));
+      return tap((m) => m.next(), m(intr, cell, args));
     };
 
     const resumable_middleware = opts.middleware?.map(start);
 
-    const error = await run_command(command, args);
+    const error = await run_command(cell.command, args);
 
     if (!error) {
       start_message_runtime(args, intr).catch((e) => {

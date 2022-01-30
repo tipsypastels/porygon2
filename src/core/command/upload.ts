@@ -6,6 +6,7 @@ import sha1 from 'sha1';
 import { Controller } from 'core/controller';
 import { Client, Collection } from 'discord.js';
 import { writeFile as write } from 'fs/promises';
+import { store_command } from './storage';
 
 interface CacheFile {
   [key: string]: CacheItem;
@@ -21,20 +22,13 @@ interface Opts {
   controller: Controller;
   commands: Collection<AnyCommand, Data>;
   client: Client;
-  with_cell?(cell: Cell): void;
 }
 
 function make_key(reg: CommandRegistrar, data: Data) {
   return `${reg.name}-${data.name}`;
 }
 
-export async function upload_commands({
-  registrar,
-  controller,
-  commands,
-  client,
-  with_cell,
-}: Opts) {
+export async function upload_commands({ registrar, controller, commands, client }: Opts) {
   const file = `.commands/${controller.file_name}.json`;
   const cur_cache: Maybe<CacheFile> = await import(`../../../${file}`).catch(noop);
 
@@ -74,7 +68,7 @@ export async function upload_commands({
 
   const promises = [...commands].map(async ([command, data]) => {
     const cell = await make_cell(command, data);
-    with_cell?.(cell);
+    store_command(cell, controller);
   });
 
   const cells = await Promise.all(promises);
