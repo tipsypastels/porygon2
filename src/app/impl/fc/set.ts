@@ -1,10 +1,11 @@
-import { FriendCode, FriendCodeType } from '@prisma/client';
+import { FriendCodeType } from '@prisma/client';
 import { Maybe } from 'support/null';
+import { Entry } from '.';
 import { FcHandle } from './handle';
 import { try_tidy_fc } from './tidy';
 
 type Changes = { code: Maybe<string>; type: FriendCodeType }[];
-type Changed = Pick<FriendCode, 'type' | 'code'>[];
+type Changed = Entry[];
 
 type Result =
   | { ok: false; error: 'no_op' }

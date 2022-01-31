@@ -1,5 +1,6 @@
-import { FriendCode, FriendCodeType } from '@prisma/client';
+import { FriendCodeType } from '@prisma/client';
 import { $db } from 'core/db';
+import { Entry } from '.';
 
 const TABLE = $db.friendCode;
 
@@ -24,7 +25,7 @@ export interface FcHandle {
    * /fc set implementation to only query types that weren't explicitly
    * just set by the user.
    */
-  get(opts?: GetOpts): Promise<Pick<FriendCode, 'code' | 'type'>[]>;
+  get(opts?: GetOpts): Promise<Entry[]>;
 
   /**
    * Sets the a specific type to a given code for the user.
