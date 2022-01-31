@@ -1,11 +1,11 @@
 import { FriendCodeType } from '@prisma/client';
-import { FcHandle, fc_get, fc_clear, fc_set, Entry } from '.';
+import { FcHandle, fc_get, fc_clear, fc_set, FcEntry } from '.';
 
-function create_entries(...types: FriendCodeType[]): Entry[] {
+function create_entries(...types: FriendCodeType[]): FcEntry[] {
   return types.map((type) => ({ type, code: '1111-2222-3333' }));
 }
 
-function create_handle(initial_storage: Entry[] = []): FcHandle {
+function create_handle(initial_storage: FcEntry[] = []): FcHandle {
   let storage = initial_storage;
 
   return {
@@ -111,7 +111,7 @@ describe(fc_set, () => {
 
   // see tidy.test.ts for more tests on the specific tidying rules
   it('errors on untidy codes', async () => {
-    const changes: Entry[] = [{ type: 'THREEDS', code: 'hello' }];
+    const changes: FcEntry[] = [{ type: 'THREEDS', code: 'hello' }];
     const handle = create_handle();
 
     const result = await fc_set(handle, changes);
@@ -126,7 +126,7 @@ describe(fc_set, () => {
 
   it('references the first untidy code in a list of multiple changes', async () => {
     const ok_changes = create_entries('THREEDS', 'GO');
-    const bad_change: Entry = { type: 'SWITCH', code: 'bad' };
+    const bad_change: FcEntry = { type: 'SWITCH', code: 'bad' };
     const changes = [ok_changes[0], bad_change, ok_changes[1]];
     const handle = create_handle();
 

@@ -1,11 +1,11 @@
 import { FriendCodeType } from '@prisma/client';
 import { Maybe } from 'support/null';
-import { Entry } from '.';
+import { FcEntry } from '.';
 import { FcHandle } from './handle';
 import { try_tidy_fc } from './tidy';
 
 type Changes = { code: Maybe<string>; type: FriendCodeType }[];
-type Changed = Entry[];
+type Changed = FcEntry[];
 
 type Result =
   | { ok: false; error: 'no_op' }
