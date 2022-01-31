@@ -16,3 +16,17 @@ model PokecomJoinDate {
   user_id   String   @id
   joined_at DateTime
 }
+
+model FriendCode {
+  user_id String
+  type    FriendCodeType
+  code    String
+
+  @@id([user_id, type])
+}
+
+enum FriendCodeType {
+  SWITCH
+  THREEDS
+  GO
+}

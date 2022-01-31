@@ -1,11 +1,11 @@
 import { add_command, ChatCommand } from 'core/command';
 import { GLOBAL } from 'core/controller';
-import { find_owner } from 'core/owner';
+import { fetch_owner } from 'core/owner';
 
 const help: ChatCommand = async ({ embed, reply, client }) => {
   reply.set_ephemeral();
 
-  const owner = find_owner(client);
+  const owner = await fetch_owner(client);
   const owner_avatar = owner?.avatarURL() ?? undefined;
 
   embed

@@ -1,6 +1,7 @@
-import { Client } from 'discord.js';
+import { Guild } from 'discord.js';
 import { OWNER } from 'support/env';
 import { assert } from './assert';
+import { ClientWithoutEvents } from './initializer';
 
 interface User {
   id: string;
@@ -14,6 +15,10 @@ export function assert_owner(user: User) {
   assert(is_owner(user), "You aren't the bot owner!");
 }
 
-export function find_owner(client: Client) {
-  return client.users.cache.get(OWNER());
+export function fetch_owner(client: ClientWithoutEvents) {
+  return client.users.fetch(OWNER());
+}
+
+export function fetch_owner_on(guild: Guild) {
+  return guild.members.fetch(OWNER());
 }

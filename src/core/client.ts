@@ -1,10 +1,10 @@
 import { Client, ClientOptions, Interaction } from 'discord.js';
 import { IS_DEBUG, IS_DEV, IS_STAGING } from 'support/env';
 import { each_file } from 'support/dir';
-import { logger, panic } from './logger';
+import { logger } from './logger';
 import { Registrar } from './registrar';
 import { TimeDifference } from './stat/time';
-import { $db } from './db';
+import { connect_db } from './db';
 import { execute_command, is_command } from './command';
 
 export const uptime = new TimeDifference();
@@ -54,13 +54,6 @@ function log_startup() {
 
 function setup(client: Client) {
   return Promise.all([connect_db(), app_setup(client)]);
-}
-
-function connect_db() {
-  return $db
-    .$connect()
-    .then(() => logger.debug('%Database connected!%'))
-    .catch((e: Error) => panic(`Database disconnected! ${e.message}`));
 }
 
 async function app_setup(client: Client) {

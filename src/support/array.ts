@@ -62,6 +62,15 @@ export function random<T>(array: T[], rng = Math.random): T {
 }
 
 /**
+ * Calls the callback with each element of the array.
+ */
+export function each<T>(fn: (t: T) => void, array: T[]) {
+  for (const item of array) {
+    fn(item);
+  }
+}
+
+/**
  * Joins an array into an english sentence.
  */
 export function to_sentence<T>(

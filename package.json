@@ -4,8 +4,7 @@
     "build": "rm -rf dist && tsc",
     "start": "NODE_ENV=production NODE_PATH=./dist node ./dist/main.js",
     "watch": "NODE_ENV=development PORY_STAGING=1 PORY_DEBUG=1 NODE_PATH=./src/ nodemon",
-    "migrate": "prisma db push",
-    "codegen": "apollo client:codegen --target typescript --no-addTypename"
+    "migrate": "prisma db push"
   },
   "dependencies": {
     "@favware/zalgo": "^3.1.3",
