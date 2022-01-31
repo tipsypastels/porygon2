@@ -1,10 +1,5 @@
 import { FriendCodeType } from '@prisma/client';
-import { FcHandle, fc_get, fc_clear, fc_set } from '.';
-
-interface Entry {
-  type: FriendCodeType;
-  code: string;
-}
+import { FcHandle, fc_get, fc_clear, fc_set, Entry } from '.';
 
 function create_entries(...types: FriendCodeType[]): Entry[] {
   return types.map((type) => ({ type, code: '1111-2222-3333' }));
