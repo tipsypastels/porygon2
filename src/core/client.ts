@@ -24,6 +24,7 @@ const intents: ClientOptions['intents'] = [
   'GUILD_MESSAGES',
   'GUILD_PRESENCES',
   'GUILD_EMOJIS_AND_STICKERS',
+  'DIRECT_MESSAGES',
 ];
 
 export function make_client() {
